@@ -1334,7 +1334,7 @@ smoothPLS_CFD_predict_Deprecated <- function(df_predict, delta_spls,
                                              int_mode = 1,
                                   id_col = 'id', time_col = 'time',
                                   nb_pt = 10, subdivisions = 100){
-  # This function make prediction on new data from pls-cfd delta
+  # This function make prediction on new data from pls-cfd delta object
   # Y = delta_0 + int delta_1(t) X(t) dt
 
   delta_0 = delta_spls[[1]]
