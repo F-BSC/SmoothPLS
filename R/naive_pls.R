@@ -24,7 +24,8 @@
 #' "opti_reg_coef", "reg_obj")
 #' @export
 #'
-#' @importFrom pls plsr RMSEP
+#' @import pls
+#' @importFrom pls plsr RMSEP MSEP
 #' @importFrom stats coef predict residuals lm.influence
 #'
 #' @author Francois Bassac

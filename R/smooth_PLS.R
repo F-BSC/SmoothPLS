@@ -69,7 +69,8 @@ build_u_ki_list <- function(N_states, nbComp, ms_pls_models){
 #' @returns a list of the plsr_model and the regression curves (and intercept).
 #' @export
 #'
-#' @importFrom pls plsr RMSEP
+#' @import pls
+#' @importFrom pls plsr RMSEP MSEP
 #' @importFrom stats coef
 #' @importFrom graphics plot title
 #'
@@ -1113,7 +1114,7 @@ evaluate_V_i_function <- function(w_i_list, gamma_ij_list){
 #' @returns a fd function
 #' @export
 #'
-#' @impotFrom fda fd
+#' @importFrom fda fd
 #'
 #' @author Francois Bassac
 evaluate_reg_curve_SPLS_uni <- function(plsr_model, v_i_list,
@@ -1286,6 +1287,8 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
 #' regression coefficient (fd object).
 #' @param id_col Character, name of the id column, default 'id'.
 #' @param time_col Character, name of the time column, default 'time'.
+#' @param subdivisions integer, maximum number of sub-intervals for integration,
+#' default 100
 #' @param ... Additional parameters passed to evaluate_id_func_integral
 #' (e.g., rel_tol, subdivisions).
 #'

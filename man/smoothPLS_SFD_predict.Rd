@@ -33,3 +33,6 @@ A numeric vector of predicted values
 Predicts the response Y for Scalar Functional Data using the analytic L2 inner product.
 This implementation follows the theory from Chapter 7.
 }
+\author{
+Francois Bassac
+}

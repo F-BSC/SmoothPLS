@@ -20,16 +20,17 @@
 #' @param jackknife a plsr input, defautl = TRUE
 #' @param validation a plsr input, default = 'LOO'
 #'
+#' @returns a list ("curve_names", "alphas", "metric", "root_metric",
+#' "trans_alphas", "mfpls_mfd", "nb_comp_pls_opt", "beta_0", "beta_pls_list")
+#' @export
+#'
+#' @import pls
 #' @importFrom mgcv mroot
-#' @importFrom pls plsr RMSEP
+#' @importFrom pls plsr RMSEP MSEP
 #' @importFrom MASS ginv
 #' @importFrom stats coef
 #' @importFrom graphics plot title
 #' @importFrom fda fd
-#'
-#' @returns a list ("curve_names", "alphas", "metric", "root_metric",
-#' "trans_alphas", "mfpls_mfd", "nb_comp_pls_opt", "beta_0", "beta_pls_list")
-#' @export
 #'
 #' @author Francois Bassac
 funcPLS <- function(df_list, Y, basis_obj, regul_time_obj,

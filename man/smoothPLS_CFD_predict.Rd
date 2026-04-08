@@ -9,6 +9,7 @@ smoothPLS_CFD_predict(
   delta_spls,
   id_col = "id",
   time_col = "time",
+  subdivisions = 100,
   ...
 )
 }
@@ -21,6 +22,9 @@ regression coefficient (fd object).}
 \item{id_col}{Character, name of the id column, default 'id'.}
 
 \item{time_col}{Character, name of the time column, default 'time'.}
+
+\item{subdivisions}{integer, maximum number of sub-intervals for integration,
+default 100}
 
 \item{...}{Additional parameters passed to evaluate_id_func_integral
 (e.g., rel_tol, subdivisions).}

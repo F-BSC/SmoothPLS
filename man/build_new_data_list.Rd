@@ -37,7 +37,7 @@ curve}
 a list
 }
 \description{
-Thius function preprocess the different input in order to format them to the
+This function preprocess the different input in order to format them to the
 right number of curve. Warning the "right" number of curve take into account
 the number of different states for the CFDs.
 }

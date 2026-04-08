@@ -1,7 +1,9 @@
 test_that("funcPLS execution and consistency", {
   nind <- 30
   df <- generate_X_df(nind = nind, curve_type = 'cat', seed = 123)
-  Y <- generate_Y_df(df, curve_type = 'cat', beta_real_func_or_list = beta_1_real_func, seed = 123)$Y_noised
+  Y <- generate_Y_df(df, curve_type = 'cat',
+                     beta_real_func_or_list = beta_1_real_func,
+                     seed = 123)$Y_noised
   basis <- create_bspline_basis(0, 100, nbasis = 10)
 
   # Run FPLS
