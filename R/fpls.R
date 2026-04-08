@@ -21,7 +21,11 @@
 #' @param validation a plsr input, default = 'LOO'
 #'
 #' @importFrom mgcv mroot
-#' @import pls
+#' @importFrom plsplsr RMSEP
+#' @importFrom MASS ginv
+#' @importFrom stats coef
+#' @importFrom graphics plot title
+#' @importFrom fda fd
 #'
 #' @returns a list ("curve_names", "alphas", "metric", "root_metric",
 #' "trans_alphas", "mfpls_mfd", "nb_comp_pls_opt", "beta_0", "beta_pls_list")
@@ -75,8 +79,8 @@ funcPLS <- function(df_list, Y, basis_obj, regul_time_obj,
   # Alphas matrix and curve_names
   alpha_names_obj = multivariate_alpha_building(df_list = df_list,
                                                 basis_list = basis_list,
-                                                curve_type_list = curve_type_list,
-                                                regul_time_list = regul_time_list,
+                                                curve_type_list =curve_type_list,
+                                                regul_time_list =regul_time_list,
                                                 id_col_list = id_col_list,
                                                 time_col_list = time_col_list,
                                                 print_steps = print_steps)
@@ -114,7 +118,7 @@ funcPLS <- function(df_list, Y, basis_obj, regul_time_obj,
          xlab="Components number")
   }
 
-  nb_comp_pls_opt = which.min(RMSEP(mfpls_mfd)$val[1, , ])-1
+  nb_comp_pls_opt = which.min(pls::RMSEP(mfpls_mfd)$val[1, , ])-1
   if(print_nbComp){
     cat(paste("Optimal number of PLS components : ", nb_comp_pls_opt, ".\n"))
   }
@@ -125,8 +129,10 @@ funcPLS <- function(df_list, Y, basis_obj, regul_time_obj,
     nb_total_cp = dim(trans_alphas)[2]
     cat("No Optimal number of component!\n")
     cat("Search the optimal number of component EXCLUDING the intercept.\n")
-    nb_comp_pls_opt = which.min(pls::RMSEP(mfpls_mfd)$val[1, , ][c(2:nb_total_cp)])
-    cat(paste("New \'Optimal\' number of PLS components : ", nb_comp_pls_opt, ".\n"))
+    nb_comp_pls_opt = which.min(pls::RMSEP(mfpls_mfd)$val[1,
+                                                          , ][c(2:nb_total_cp)])
+    cat(paste("New \'Optimal\' number of PLS components : ",
+              nb_comp_pls_opt, ".\n"))
   }
 
   if(print_steps){
@@ -134,7 +140,7 @@ funcPLS <- function(df_list, Y, basis_obj, regul_time_obj,
   }
   # beta_t_i and beta_0_i
   beta_pls_list = reg_curve_funcPLS_evaluation(mfpls_mfd = mfpls_mfd,
-                                               nb_comp_pls_opt = nb_comp_pls_opt,
+                                               nb_comp_pls_opt =nb_comp_pls_opt,
                                                root_metric = root_metric,
                                                new_basis_list = new_basis_list,
                                                curve_names =  curve_names,
@@ -147,13 +153,21 @@ funcPLS <- function(df_list, Y, basis_obj, regul_time_obj,
     }
   }
 
-  beta_0 = coef(mfpls_mfd, ncomp = nb_comp_pls_opt, intercept = TRUE)[1]
+  beta_0 = stats::coef(mfpls_mfd, ncomp = nb_comp_pls_opt, intercept = TRUE)[1]
 
   full_beta_list = append(list(beta_0), beta_pls_list)
   names(full_beta_list) = c("Intercept", curve_names)
 
+
+  # Extracting coefficients with MASS::ginv for the inverse of the metric
+  #coefs_alphas = stats::coef(mfpls_mfd,
+  #                           ncomp = nb_comp_pls_opt,
+  #                           intercept=FALSE)
+  #betacoef = MASS::ginv(t(root_metric)) %*% coefs_alphas
+
+
   # return also the df_fd$curve_name?
-  #fpls_mv_list = list(curve_names, alphas, metric, root_metric,
+  # fpls_mv_list = list(curve_names, alphas, metric, root_metric,
   #                    trans_alphas, mfpls_mfd, nb_comp_pls_opt,
   #                    full_beta_list)
   fpls_mv_list = list(metric, root_metric, alphas, trans_alphas,
@@ -387,9 +401,6 @@ multivariate_alpha_building <- function(df_list, basis_list,
     alphas = cbind(alphas, alphas_loc)
     curve_names = c(curve_names, curve_name_loc)
 
-
-
-
   }
   return(list(alphas, curve_names, new_basis_list))
 }
@@ -407,6 +418,9 @@ multivariate_alpha_building <- function(df_list, basis_list,
 #' @param time_col a character for the time column name
 #'
 #' @returns a matrix
+#'
+#' @importFrom fda Data2fd
+#' @importFrom stats coef
 #'
 #' @author Francois Bassac
 univariate_alpha_building <- function(df, basis, curve_type = NULL, regul_time,
@@ -609,6 +623,7 @@ multivariate_assemble_basis_metric <- function(df_list, basis_list, curve_list,
 #'
 #' @importFrom fda fd
 #' @importFrom MASS ginv
+#' @importFrom stats coef
 #'
 #' @author Francois Bassac
 reg_curve_funcPLS_evaluation <- function(mfpls_mfd, nb_comp_pls_opt,
@@ -619,7 +634,9 @@ reg_curve_funcPLS_evaluation <- function(mfpls_mfd, nb_comp_pls_opt,
   # FD.
   # It returns a list of beta.
 
-  coefs_alphas = coef(mfpls_mfd, ncomp = nb_comp_pls_opt, intercept=FALSE)
+  coefs_alphas = stats::coef(mfpls_mfd,
+                             ncomp = nb_comp_pls_opt,
+                             intercept=FALSE)
   betacoef = MASS::ginv(t(root_metric))%*%coefs_alphas
 
   beta_mfpls = list()
