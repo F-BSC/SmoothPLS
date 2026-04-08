@@ -21,7 +21,7 @@
 #' @param validation a plsr input, default = 'LOO'
 #'
 #' @importFrom mgcv mroot
-#' @importFrom plsplsr RMSEP
+#' @importFrom pls plsr RMSEP
 #' @importFrom MASS ginv
 #' @importFrom stats coef
 #' @importFrom graphics plot title

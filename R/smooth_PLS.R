@@ -69,7 +69,9 @@ build_u_ki_list <- function(N_states, nbComp, ms_pls_models){
 #' @returns a list of the plsr_model and the regression curves (and intercept).
 #' @export
 #'
-#' @importFrom pls plsr
+#' @importFrom pls plsr RMSEP
+#' @importFrom stats coef
+#' @importFrom graphics plot title
 #'
 #' @author Francois Bassac
 smoothPLS <- function(df_list, Y,
@@ -178,7 +180,7 @@ smoothPLS <- function(df_list, Y,
     cat("=> PLSR model.\n")
   }
 
-  plsr_model = plsr(Y ~ as.matrix(Lambda), validation = validation,
+  plsr_model = pls::plsr(Y ~ as.matrix(Lambda), validation = validation,
                     jackknife = jackknife, intercept = TRUE,
                     center = TRUE)
 
@@ -193,7 +195,7 @@ smoothPLS <- function(df_list, Y,
   if(nb_comp_pls_opt == 0){
     cat("No Optimal number of component!\n")
     cat("Search the optimal number of component EXCLUDING the intercept.\n")
-    nb_total_cp = length(plsr_model$scores)
+    nb_total_cp = ncol(plsr_model$scores)
     nb_comp_pls_opt = which.min(
       pls::RMSEP(plsr_model)$val[1, , ][c(2:nb_total_cp)]
     )
@@ -209,7 +211,7 @@ smoothPLS <- function(df_list, Y,
 
   # Coefficients
   # b_i : Y = sum b_i lambda_i
-  b_i = coef(plsr_model, ncomp = nb_comp_pls_opt)
+  b_i = stats::coef(plsr_model, ncomp = nb_comp_pls_opt)
   # c_i : Y = sum c_i t_i
   c_i = plsr_model$Yscores
   # d_i : Lambda = sum d_i t_i
@@ -653,7 +655,8 @@ evaluate_lambda_CFD <- function(df, basis, int_mode = 1,
 #' @returns a matrix of dimension nbasis columns and nind rows
 #'
 #' @importFrom fda eval.fd fd
-#' @importFrom stats approxfun
+#' @importFrom stats approxfun integrate
+#' @importFrom pracma trapz
 #'
 #' @author Francois Bassac
 evaluate_lambda_SFD <- function(df, basis,
@@ -716,9 +719,9 @@ evaluate_lambda_SFD <- function(df, basis,
       # Integration
       if(int_mode == 1){
         # integrate
-        local_fun = approxfun(x = regul_time, y = prod_values)
+        local_fun = stats::approxfun(x = regul_time, y = prod_values)
 
-        integral_sum = integrate(f=local_fun,
+        integral_sum = stats::integrate(f=local_fun,
                                  lower=regul_time[1],
                                  upper=regul_time[length(regul_time)],
                                  subdivisions = subdivisions)[1]$value
@@ -739,7 +742,7 @@ evaluate_lambda_SFD <- function(df, basis,
 
 #' build_new_data_list
 #'
-#' Thius function preprocess the different input in order to format them to the
+#' This function preprocess the different input in order to format them to the
 #' right number of curve. Warning the "right" number of curve take into account
 #' the number of different states for the CFDs.
 #'
@@ -965,6 +968,8 @@ build_spls_functions <- function(curves_names_list,
 #'
 #' @returns a list of fd objects
 #'
+#' @importFrom fda fd
+#'
 #' @author Francois Bassac
 p_w_building <- function(coefficient,
                          N_curves_processed,
@@ -1108,6 +1113,8 @@ evaluate_V_i_function <- function(w_i_list, gamma_ij_list){
 #' @returns a fd function
 #' @export
 #'
+#' @impotFrom fda fd
+#'
 #' @author Francois Bassac
 evaluate_reg_curve_SPLS_uni <- function(plsr_model, v_i_list,
                                 nb_comp=NULL){
@@ -1146,6 +1153,8 @@ evaluate_reg_curve_SPLS_uni <- function(plsr_model, v_i_list,
 #' @returns a list of fd object
 #' @export
 #'
+#' @importFrom stats coef
+#'
 #' @author Francois Bassac
 build_reg_curve_spls <- function(plsr_model, curves_names_list,
                              v_i_list, nb_comp_pls_opt = NULL,
@@ -1169,7 +1178,9 @@ build_reg_curve_spls <- function(plsr_model, curves_names_list,
     delta_list = append(delta_list, list(d_i))
   }
 
-  delta_0 = coef(plsr_model, ncomp = nb_comp_pls_opt, intercept = TRUE)[1]
+  delta_0 = stats::coef(plsr_model,
+                        ncomp = nb_comp_pls_opt,
+                        intercept = TRUE)[1]
 
 
   delta_spls = list(delta_0)
@@ -1282,7 +1293,7 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
 #'
 #' @author Francois Bassac
 smoothPLS_CFD_predict <- function(df_predict, delta_spls, id_col = 'id',
-                                  time_col = 'time', ...) {
+                                  time_col = 'time', subdivisions = 100, ...) {
 
   delta_0 <- delta_spls[[1]]
 
@@ -1303,6 +1314,7 @@ smoothPLS_CFD_predict <- function(df_predict, delta_spls, id_col = 'id',
                                          func = delta_1_func,
                                          id_col = id_col,
                                          time_col = time_col,
+                                         subdivisions = 100,
                                          ...)
 
     y_hat[i] <- delta_0 + res_int$integral
@@ -1311,7 +1323,7 @@ smoothPLS_CFD_predict <- function(df_predict, delta_spls, id_col = 'id',
   return(y_hat)
 }
 
-#' smoothPLS_CFD_predict
+#' smoothPLS_CFD_predict_Deprecated
 #'
 #' This function make prediction on new data from pls-cfd delta
 #' Y = delta_0 + int delta_1(t) X(t) dt.
@@ -1377,6 +1389,7 @@ smoothPLS_CFD_predict_Deprecated <- function(df_predict, delta_spls,
 #' @return A numeric vector of predicted values
 #'
 #' @importFrom fda Data2fd inprod
+#' @author Francois Bassac
 smoothPLS_SFD_predict <- function(df_predict, delta_spls, basis_obj = NULL,
                                   id_col = 'id', time_col = 'time', ...) {
 
@@ -1414,7 +1427,7 @@ smoothPLS_SFD_predict <- function(df_predict, delta_spls, basis_obj = NULL,
 
 
 
-#' smoothPLS_SFD_predict
+#' smoothPLS_SFD_predict_Deprecated
 #'
 #' This function make prediction on new data from pls-cfd delta
 #' Y = delta_0 + int delta_1(t) X(t) dt.
@@ -1434,6 +1447,8 @@ smoothPLS_SFD_predict <- function(df_predict, delta_spls, basis_obj = NULL,
 #' @returns a vector of predicted values
 #' @noRd
 #' @importFrom fda eval.fd
+#' @importFrom stats approxfun integrate
+#' @importFrom pracma trapz
 #'
 #' @author Francois Bassac
 smoothPLS_SFD_predict_Deprecated <- function(df_predict, delta_spls,
@@ -1474,9 +1489,9 @@ smoothPLS_SFD_predict_Deprecated <- function(df_predict, delta_spls,
     # Integration
     if(int_mode == 1){
       # integrate
-      local_fun = approxfun(x = regul_time, y = prod_values)
+      local_fun = stats::approxfun(x = regul_time, y = prod_values)
 
-      y_hat_id = delta_0 + integrate(f=local_fun,
+      y_hat_id = delta_0 + stats::integrate(f=local_fun,
                                      lower=regul_time[1],
                                      upper=regul_time[length(regul_time)],
                                      subdivisions = subdivisions)[1]$value
