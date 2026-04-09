@@ -24,7 +24,7 @@ This work was developed as part of a PhD project at **[DECATHLON](https://www.de
 
 The core innovation lies in treating categorical predictors not as simple dummy variables, but as functional indicator functions $\mathbb{1}^k_t$. The model computes components by integrating over the specific intervals where a state is present:
 
-$$\Lambda_{i,j} = \int_{T} \mathbb{1}_{\{X_i(t) = s_j\}} \phi(t) dt$$
+$$\Lambda_{k,j} = \int_{T} \mathbb{1}_{\{X(t) = s_k\}} \phi_j(t) dt = \int_{\tau_i = \{t \in \mathcal{T}, X(t) = s_k\}}  \phi_j(t) dt$$
 
 This ensures that the smoothing process respects the physical reality of state transitions while maintaining the continuous framework of Functional PLS.
 

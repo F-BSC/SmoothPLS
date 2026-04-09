@@ -4,8 +4,8 @@
 .Ruserdata
 devtools.history.R
 */*.pdf
-inst/doc
 .httr-oauth
 .DS_Store
 .quarto
+!inst/doc
 !inst/doc/*.pdf
