@@ -618,7 +618,7 @@ evaluate_lambda_CFD <- function(df, basis, int_mode = 1,
   nb_cores <- get_optimal_cores(parallel = parallel,
                                 computational_load = computational_load)
 
-  cat(paste0("nb_core : ", nb_cores))
+  #cat(paste0("nb_core : ", nb_cores))
 
   if (parallel) {
     old_plan <- future::plan(future::multisession, workers = nb_cores)

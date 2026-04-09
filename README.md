@@ -83,16 +83,18 @@ plot(spls_model$reg_obj$CatFD_1_state_1, main="SmoothPLS Regression Curve")
 ```
 
 ---
-### ⚡ Advanced Performance Tuning: Parallel Processing
+### ⚡ Performance Tuning: Parallel Processing
 
 By default, `SmoothPLS` uses the `future` framework to automatically parallelize the heavy numerical integration steps (Lambda matrix evaluation) when `parallel = TRUE`. 
 
-To prevent performance degradation (overhead) on smaller datasets, the package uses a dynamic heuristic guardrail. It will seamlessly fall back to sequential processing if the computational load is too light to justify spinning up multiple background sessions.
+To prevent performance degradation (overhead) on smaller datasets, the package uses **dynamic load balancing**. Instead of a simple binary ON/OFF switch, it calculates an optimal number of background workers required for your specific task to maximize efficiency.
 
-The default threshold is set to **2500 integral evaluations per available core**. For a standard 8-core machine (using 6 cores for parallel processing), the parallel engine will only trigger if the total number of integrals (Individuals $\times$ Basis functions) exceeds 15,000.
+The default threshold is set to **2500 integral evaluations per core**. The engine will recruit one core for every 2500 integrals (calculated as *Individuals* $\times$ *Basis functions*). For example:
+* **Under 2,500 integrals:** The model runs sequentially (1 core) to avoid unnecessary setup overhead.
+* **5,000 integrals:** The engine spins up exactly 2 cores.
+* **Massive datasets (e.g., 50,000+ integrals):** The engine recruits the maximum number of available cores on your machine (*always leaving 2 cores free to keep your operating system responsive*).
 
 You can manually adjust this threshold based on your specific hardware (e.g., lower it if you are on a UNIX system with low forking overhead) by setting a global option before running your model:
-
 ```R
 # Lower the threshold to 500 evaluations per core
 options(SmoothPLS.parallel_threshold = 500)
