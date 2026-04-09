@@ -11,10 +11,8 @@ usethis::use_package("mgcv")
 usethis::use_package("MASS")
 usethis::use_package("cfda")
 usethis::use_package("pls")
-devtools::document() # make documentation
-#devtools::check()
+usethis::use_package("future.apply")
 usethis::use_vignette("multi_state_data_04")
-#usethis::use_package("parallel")
 usethis::use_vignette("synthetic_data_00")
 usethis::use_vignette("smooth_pls_one_state_01")
 usethis::use_vignette("comparaison_one_state_02")
@@ -35,8 +33,8 @@ usethis::use_test("synthetic_data")
 usethis::use_test("smooth_PLS")
 usethis::use_test("fpls")
 usethis::use_test("edge_cases")
-devtools::document()
-devtools::load_all() #function update
+devtools::document() # make documentation
+devtools::load_all() # function update
 devtools::test()
 #pkgdown::build_site()
 #devtools::build_manual()

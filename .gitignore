@@ -9,3 +9,4 @@ devtools.history.R
 .quarto
 !inst/doc
 !inst/doc/*.pdf
+test.R
