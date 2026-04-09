@@ -1,7 +1,7 @@
 Package: SmoothPLS
 Type: Package
 Title: SmoothPLS algorithm for Categorical and Scalar Functional Data 
-Version: 0.1.2
+Version: 0.1.3
 Date: 2026-04-08
 Authors@R: c(
     person(

@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">SmoothPLS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.3</span>
       </span>
     </div>
 
@@ -73,7 +73,14 @@
   <a href="news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/FrancoisBassac/SmoothPLS/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -88,9 +95,10 @@
 <div class="section level1">
 <div class="page-header"><h1 id="smoothpls-">SmoothPLS <img src="reference/figures/logo.png" align="right" height="139"><a class="anchor" aria-label="anchor" href="#smoothpls-"></a>
 </h1></div>
-<p><a href="https://github.com/FrancoisBassac/SmoothPLS/actions" class="external-link"><img src="https://github.com/FrancoisBassac/SmoothPLS/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> <img src="https://img.shields.io/badge/version-0.1.2-blue.svg" alt="Version"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License"><img src="https://komarev.com/ghpvc/?username=FrancoisBassac&amp;repo=SmoothPLS&amp;color=brightgreen" alt="Views"><img src="https://img.shields.io/github/downloads/FrancoisBassac/SmoothPLS/total.svg" alt="Downloads"></p>
+<!-- badges: start -->
+
 <div class="section level2">
-<h2 id="dart-overview">🎯 Overview<a class="anchor" aria-label="anchor" href="#dart-overview"></a>
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p><strong>SmoothPLS</strong> is an R package designed for <strong>Hybrid Functional Data Analysis</strong>. It implements a novel approach to Functional Partial Least Squares (FPLS) by integrating categorical functional predictors through the concept of <strong>“Active Area Integration”</strong>.</p>
 <p>This work was developed as part of a PhD project at <strong><a href="https://www.decathlon.fr/" class="external-link">DECATHLON</a></strong> in collaboration with <strong><a href="https://www.inria.fr/" class="external-link">INRIA</a></strong>.</p>
@@ -111,10 +119,10 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="microscope-mathematical-intuition">🔬 Mathematical Intuition<a class="anchor" aria-label="anchor" href="#microscope-mathematical-intuition"></a>
+<h2 id="mathematical-intuition">Mathematical Intuition<a class="anchor" aria-label="anchor" href="#mathematical-intuition"></a>
 </h2>
 <p>The core innovation lies in treating categorical predictors not as simple dummy variables, but as functional indicator functions <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mn>𝟙</mn><mi>t</mi><mi>k</mi></msubsup><annotation encoding="application/x-tex">\mathbb{1}^k_t</annotation></semantics></math>. The model computes components by integrating over the specific intervals where a state is present:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Λ</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mo>∫</mo><mi>T</mi></msub><msub><mn>𝟙</mn><mrow><mo stretchy="false" form="prefix">{</mo><msub><mi>X</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>s</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">}</mo></mrow></msub><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Lambda_{i,j} = \int_{T} \mathbb{1}_{\{X_i(t) = s_j\}} \phi(t) dt</annotation></semantics></math></p>
+<p><span class="math display">$$\Lambda_{k,j} = \int_{T} \mathbb{1}_{\{X(t) = s_k\}} \phi_j(t) dt = \int_{\tau_k}  \phi_j(t) dt, \quad \text{with} \quad \tau_k = \lbracet \in \mathcal{T}, X(t) = s_k\rbrace$$</span></p>
 <p>This ensures that the smoothing process respects the physical reality of state transitions while maintaining the continuous framework of Functional PLS.</p>
 <hr>
 </div>
@@ -126,6 +134,27 @@
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"FrancoisBassac/SmoothPLS"</span><span class="op">)</span></span></code></pre></div>
 <hr>
+</div>
+<div class="section level2">
+<h2 id="open_book-documentation">📖 Documentation<a class="anchor" aria-label="anchor" href="#open_book-documentation"></a>
+</h2>
+<p>The complete package documentation—including function references, detailed vignettes, and usage examples—is available online:</p>
+<p><a href="https://FrancoisBassac.github.io/SmoothPLS/" class="external-link"><img src="https://img.shields.io/badge/docs-pkgdown-blue.svg" alt="Documentation"></a></p>
+<p>👉 <strong><a href="https://FrancoisBassac.github.io/SmoothPLS/" class="external-link">Explore the SmoothPLS documentation website</a></strong></p>
+<hr>
+<div class="section level3">
+<h3 id="whats-inside">What’s inside?<a class="anchor" aria-label="anchor" href="#whats-inside"></a>
+</h3>
+<ul>
+<li>
+<strong>Reference</strong>: Comprehensive manual for all functions (including <code>smoothPLS</code>, <code>funcPLS</code>, and <code>naivePLS</code>).</li>
+<li>
+<strong>Articles (Vignettes)</strong>: Step-by-step tutorials, such as the comparison of PLS methods for Categorical Functional Data (CFD).</li>
+<li>
+<strong>Getting Started</strong>: Quick installation guide and basic usage.</li>
+</ul>
+<hr>
+</div>
 </div>
 <div class="section level2">
 <h2 id="rocket-quick-start-example">🚀 Quick Start Example<a class="anchor" aria-label="anchor" href="#rocket-quick-start-example"></a>
@@ -159,12 +188,12 @@
 <li>
 <strong><a href="https://www.decathlon.fr/" class="external-link">Decathlon</a></strong> – Main industrial partner.</li>
 <li>
-<strong><a href="https://www.decathlon.com/pages/sportslab" class="external-link">Decathlon SportsLab</a></strong> – The research and development center.</li>
+<strong><a href="https://engagements.decathlon.fr/le-sportslab-notre-labo-danalyse-du-corps-du-ou-de-la-sportif-ve" class="external-link">Decathlon SportsLab</a></strong> – The research and development center.</li>
 <li>
 <strong>Kiprun Pacer</strong> – The training application using advanced running data:
 <ul>
-<li><a href="https://kiprun.com/pacer/" class="external-link">Official Website</a></li>
-<li><a href="https://kiprun.com/pacer/download" class="external-link">App Store / Play Store</a></li>
+<li><a href="https://www.kiprun.com/" class="external-link">Official Website</a></li>
+<li><a href="https://pacer.kiprun.com/" class="external-link">App Store / Play Store</a></li>
 </ul>
 </li>
 </ul>
@@ -176,16 +205,110 @@
 <li>
 <strong><a href="https://www.inria.fr/" class="external-link">Inria</a></strong> – National Institute for Research in Digital Science and Technology.</li>
 <li>
-<strong><a href="https://data.inria.fr/" class="external-link">Inria Dataverse</a></strong> – The research team specialized in stochastic modeling and data analysis.</li>
-<li><strong><a href="https://www.inria.fr/fr/equipes/modal" class="external-link">Modal Team</a></strong></li>
+<strong><a href="https://www.inria.fr/fr/datavers" class="external-link">Inria Dataverse</a></strong> – The research team specialized in stochastic modeling and data analysis.</li>
 </ul>
+<hr>
+</div>
+</div>
+<div class="section level2">
+<h2 id="world_map-roadmap--future-releases">🗺️ Roadmap &amp; Future Releases<a class="anchor" aria-label="anchor" href="#world_map-roadmap--future-releases"></a>
+</h2>
+<p><strong>SmoothPLS</strong> is actively developed. The upcoming updates focus on computational efficiency and expanding the model’s theoretical capabilities:</p>
+<ul>
+<li>
+<strong>[v0.1.3] Parallel Processing:</strong> Implementation of multicore computing to drastically reduce integration time for large datasets (e.g., thousands of Active Areas).</li>
+<li>
+<strong>[v0.1.4] Hybrid Data Framework:</strong> Support for integrating standard non-functional covariates (e.g., user age, weight) alongside Categorical and Scalar Functional Data.</li>
+<li>
+<strong>[v0.2.0] Penalized Splines (Univariate):</strong> Addition of roughness penalties to the B-spline coefficients to increase model robustness against noisy kinematic data.</li>
+<li>
+<strong>[v0.2.1] Penalized Splines (Multivariate):</strong> Extension of the penalized framework to the full multivariate model.</li>
+</ul>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="a-detailled-example--one-state-categorical-functional-data">A detailled example : One-State Categorical Functional Data<a class="anchor" aria-label="anchor" href="#a-detailled-example--one-state-categorical-functional-data"></a>
+</h2>
+<p>This example illustrates how SmoothPLS processes Categorical Functional Data (CFD) by modeling transitions as functional objects. For a deeper dive, see the <a href="https://francoisbassac.github.io/SmoothPLS/articles/s01_CFD_one_state.html" class="external-link">full vignette</a>.</p>
+<ol style="list-style-type: decimal">
+<li>Data Visualization We simulate categorical time series where individuals switch between state 0 and state 1 over time.</li>
+</ol>
+<div class="section level3">
+<h3 id="generate-synthetic-categorical-data">Generate synthetic categorical data<a class="anchor" aria-label="anchor" href="#generate-synthetic-categorical-data"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SmoothPLS</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/generate_X_df.html">generate_X_df</a></span><span class="op">(</span>nind <span class="op">=</span> <span class="fl">100</span>, start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fl">100</span>, curve_type <span class="op">=</span> <span class="st">'cat'</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="visualize-the-first-5-individuals">Visualize the first 5 individuals<a class="anchor" aria-label="anchor" href="#visualize-the-first-5-individuals"></a>
+</h3>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_CFD_individuals.html">plot_CFD_individuals</a></span><span class="op">(</span><span class="va">df_x</span>, by_cfda <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="reference/figures/trajectories_example.png" alt="Figure 1: Synthetic binary state trajectories for 5 individuals."><div class="figcaption">Figure 1: Synthetic binary state trajectories for 5 individuals.</div>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Model Fitting &amp; Prediction We fit the SmoothPLS model to a noised response <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> and compare the resulting regression curve <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta(t)</annotation></semantics></math> with the ground truth.R# Define a B-spline basis</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">basis</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/create_bspline_basis.html">create_bspline_basis</a></span><span class="op">(</span>start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fl">100</span>, nbasis <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">basis</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="reference/figures/10_BSplines.png" alt="Figure 2: Cubic B-splines basis of 10 functions."><div class="figcaption">Figure 2: Cubic B-splines basis of 10 functions.</div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="generate-response-y-linked-to-the-time-spent-in-state-1">Generate response Y linked to the time spent in state 1<a class="anchor" aria-label="anchor" href="#generate-response-y-linked-to-the-time-spent-in-state-1"></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Y_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/generate_Y_df.html">generate_Y_df</a></span><span class="op">(</span><span class="va">df_x</span>, curve_type <span class="op">=</span> <span class="st">'cat'</span>, </span>
+<span>                      beta_real_func_or_list <span class="op">=</span> <span class="va">beta_1_real_func</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="fit-the-smoothpls-model">Fit the SmoothPLS model<a class="anchor" aria-label="anchor" href="#fit-the-smoothpls-model"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">spls_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/smoothPLS.html">smoothPLS</a></span><span class="op">(</span>df_list <span class="op">=</span> <span class="va">df_x</span>, Y <span class="op">=</span> <span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span>, </span>
+<span>                      basis_obj <span class="op">=</span> <span class="va">basis</span>, curve_type_obj <span class="op">=</span> <span class="st">'cat'</span>,</span>
+<span>                      print_steps <span class="op">=</span> <span class="cn">FALSE</span>, print_nbComp <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>                      plot_rmsep <span class="op">=</span> <span class="cn">FALSE</span>, plot_reg_curves <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="plot-the-recovered-regression-curve-vs-the-theoretical-one">Plot the recovered regression curve vs the theoretical one<a class="anchor" aria-label="anchor" href="#plot-the-recovered-regression-curve-vs-the-theoretical-one"></a>
+</h3>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">y_lim</span> <span class="op">=</span> <span class="fu"><a href="reference/eval_max_min_y.html">eval_max_min_y</a></span><span class="op">(</span>f_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">beta_real_func</span>, </span>
+<span>                                     <span class="va">delta</span><span class="op">)</span>, </span>
+<span>                       regul_time <span class="op">=</span> <span class="va">regul_time_0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">regul_time_0</span>, <span class="fu">beta_real_func</span><span class="op">(</span><span class="va">regul_time_0</span><span class="op">)</span>, type<span class="op">=</span><span class="st">'l'</span>, xlab<span class="op">=</span><span class="st">"Beta_t"</span>,</span>
+<span>     ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="fl">3.5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">delta</span>, add<span class="op">=</span><span class="cn">TRUE</span>, col<span class="op">=</span><span class="st">'blue'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>,</span>
+<span>         legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"delta_SmoothPLS"</span><span class="op">)</span>,</span>
+<span>         col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span><span class="op">)</span>,</span>
+<span>         lty <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>         lwd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="reference/figures/beta_comparison.png" alt="Figure 3: The blue curve (SmoothPLS) successfully recovers the underlying red dashed curve (Theoretical Beta)."><div class="figcaption">Figure 3: The blue curve (SmoothPLS) successfully recovers the underlying red dashed curve (Theoretical Beta).</div>
+</div>
 </div>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+    <div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/FrancoisBassac/SmoothPLS/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/FrancoisBassac/SmoothPLS/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
@@ -214,7 +337,13 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://FrancoisBassac.github.io/SmoothPLS/" class="external-link"><img src="https://img.shields.io/badge/docs-pkgdown-blue.svg" alt="Documentation"></a></li>
+</ul>
+</div>
 
   </div>
 </div>

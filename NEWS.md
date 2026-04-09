@@ -1,5 +1,18 @@
 # NEWS: SmoothPLS
 
+## SmoothPLS 0.1.3 (2026-04-09)
+
+### Improvements 
+* **Documentation:**
+  * Launched the official `pkgdown` website (hosted on GitHub Pages) including detailed vignettes and function references.
+  * Added the complete compiled PDF manual to `inst/doc/`.
+* **README & Branding:**
+  * Added a comprehensive quick-start example (One-State Categorical PLS) with visual outputs.
+  * Fixed LaTeX equations rendering for cross-compatibility between GitHub and Pandoc/pkgdown.
+  * Added institutional links (Decathlon SportsLab, Inria).
+* **Continuous Integration:**
+  * Configured GitHub Actions workflows for automated `R CMD check` and `pkgdown` site deployment.
+
 ## SmoothPLS 0.1.2 (2026-04-08)
 
 ### Core Improvements & Stability

@@ -38,6 +38,6 @@ usethis::use_test("edge_cases")
 devtools::document()
 devtools::load_all() #function update
 devtools::test()
-#devtools::check()
 #pkgdown::build_site()
 #devtools::build_manual()
+#devtools::check()

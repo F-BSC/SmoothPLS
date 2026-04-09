@@ -8,7 +8,7 @@
 ![Downloads](https://img.shields.io/github/downloads/FrancoisBassac/SmoothPLS/total.svg)
 <!-- badges: end -->
 
-## 🎯 Overview
+## Overview
 
 **SmoothPLS** is an R package designed for **Hybrid Functional Data Analysis**. It implements a novel approach to Functional Partial Least Squares (FPLS) by integrating categorical functional predictors through the concept of **"Active Area Integration"**.
 
@@ -22,11 +22,11 @@ This work was developed as part of a PhD project at **[DECATHLON](https://www.de
 
 ---
 
-## 🔬 Mathematical Intuition
+## Mathematical Intuition
 
 The core innovation lies in treating categorical predictors not as simple dummy variables, but as functional indicator functions $\mathbb{1}^k_t$. The model computes components by integrating over the specific intervals where a state is present:
 
-$$\Lambda_{k,j} = \int_{T} \mathbb{1}_{\{X(t) = s_k\}} \phi_j(t) dt = \int_{\tau_k}  \phi_j(t) dt, \quad \text{with} \quad \tau_k = \\{t \in \mathcal{T}, X(t) = s_k\\}$$
+$$\Lambda_{k,j} = \int_{T} \mathbb{1}_{\{X(t) = s_k\}} \phi_j(t) dt = \int_{\tau_k}  \phi_j(t) dt, \quad \text{with} \quad \tau_k = \lbracet \in \mathcal{T}, X(t) = s_k\rbrace$$
 
 This ensures that the smoothing process respects the physical reality of state transitions while maintaining the continuous framework of Functional PLS.
 
@@ -94,6 +94,17 @@ plot(spls_model$reg_obj$CatFD_1_state_1, main="SmoothPLS Regression Curve")
 ### 🔬 Research Institutions
 * **[Inria](https://www.inria.fr/)** – National Institute for Research in Digital Science and Technology.
 * **[Inria Dataverse](https://www.inria.fr/fr/datavers)** – The research team specialized in stochastic modeling and data analysis.
+
+---
+
+## 🗺️ Roadmap & Future Releases
+
+**SmoothPLS** is actively developed. The upcoming updates focus on computational efficiency and expanding the model's theoretical capabilities:
+
+* **[v0.1.3] Parallel Processing:** Implementation of multicore computing to drastically reduce integration time for large datasets (e.g., thousands of Active Areas).
+* **[v0.1.4] Hybrid Data Framework:** Support for integrating standard non-functional covariates (e.g., user age, weight) alongside Categorical and Scalar Functional Data.
+* **[v0.2.0] Penalized Splines (Univariate):** Addition of roughness penalties to the B-spline coefficients to increase model robustness against noisy kinematic data.
+* **[v0.2.1] Penalized Splines (Multivariate):** Extension of the penalized framework to the full multivariate model.
 
 ---
 

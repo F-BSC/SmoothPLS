@@ -58,7 +58,7 @@ id_df = data.frame(id=rep(1,5), time=seq(0, 40, 10), state=c(0, 1, 1, 0, 1))
 id_df
 ```
 
-```{r}
+```{r, fig.alt="Decay plot"}
 func = function(t){0.01*t^2 - t}
 plot(0:40, func(0:40))
 ```
@@ -108,7 +108,7 @@ func_from_fd = from_fd_to_func(coef = coef, basis = basis)
 
 Here if the fd object :
 
-```{r}
+```{r, fig.alt="fd object"}
 plot(fd_obj)
 ```
 
@@ -147,11 +147,11 @@ length(unique(df_2$id))
 
 This function plots the selected first individuals of the given dataframe.
 
-```{r}
+```{r, fig.alt="Binary CFD individuals"}
 plot_CFD_individuals(df)
 ```
 
-```{r}
+```{r, fig.alt="3 binary CFD individuals"}
 plot_CFD_individuals(df_2, n_ind_to_plot = 3)
 ```
 
@@ -184,25 +184,25 @@ This package gives 3 functions to link $X(t)$ with a scalar $Y$ by the following
 
 ### beta_1_real_func
 
-```{r}
+```{r, fig.alt="beta_1_real_func"}
 plot(x=0:100, y=beta_1_real_func(0:100, 100), type='l', main="Beta_1")
 ```
 
 ### beta_2_real_func
 
-```{r}
+```{r, fig.alt="beta_2_real_func"}
 plot(x=0:100, y=beta_2_real_func(0:100, 100), type='l', main="Beta_2")
 ```
 
 ### beta_3_real_func
 
-```{r}
+```{r, fig.alt="beta_3_real_func"}
 plot(x=0:100, y=beta_3_real_func(0:100, 100), type='l', main="Beta_3")
 ```
 
 ### Other beta functions
 
-```{r}
+```{r, fig.alt="Other beta functions"}
 plot(x=0:100, y=beta_4_real_func(0:100, 100), type='l', main="Beta_4")
 plot(x=0:100, y=beta_5_real_func(0:100, 100), type='l', main="Beta_5")
 plot(x=0:100, y=beta_6_real_func(0:100, 100), type='l', main="Beta_6")
@@ -233,7 +233,7 @@ var(Y_df$Y_real)/var(Y_df$Y_noised)
 (var(Y_df$Y_noised) - var(Y_df$Y_real))/var(Y_df$Y_noised)
 ```
 
-```{r}
+```{r, fig.alt="Y_df real and noised value histograms"}
 par(mfrow=c(1,2))
 hist(Y_df$Y_real)
 hist(Y_df$Y_noised)
@@ -262,7 +262,7 @@ df = generate_X_df(nind = nind, start = start,end =  end, curve_type = 'num',
 head(df)
 ```
 
-```{r}
+```{r, fig.alt="Noised cosinus curves"}
 # Visualisation
 ggplot(df, aes(x = time, y = value, group = id, color = factor(id))) +
   geom_line(alpha = 0.8) +
@@ -320,14 +320,14 @@ head(df)
 ```
 
 We can plot some individuals with the plot_individual() function.
-```{r}
+```{r, fig.alt="Multistates individuals"}
 plot_CFD_individuals(df)
 ```
 
 ## plotData
 We can use the package *cfda* and its functions to make some analysis on the 
 data.
-```{r}
+```{r, fig.alt="Multistates individuals plot by cfda"}
 cfda::plotData(df)
 ```
 ## estimate_pt
@@ -336,7 +336,7 @@ We can still use the CFDA package to estimate the probabilities :
 proba = cfda::estimate_pt(df)
 ```
 
-```{r}
+```{r, fig.alt="Marginal probabilities"}
 par(mfrow=c(1,2))
 plot(proba, ribbon = FALSE)
 plot(proba, ribbon = TRUE)
@@ -405,7 +405,7 @@ names(states_df)
 mode(states_df)
 ```
 
-```{r}
+```{r, fig.alt="Indicator function per state"}
 plot_CFD_individuals(states_df[[1]])
 ```
 
