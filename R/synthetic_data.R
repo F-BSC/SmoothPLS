@@ -267,6 +267,7 @@ generate_X_df <- function(nind=100, start=0, end=100, curve_type = 'cat',
 #' @param nb_pt number of points for the integration, default value : 10
 #' @param subdivisions default parameter of R function integrate;
 #' default value : 100
+#' @param parallel a boolean to use parallelization, default FALSE
 #'
 #' @returns a dataframe of Y real and noised values
 #' @export
@@ -288,7 +289,8 @@ generate_Y_df <- function(df, curve_type = NULL,
                           NotS_ratio=0.2, seed = 123,
                           id_col = 'id', time_col = 'time',
                           int_mode = 1,
-                          nb_pt = 10, subdivisions = 100){
+                          nb_pt = 10, subdivisions = 100,
+                          parallel = FALSE){
   # This function generates Y_df bases on df, beta_func with the following link
   # Y = beta_0 + int(X(t)*beta_real_func(t))dt
   # It generates also the noised values of Y.
@@ -309,14 +311,15 @@ generate_Y_df <- function(df, curve_type = NULL,
   if(curve_type == 'num'){
     Y_df = generate_Y_df_SFD(df = df, beta_real_func = beta_real_func_or_list,
                       beta_0_real = beta_0_real, NotS_ratio = NotS_ratio,
-                      id_col = id_col, time_col = time_col)
+                      id_col = id_col, time_col = time_col, seed = seed)
   }else if(curve_type == 'cat'){
     Y_df = generate_Y_df_CFD(df = df,
                              beta_real_func_or_list = beta_real_func_or_list,
                              beta_0_real=beta_0_real, NotS_ratio=NotS_ratio,
                              id_col = id_col, time_col = time_col,
-                             int_mode = int_mode,
-                             nb_pt = nb_pt, subdivisions = subdivisions)
+                             int_mode = int_mode, seed = seed,
+                             nb_pt = nb_pt, subdivisions = subdivisions,
+                             parallel = parallel)
   }else{
     stop('generate_Y_df() : curve_type has to be either \'cat\' or \'num\'!')
   }
@@ -440,12 +443,15 @@ generate_X_df_CFD <- function(nind=500, start=0, end=100,
 #' @param subdivisions default parameter of R function integrate;
 #' default value : 100
 #' @param seed a integer, random seed
+#' @param parallel a boolean to enable parallel processing, default FALSE
 #'
 #' @returns a dataframe of Y real and noised values
 #' @export
 #'
 #' @importFrom stats rnorm var
 #' @importFrom dplyr full_join
+#' @importFrom future availableCores plan multisession sequential
+#' @importFrom future.apply future_lapply future_sapply
 #'
 #' @examples
 #' df = generate_X_df(nind=100, curve_type='cat')
@@ -460,55 +466,49 @@ generate_Y_df_CFD <- function(df, beta_real_func_or_list,
                               beta_0_real=5.4321, NotS_ratio=0.2,
                               id_col = 'id', time_col = 'time',
                               int_mode = 1,
-                              nb_pt = 10, subdivisions = 100, seed = 123){
-  # This function generates Y_df bases on df, beta_func with the following link
-  # Y = beta_0 + int(X(t)*beta_real_func(t))dt
-  # It generates also the noised values of Y.
-  # INPUT :
-  # df : df to build Y for.
-  # beta_real_func : link between X and Y
-  # beta_0_real : intercept
-  # NotS_ratio =  Noise over total Signal ratio
-  # (0.10 means 10% of the TOTAL signal is noise.)
+                              nb_pt = 10, subdivisions = 100, seed = 123,
+                              parallel = FALSE){
 
   set.seed(seed = seed)
 
-  Y_df = data.frame()
+  if (parallel) {
+    nb_cores <- max(future::availableCores() - 2, 1)
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
 
+  Y_df = data.frame()
   state_col = setdiff(names(df), c(id_col, time_col))
 
-  # Mode for a list of functions
   if(mode(beta_real_func_or_list) == 'list'){
-
     state_names = names(df)
-
     for(i in 1:length(state_names)){
       temp_df = data.frame(df[[state_names[i]]])
       temp_id_list <- split(temp_df, temp_df[[id_col]])
       temp_beta_f = beta_real_func_or_list[[i]]
-      temp_Y_df <- do.call(rbind, lapply(temp_id_list,
-                                         evaluate_id_func_integral,
-                                         func=temp_beta_f,
-                                         mode = int_mode,
-                                         id_col = id_col,
-                                         time_col = time_col,
-                                         nb_pt = nb_pt,
-                                         subdivisions = subdivisions)
-                           )
+
+      temp_Y_df <- do.call(rbind,
+                           future.apply::future_lapply(temp_id_list,
+                                                       evaluate_id_func_integral,
+                                                       func=temp_beta_f,
+                                                       mode = int_mode,
+                                                       id_col = id_col,
+                                                       time_col = time_col,
+                                                       nb_pt = nb_pt,
+                                                       subdivisions = subdivisions,
+                                                       future.seed = TRUE))
       names(temp_Y_df) = c('id', paste0('Y_beta', i))
-      #head(temp_Y_df)
+
       if(i == 1){
-        # Init for i == 1
         Y_df = temp_Y_df
       }else{
-        #by = join_by(id)
         Y_df = dplyr::full_join(Y_df, temp_Y_df, by = id_col)
       }
     }
-    # Add values
     Y_df$Y_real <- rowSums(Y_df[, setdiff(names(Y_df), c(id_col))])
-
-    # Add beta_0_real
     Y_df$Y_real = Y_df$Y_real + beta_0_real
 
     if(NotS_ratio == 0 | is.null(NotS_ratio)){
@@ -516,31 +516,26 @@ generate_Y_df_CFD <- function(df, beta_real_func_or_list,
     }else{
       noise_var = stats::var(Y_df$Y_real) * (NotS_ratio / (1-NotS_ratio))
       Y_df$Y_noised = Y_df$Y_real + stats::rnorm(n=dim(Y_df)[1],
-                                          mean=0, sd=sqrt(noise_var))
+                                                 mean=0, sd=sqrt(noise_var))
     }
 
   } else if(mode(beta_real_func_or_list)=='function'){
-
-    # Mode for a single function
     id_list <- split(df, df[[id_col]])
 
-    Y_df <- do.call(rbind, lapply(id_list, evaluate_id_func_integral,
-                                  func=beta_real_func_or_list,
-                                  mode = int_mode,
-                                  id_col = id_col,
-                                  time_col = time_col,
-                                  nb_pt = nb_pt,
-                                  subdivisions = subdivisions))
+    Y_df <- do.call(rbind, future.apply::future_lapply(id_list, evaluate_id_func_integral,
+                                                       func=beta_real_func_or_list,
+                                                       mode = int_mode,
+                                                       id_col = id_col,
+                                                       time_col = time_col,
+                                                       nb_pt = nb_pt,
+                                                       subdivisions = subdivisions,
+                                                       future.seed = TRUE))
 
     names(Y_df) = c('id', 'Y_real')
-
-    # Add beta_0_real
     Y_df$Y_real = Y_df$Y_real + beta_0_real
-
     noise_var = stats::var(Y_df$Y_real) * (NotS_ratio / (1-NotS_ratio))
-
     Y_df$Y_noised = Y_df$Y_real + stats::rnorm(n=length(unique(df[, id_col])),
-                                        mean=0, sd=sqrt(noise_var))
+                                               mean=0, sd=sqrt(noise_var))
   }
   return(Y_df)
 }

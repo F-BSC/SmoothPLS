@@ -680,6 +680,7 @@ reg_curve_funcPLS_evaluation <- function(mfpls_mfd, nb_comp_pls_opt,
 #' mode 2, default 10
 #' @param subdivisions a integer, the number of subdivisions for integration
 #' mode 1, default 100
+#' @param parallel a boolean to use parallelization, default TRUE
 #'
 #' @returns a numeric vector
 #' @export
@@ -692,7 +693,8 @@ funcPLS_predict <- function(df_predict_list,
                             id_col_obj = 'id',
                             time_col_obj = 'time',
                             int_mode = 1,
-                            nb_pt = 10, subdivisions = 100){
+                            nb_pt = 10, subdivisions = 100,
+                            parallel = TRUE){
 
   Y_hat = smoothPLS_predict(df_predict_list = df_predict_list,
                             delta_list = delta_list,
@@ -702,7 +704,8 @@ funcPLS_predict <- function(df_predict_list,
                             time_col_obj = time_col_obj,
                             int_mode = int_mode,
                             nb_pt = nb_pt,
-                            subdivisions = subdivisions)
+                            subdivisions = subdivisions,
+                            parallel = parallel)
   return(Y_hat)
 }
 

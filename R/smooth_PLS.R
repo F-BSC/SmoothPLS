@@ -65,6 +65,7 @@ build_u_ki_list <- function(N_states, nbComp, ms_pls_models){
 #' default TRUE
 #' @param validation a character for the validation input of pls() function,
 #' default 'LOO'
+#' @param parallel a boolean to use parallelization, default TRUE
 #'
 #' @returns a list of the plsr_model and the regression curves (and intercept).
 #' @export
@@ -73,6 +74,7 @@ build_u_ki_list <- function(N_states, nbComp, ms_pls_models){
 #' @importFrom pls plsr RMSEP MSEP
 #' @importFrom stats coef
 #' @importFrom graphics plot title
+#' @importFrom future availableCores
 #'
 #' @author Francois Bassac
 smoothPLS <- function(df_list, Y,
@@ -83,9 +85,18 @@ smoothPLS <- function(df_list, Y,
                       plot_rmsep = TRUE, print_nbComp = TRUE,
                       plot_reg_curves = FALSE,
                       jackknife = TRUE,
-                      validation = 'LOO'){
+                      validation = 'LOO',
+                      parallel = TRUE){
 
-  if(print_nbComp){cat("### Smooth PLS ### \n")}
+  if(print_nbComp){
+    cat("### Smooth PLS ### \n")
+    if(parallel){
+      cat("## Use parallelization ## \n")
+      nb_cores <- max(future::availableCores() - 2, 1)
+      cat(paste0("## Parallelization on ", nb_cores, " cores ## \n"))
+    }
+  }
+
   # 1 assertion
 
   if(print_steps){
@@ -167,7 +178,8 @@ smoothPLS <- function(df_list, Y,
                              int_mode = int_mode,
                              id_col = new_id_col_list[[i]],
                              time_col = new_time_col_list[[i]],
-                             regul_time = new_regul_time_list[[i]])
+                             regul_time = new_regul_time_list[[i]],
+                             parallel = parallel)
     #dim(lambda)
     if(i != 1){
       Lambda = cbind(Lambda, lambda)
@@ -502,6 +514,7 @@ orthonormalize_basis_list <- function(basis_list, orth_list, tol=1e-9){
 #' default value : 100
 #' @param regul_time regul_time a vector of time regularization values default
 #'  basis rangeval per 1
+#' @param parallel a boolean to use parallelization, default TRUE
 #'
 #' @returns a matrix \eqn{\Lambda_i = \int_0^T X(t) \phi_i(t) dt}
 #' @export
@@ -523,7 +536,8 @@ evaluate_lambda <- function(df, basis, curve_type = NULL, int_mode = 1,
                             nb_pt = 10, subdivisions = 100,
                             regul_time = seq(basis$rangeval[1],
                                              basis$rangeval[2],
-                                             1)){
+                                             1),
+                            parallel = TRUE){
   # This function evaluate the Lambda matrix depending of its curve_type
 
   if(is.null(curve_type)){
@@ -532,7 +546,8 @@ evaluate_lambda <- function(df, basis, curve_type = NULL, int_mode = 1,
 
     Lambda = evaluate_lambda_CFD(df = df, basis = basis, int_mode = int_mode,
                                  id_col = id_col, time_col = time_col,
-                                 nb_pt = nb_pt, subdivisions = subdivisions)
+                                 nb_pt = nb_pt, subdivisions = subdivisions,
+                                 parallel = parallel)
 
   }else if(curve_type == 'num'){
     if(int_mode==1){
@@ -547,7 +562,8 @@ evaluate_lambda <- function(df, basis, curve_type = NULL, int_mode = 1,
                                  regul_time = regul_time,
                                  int_mode = mode_int,
                                  id_col = id_col, time_col = time_col,
-                                 subdivisions = subdivisions)
+                                 subdivisions = subdivisions,
+                                 parallel = parallel)
 
   }else{
     stop("evaluate_lambda() : curve_type should be 'cat' or 'num'.")
@@ -558,7 +574,7 @@ evaluate_lambda <- function(df, basis, curve_type = NULL, int_mode = 1,
 #' evaluate_lambda_CFD
 #'
 #' This function evaluates the Lambda matrix
-#' Lambda_ij = int X_j(t) phi_i(t) dt
+#' Lambda_ij = int X_j(t) phi_i(t) dt using parallel processing with Chunking.
 #'
 #' @param df dataframe X(t)
 #' @param basis basis fd object or a list of fd functions
@@ -568,77 +584,336 @@ evaluate_lambda <- function(df, basis, curve_type = NULL, int_mode = 1,
 #' @param nb_pt number of points for the integration, default value : 10
 #' @param subdivisions default parameter of R function integrate;
 #' default value : 100
+#' @param parallel boolean, if TRUE uses max(nb_cores - 2, 1) cores, default TRUE.
 #'
 #' @returns a matrix of dimension nbasis columns and nind rows
 #' @importFrom fda fd
+#' @importFrom future.apply future_lapply
+#' @importFrom future availableCores plan multisession sequential
 #'
 #' @author Francois Bassac
 evaluate_lambda_CFD <- function(df, basis, int_mode = 1,
                                 id_col = 'id', time_col = 'time',
-                                nb_pt = 10, subdivisions = 100){
-  # This function evaluate the matrix LAMBDA for step 1.
-  # Lambda is a matrix of p columns (Lambda_i) and n rows (individuals)
-  # Lambda_i = int X(t) phi_i(t) dt
+                                nb_pt = 10, subdivisions = 100,
+                                parallel = TRUE){
+
+  # --- 0. Setup Parallel ---
+  # 1. Load evaluation
+  ids = unique(df[[id_col]])
+  n_ind = length(ids)
+
+  if (inherits(basis, "basisfd")) {
+    n_col <- basis$nbasis
+
+  } else if (is.list(basis) && all(sapply(basis,
+                                          function(x) inherits(x, "fd")))) {
+    n_col <- length(basis)
+  } else {
+    stop("evaluate_lambda_CFD() : basis have to be a basisobj from fda or a list of fd objects")
+  }
+
+  computational_load <- n_ind * n_col
+
+  # 2. Setup Parallel
+  nb_cores <- if (parallel) max(future::availableCores() - 2, 1) else 1
+
+  # ---  DYNAMIC HEURISTIC ---
+  # estimated 2500 integral evaluation per core
+  base_threshold <- getOption("SmoothPLS.parallel_threshold", default = 2500)
+  threshold_limit <- base_threshold * nb_cores
+
+  if (parallel && computational_load < threshold_limit) {
+    parallel <- FALSE
+    nb_cores <- 1
+  }
+
+  cat(paste0("nb_core : ", nb_cores))
+
+  if (parallel) {
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
 
   ids = unique(df[[id_col]])
   n_ind = length(ids)
 
-  # Convert in fd list if necessary
   if (inherits(basis, "basisfd")) {
     nbasis <- basis$nbasis
-    rangeval <- basis$rangeval
     coefs <- diag(nbasis)
     fd_list <- list()
     for (i in 1:nbasis) {
       fd_list[[i]] <- fda::fd(coefs[, i], basis)
     }
-  } else if (is.list(basis) &&
-             all(sapply(basis, function(x) inherits(x, "fd")))) {
+  } else if (is.list(basis) && all(sapply(basis,
+                                          function(x) inherits(x, "fd")))) {
     fd_list <- basis
     nbasis <- length(fd_list)
   }else {
-    stop("evaluate_lambda_CFD() : basis have to be a basisobj from fda
-         or a list of fd objects")
+    stop("evaluate_lambda_CFD() : basis have to be a basisobj from fda or a list of fd objects")
   }
+
   n_col = nbasis
+  lambda_names = paste0("Lambda_", 1:n_col)
+  phi_funcs <- lapply(fd_list, from_fd_to_func)
 
-  # Use other functions
-  # fd_list = = from_basis_to_fdlist(basis)
-  # n_col = basis_list[[1]]$basis$nbasis
-
-  Lambda = data.frame(matrix(nrow=n_ind, ncol=n_col))
-  # name creation
-  lambda_names = c()
-  for(i in 1:n_col){
-    name = paste0("Lambda_",i)
-    lambda_names = c(lambda_names, name)
+  # --- CHUNKING ---
+  if (nb_cores == 1) {
+    chunk_indices <- list(1:n_ind)
+  } else {
+    actual_breaks <- min(nb_cores, n_ind)
+    chunk_indices <- split(1:n_ind, cut(1:n_ind,
+                                        breaks = actual_breaks,
+                                        labels = FALSE))
   }
-  colnames(Lambda) = lambda_names
 
-  # Iteration per basis function per individual
-  # LONG
-  for(j in 1:n_col){
-    # phi_i function definition for integration
-    local_phi_fd <- fd_list[[j]]
+  # Launch parallelisme on nb_core
+  res_list <- future.apply::future_lapply(chunk_indices, function(idx_chunk) {
 
-    local_phi <- from_fd_to_func(local_phi_fd)
+    chunk_ids <- ids[idx_chunk]
+    # Local matrix
+    chunk_res <- matrix(0, nrow = length(chunk_ids), ncol = n_col)
 
-    for(i in 1:n_ind){
-      df_id = df[df[[id_col]]==ids[i], ]
+    for(k in seq_along(chunk_ids)) {
+      df_id = df[df[[id_col]] == chunk_ids[k], ]
+
+      for(j in 1:n_col) {
+        int_df = evaluate_id_func_integral(id_df = df_id,
+                                           func = phi_funcs[[j]],
+                                           mode = int_mode,
+                                           id_col = id_col,
+                                           time_col = time_col,
+                                           nb_pt = nb_pt,
+                                           subdivisions = subdivisions)
+        chunk_res[k, j] <- int_df[, 2]
+      }
+    }
+    return(chunk_res)
+  }, future.seed = TRUE)
+
+  # rbind
+  Lambda <- do.call(rbind, res_list)
+  Lambda <- as.data.frame(Lambda)
+  colnames(Lambda) <- lambda_names
+
+  return(Lambda)
+}
+
+#' evaluate_lambda_CFD_para_v1
+#'
+#' This function evaluates the Lambda matrix
+#' Lambda_ij = int X_j(t) phi_i(t) dt using parallel processing.
+#'
+#' @param df dataframe X(t)
+#' @param basis basis fd object or a list of fd functions
+#' @param int_mode integration mode, 1 for integrate, 2 for pracma::trapz
+#' @param id_col a character for the id column, default 'id'
+#' @param time_col a character for the time column, default 'time'
+#' @param nb_pt number of points for the integration, default value : 10
+#' @param subdivisions default parameter of R function integrate;
+#' default value : 100
+#' @param parallel a boolean to enable parallel processing, default TRUE
+#'
+#' @returns a matrix of dimension nbasis columns and nind rows
+#' @importFrom fda fd
+#' @importFrom future availableCores plan multisession sequential
+#' @importFrom future.apply future_lapply future_sapply
+#'
+#' @author Francois Bassac
+evaluate_lambda_CFD_para_v1 <- function(df, basis, int_mode = 1,
+                                id_col = 'id', time_col = 'time',
+                                nb_pt = 10, subdivisions = 100,
+                                parallel = TRUE){
+
+  if (parallel) {
+    nb_cores <- max(future::availableCores() - 2, 1)
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
+
+  ids = unique(df[[id_col]])
+  n_ind = length(ids)
+
+  if (inherits(basis, "basisfd")) {
+    nbasis <- basis$nbasis
+    coefs <- diag(nbasis)
+    fd_list <- list()
+    for (i in 1:nbasis) {
+      fd_list[[i]] <- fda::fd(coefs[, i], basis)
+    }
+  } else if (is.list(basis) && all(sapply(basis,
+                                          function(x) inherits(x, "fd")))) {
+    fd_list <- basis
+    nbasis <- length(fd_list)
+  }else {
+    stop("evaluate_lambda_CFD() : basis have to be a basisobj from fda or a list of fd objects")
+  }
+
+  n_col = nbasis
+  lambda_names = paste0("Lambda_", 1:n_col)
+
+  # Pre-convert phi to functions to avoid doing it inside the parallel loop
+  phi_funcs <- lapply(fd_list, from_fd_to_func)
+
+  res_list <- future.apply::future_lapply(1:n_ind, function(i) {
+    df_id = df[df[[id_col]] == ids[i], ]
+    row_vals <- numeric(n_col)
+    for(j in 1:n_col){
       int_df = evaluate_id_func_integral(id_df = df_id,
-                                         func = local_phi,
+                                         func = phi_funcs[[j]],
                                          mode = int_mode,
                                          id_col = id_col,
                                          time_col = time_col,
                                          nb_pt = nb_pt,
                                          subdivisions = subdivisions)
-      Lambda[i, j] = int_df[, 2]
+      row_vals[j] <- int_df[, 2]
     }
-  }
+    return(row_vals)
+  }, future.seed = TRUE)
+
+  Lambda <- do.call(rbind, res_list)
+  Lambda <- as.data.frame(Lambda)
+  colnames(Lambda) <- lambda_names
+
   return(Lambda)
 }
 
 #' evaluate_lambda_SFD
+#'
+#' This function evaluates the Lambda matrix
+#' Lambda_ij = int X_j(t) phi_i(t) dt for step > 1 using parallel chunking.
+#'
+#' @param df dataframe X(t)
+#' @param basis basis fd object
+#' @param regul_time a vector of time regularization values default basis
+#' rangeval per 1
+#' @param int_mode int, integration mode, 1 for integrate, 2 for pracma::trapz
+#' @param id_col default name of the id column
+#' @param time_col default name of the time column
+#' @param subdivisions default parameter of R function integrate;
+#' default value : 100
+#' @param parallel boolean, if TRUE uses parallel processing. Default TRUE.
+#'
+#' @returns a matrix of dimension nbasis columns and nind rows
+#'
+#' @importFrom fda eval.fd fd
+#' @importFrom stats approxfun integrate
+#' @importFrom pracma trapz
+#' @importFrom future availableCores plan multisession sequential
+#' @importFrom future.apply future_lapply
+#'
+#' @author Francois Bassac
+evaluate_lambda_SFD <- function(df, basis,
+                                regul_time = seq(basis$rangeval[1],
+                                                 basis$rangeval[2],
+                                                 1), int_mode = 1,
+                                id_col = 'id', time_col = 'time',
+                                subdivisions = 100,
+                                parallel = TRUE){
+
+  # --- 0. Setup Parallel ---
+  # 1. Load evaluation
+  ids = unique(df[[id_col]])
+  n_ind = length(ids)
+
+  if (inherits(basis, "basisfd")) {
+    n_col <- basis$nbasis
+
+  } else if (is.list(basis) && all(sapply(basis,
+                                          function(x) inherits(x, "fd")))) {
+    n_col <- length(basis)
+  } else {
+    stop("evaluate_lambda_CFD() : basis have to be a basisobj from fda or a list of fd objects")
+  }
+
+  computational_load <- n_ind * n_col
+
+  # 2. Setup Parallel
+  nb_cores <- if (parallel) max(future::availableCores() - 2, 1) else 1
+
+  # ---  DYNAMIC HEURISTIC ---
+  # estimated 2500 integral evaluation per core
+  base_threshold <- getOption("SmoothPLS.parallel_threshold", default = 2500)
+  threshold_limit <- base_threshold * nb_cores
+
+  if (parallel && computational_load < threshold_limit) {
+    parallel <- FALSE
+    nb_cores <- 1
+  }
+
+  if (parallel) {
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
+
+  if(ncol(df) > 3){
+    stop("evaluate_lambda_SFD(): df shoul have only 3 column, id, time, value")
+  }
+  value_col = setdiff(names(df), c(id_col, time_col))
+
+  lambda_names = paste0("Lambda_", 1:n_col)
+
+  df_regul = regularize_time_series(df, time_seq = regul_time,
+                                    curve_type = 'num',
+                                    id_col = id_col, time_col = time_col)
+
+  # Pre-evaluate basis to save massive computational overhead
+  eval_basis_list <- lapply(1:n_col, function(j) {
+    as.vector(fda::eval.fd(evalarg = regul_time, fdobj = basis_list[[j]]))
+  })
+
+  # --- CHUNKING ---
+  if (nb_cores == 1) {
+    chunk_indices <- list(1:n_ind)
+  } else {
+    actual_breaks <- min(nb_cores, n_ind)
+    chunk_indices <- split(1:n_ind, cut(1:n_ind,
+                                        breaks = actual_breaks,
+                                        labels = FALSE))
+  }
+
+  res_list <- future.apply::future_lapply(chunk_indices, function(idx_chunk) {
+
+    chunk_ids <- ids[idx_chunk]
+    chunk_res <- matrix(0, nrow = length(chunk_ids), ncol = n_col)
+
+    for(k in seq_along(chunk_ids)) {
+      df_id = df_regul[df_regul[[id_col]] == chunk_ids[k], ]
+
+      for(j in 1:n_col) {
+        prod_values = eval_basis_list[[j]] * df_id[[value_col]]
+
+        if(int_mode == 1){
+          local_fun = stats::approxfun(x = regul_time, y = prod_values)
+          chunk_res[k, j]=stats::integrate(f=local_fun,
+                                          lower=regul_time[1],
+                                          upper=regul_time[length(regul_time)],
+                                          subdivisions = subdivisions)$value
+        } else if(int_mode == 2){
+          chunk_res[k, j] = pracma::trapz(x = regul_time, y = prod_values)
+        }
+      }
+    }
+    return(chunk_res)
+  }, future.seed = TRUE)
+
+  Lambda <- do.call(rbind, res_list)
+  Lambda <- as.data.frame(Lambda)
+  colnames(Lambda) <- lambda_names
+
+  return(Lambda)
+}
+
+
+#' evaluate_lambda_SFD_para_v1
 #'
 #' This function evaluates the Lambda matrix
 #' Lambda_ij = int X_j(t) phi_i(t) dt for step > 1
@@ -652,91 +927,77 @@ evaluate_lambda_CFD <- function(df, basis, int_mode = 1,
 #' @param time_col default name of the time column
 #' @param subdivisions default parameter of R function integrate;
 #' default value : 100
+#' @param parallel a boolean to enable parallel processing, default TRUE
 #'
 #' @returns a matrix of dimension nbasis columns and nind rows
 #'
 #' @importFrom fda eval.fd fd
 #' @importFrom stats approxfun integrate
 #' @importFrom pracma trapz
+#' @importFrom future availableCores plan multisession sequential
+#' @importFrom future.apply future_lapply future_sapply
 #'
 #' @author Francois Bassac
-evaluate_lambda_SFD <- function(df, basis,
+evaluate_lambda_SFD_para_v1 <- function(df, basis,
                                 regul_time = seq(basis$rangeval[1],
-                                                 basis$rangeval[2],
-                                                 1), int_mode = 1,
+                                                 basis$rangeval[2], 1),
+                                int_mode = 1,
                                 id_col = 'id', time_col = 'time',
-                                subdivisions = 100){
-  # This function evaluate the matrix LAMBDA for step 1.
-  # Lambda is a matrix of p columns (Lambda_i) and n rows (individuals)
-  # Lambda_i = int X(t) phi_i(t) dt
+                                subdivisions = 100,
+                                parallel = TRUE){
+
+  if (parallel) {
+    nb_cores <- max(future::availableCores() - 2, 1)
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
 
   ids = unique(df[[id_col]])
   n_ind = length(ids)
-
   basis_list = from_basis_to_fdlist(basis)
-
   n_col = basis_list[[1]]$basis$nbasis
 
-  # if df has more than 3 columns, we remove state
   if(ncol(df) > 3){
     stop("evaluate_lambda_SFD() : df shoul have only 3 column, id, time, value")
   }
-
   value_col = setdiff(names(df), c(id_col, time_col))
 
-  Lambda = data.frame(matrix(nrow=n_ind, ncol=n_col))
-  # name creation
-  lambda_names = c()
-  for(i in 1:n_col){
-    name = paste0("Lambda_",i)
-    lambda_names = c(lambda_names, name)
-  }
-  colnames(Lambda) = lambda_names
-
-  #eval_basis = matrix(nrow = basis$nbasis, ncol = length(regul_time))
-
+  lambda_names = paste0("Lambda_", 1:n_col)
   df_regul = regularize_time_series(df, time_seq = regul_time,
                                     curve_type = 'num',
                                     id_col = id_col, time_col = time_col)
 
-  # Iteration per basis function per individual
-  # LONG
-  for(j in 1:n_col){
+  # Pre-evaluate basis to save massive computational overhead
+  eval_basis_list <- lapply(1:n_col, function(j) {
+    as.vector(fda::eval.fd(evalarg = regul_time, fdobj = basis_list[[j]]))
+  })
 
-    # 1/ evaluate the j^th basis on the regul_time
-    eval_basis = as.vector(
-      fda::eval.fd(evalarg = regul_time, fdobj = basis_list[[j]])
-    )
+  res_list <- future.apply::future_lapply(1:n_ind, function(k) {
+    df_id = df_regul[df_regul[[id_col]]==ids[k], ]
+    row_vals <- numeric(n_col)
 
-    for(k in 1:n_ind){
+    for(j in 1:n_col){
+      prod_values = eval_basis_list[[j]] * df_id[[value_col]]
 
-      df_id = df_regul[df_regul[[id_col]]==ids[k], ]
-      # Order
-      #df_id <- df_id[order(df_id[[time_col]]), ]
-
-      # 2/ multiply by the X_1(t) values
-      prod_values = eval_basis*df_id[[value_col]]
-
-      # Integration
       if(int_mode == 1){
-        # integrate
         local_fun = stats::approxfun(x = regul_time, y = prod_values)
-
-        integral_sum = stats::integrate(f=local_fun,
-                                 lower=regul_time[1],
-                                 upper=regul_time[length(regul_time)],
-                                 subdivisions = subdivisions)[1]$value
-
+        row_vals[j] = stats::integrate(f=local_fun, lower=regul_time[1],
+                                       upper=regul_time[length(regul_time)],
+                                       subdivisions = subdivisions)$value
       } else if(int_mode == 2){
-        # pracma::trapz
-        integral_sum = pracma::trapz(x = regul_time,
-                                     y = prod_values)
-
+        row_vals[j] = pracma::trapz(x = regul_time, y = prod_values)
       }
-
-      Lambda[k, j] = integral_sum
     }
-  }
+    return(row_vals)
+  }, future.seed = TRUE)
+
+  Lambda <- do.call(rbind, res_list)
+  Lambda <- as.data.frame(Lambda)
+  colnames(Lambda) <- lambda_names
+
   return(Lambda)
 }
 
@@ -1211,7 +1472,8 @@ build_reg_curve_spls <- function(plsr_model, curves_names_list,
 #' @param subdivisions default parameter of R function integrate;
 #' default value : 100
 #' @param regul_time a vector of time regularization values default delta_fd
-#'  basis rangeval per 1, NEEDED for curve_type = 'num'!
+#' basis rangeval per 1, NEEDED for curve_type = 'num'!
+#' @param parallel a boolean to use parallelization, default TRUE
 #'
 #'
 #' @returns a vector of predicted values
@@ -1225,7 +1487,8 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
                                   regul_time = seq(
                                     delta_list[[2]]$basis$rangeval[1],
                                     delta_list[[2]]$rangeval[2],
-                                    1)){
+                                    1),
+                                  parallel = TRUE){
 
   if(!inherits(delta_list[[2]], "fd")){
     stop("smoothPLS_predict(): delta_list[[2]] have to be a
@@ -1252,7 +1515,8 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
                                   int_mode = int_mode,
                                   id_col = id_col,
                                   time_col = time_col,
-                                  nb_pt = nb_pt, subdivisions = subdivisions)
+                                  nb_pt = nb_pt, subdivisions = subdivisions,
+                                  parallel = parallel)
 
   }else if(curve_type == 'num'){
 
@@ -1267,7 +1531,8 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
                                   regul_time = regul_time,
                                   int_mode = 2,
                                   id_col = id_col, time_col = time_col,
-                                  nb_pt = nb_pt, subdivisions = subdivisions)
+                                  nb_pt = nb_pt, subdivisions = subdivisions,
+                                  parallel = parallel)
 
   }else{
     stop("smoothPLS_predict() : curve_type should be 'cat' ror 'num'.")
@@ -1291,37 +1556,41 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
 #' default 100
 #' @param ... Additional parameters passed to evaluate_id_func_integral
 #' (e.g., rel_tol, subdivisions).
+#' @param parallel a boolean to enable parallel processing, default TRUE.
 #'
 #' @return A numeric vector of predicted values for each individual.
 #'
+#' @importFrom future availableCores plan multisession sequential
+#' @importFrom future.apply future_lapply future_sapply
+#'
 #' @author Francois Bassac
 smoothPLS_CFD_predict <- function(df_predict, delta_spls, id_col = 'id',
-                                  time_col = 'time', subdivisions = 100, ...) {
+                                  time_col = 'time', subdivisions = 100,
+                                  parallel = TRUE, ...) {
+
+  if (parallel) {
+    nb_cores <- max(future::availableCores() - 2, 1)
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
 
   delta_0 <- delta_spls[[1]]
-
-  # One-time transformation of the fd object into an R function to optimize
-  # performance within the loop.
   delta_1_func <- from_fd_to_func(delta_spls[[2]])
-
   ids_predict <- unique(df_predict[[id_col]])
-  y_hat <- numeric(length(ids_predict))
 
-  for(i in seq_along(ids_predict)) {
+  y_hat <- future.apply::future_sapply(seq_along(ids_predict), function(i) {
     df_id <- df_predict[df_predict[[id_col]] == ids_predict[i], ]
-
-    # Call the exact segment-based integration function.
-    # This respects the "Active Area" concept by only integrating over
-    # intervals where the state is 1.
     res_int <- evaluate_id_func_integral(id_df = df_id,
                                          func = delta_1_func,
                                          id_col = id_col,
                                          time_col = time_col,
-                                         subdivisions = 100,
+                                         subdivisions = subdivisions,
                                          ...)
-
-    y_hat[i] <- delta_0 + res_int$integral
-  }
+    return(delta_0 + res_int$integral)
+  }, future.seed = TRUE)
 
   return(y_hat)
 }
@@ -1387,14 +1656,28 @@ smoothPLS_CFD_predict_Deprecated <- function(df_predict, delta_spls,
 #' @param basis_obj Optional basis for signal reconstruction. If NULL, uses the basis from delta_fd
 #' @param id_col Character, name of id column.
 #' @param time_col Character, name of time column.
+#' @param parallel a boolean to enable parallel processing, default TRUE.
 #' @param ... Additional arguments for Data2fd or inprod.
 #'
 #' @return A numeric vector of predicted values
 #'
+#' @importFrom future availableCores plan multisession sequential
+#' @importFrom future.apply future_lapply future_sapply
 #' @importFrom fda Data2fd inprod
+#'
 #' @author Francois Bassac
 smoothPLS_SFD_predict <- function(df_predict, delta_spls, basis_obj = NULL,
-                                  id_col = 'id', time_col = 'time', ...) {
+                                  id_col = 'id', time_col = 'time',
+                                  parallel = TRUE, ...) {
+
+  if (parallel) {
+    nb_cores <- max(future::availableCores() - 2, 1)
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
 
   delta_0 <- delta_spls[[1]]
   delta_fd <- delta_spls[[2]]
@@ -1402,28 +1685,21 @@ smoothPLS_SFD_predict <- function(df_predict, delta_spls, basis_obj = NULL,
   if(!inherits(delta_fd, "fd")) {
     stop("smoothPLS_SFD_predict() : delta_fd must be an 'fd' object.")
   }
-
   if(is.null(basis_obj)) {
     basis_obj <- delta_fd$basis
   }
 
   value_col <- setdiff(names(df_predict), c(id_col, time_col))
   ids <- unique(df_predict[[id_col]])
-  y_hat <- numeric(length(ids))
 
-  for(i in seq_along(ids)) {
+  y_hat <- future.apply::future_sapply(seq_along(ids), function(i) {
     df_id <- df_predict[df_predict[[id_col]] == ids[i], ]
-
-    # Functional representation of the test signal
     x_fd <- fda::Data2fd(argvals = df_id[[time_col]],
                          y = df_id[[value_col]],
                          basisobj = basis_obj)
-
-    # Analytic inner product calculation <X, delta> [cite: 77, 1348]
     inner_prod <- fda::inprod(x_fd, delta_fd)
-
-    y_hat[i] <- delta_0 + inner_prod
-  }
+    return(delta_0 + inner_prod)
+  }, future.seed = TRUE)
 
   return(y_hat)
 }
@@ -1530,6 +1806,7 @@ smoothPLS_SFD_predict_Deprecated <- function(df_predict, delta_spls,
 #' default 10
 #' @param subdivisions a integer, number of subdivision in integrate function,
 #' default 100
+#' @param parallel a boolean to use parallelization, default TRUE
 #'
 #' @returns a numeric vector of the prediction
 #' @export
@@ -1539,7 +1816,8 @@ smoothPLS_predict <- function(df_predict_list, delta_list,
                               curve_type_obj = NULL,
                               id_col_obj = 'id', time_col_obj = 'time',
                               regul_time_obj = NULL, int_mode = 1,
-                              nb_pt = 10, subdivisions = 100){
+                              nb_pt = 10, subdivisions = 100,
+                              parallel = TRUE){
 
   # assertions
   N_curves_processed = length(delta_list) - 1 # minus the intercept
@@ -1698,7 +1976,8 @@ smoothPLS_predict <- function(df_predict_list, delta_list,
                                    time_col = new_time_col_list[[i]],
                                    nb_pt = nb_pt,
                                    subdivisions = subdivisions,
-                                   regul_time = tem_regul_time
+                                   regul_time = tem_regul_time,
+                                   parallel = parallel
     )
 
     Y_predict = Y_predict + temp_Y
