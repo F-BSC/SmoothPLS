@@ -118,7 +118,7 @@ Y_df <- generate_Y_df(df_x, curve_type = 'cat', beta_real_func_or_list = beta_1_
 ```R
 plot_CFD_individuals(df_x, by_cfda = TRUE)
 ```
-![Figure 1: Synthetic binary state trajectories for 5 individuals.](man/figures/nom_de_l_image.png)
+![Figure 1: Synthetic binary state trajectories for 5 individuals.](man/figures/trajectories_example.png)
 
 
 2. Model Fitting & Prediction
