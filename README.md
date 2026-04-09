@@ -110,9 +110,6 @@ We simulate categorical time series where individuals switch between state 0 and
 library(SmoothPLS)
 
 df_x <- generate_X_df(nind = 100, start = 0, end = 100, curve_type = 'cat')
-
-# Generate response Y linked to the time spent in state 1
-Y_df <- generate_Y_df(df_x, curve_type = 'cat', beta_real_func_or_list = beta_1_real_func)
 ```
 
 ### Visualize the first 5 individuals
@@ -126,7 +123,9 @@ plot_CFD_individuals(df_x, by_cfda = TRUE)
 We fit the SmoothPLS model to a noised response $Y$ and compare the resulting regression curve $\beta(t)$ with the ground truth.R# Define a B-spline basis
 ```R
 basis <- create_bspline_basis(start = 0, end = 100, nbasis = 10)
+plot(basis)
 ```
+![Figure 2: Cubic B-splines basis of 10 functions.](man/figures/10_BSplines.png)
 
 ### Generate response Y linked to the time spent in state 1
 ```R
@@ -157,4 +156,4 @@ legend("topleft",
          lty = 1,
          lwd = 1)
 ```
-![Figure 2: The blue curve (SmoothPLS) successfully recovers the underlying red dashed curve (Theoretical Beta).](man/figures/beta_comparison.png)
+![Figure 3: The blue curve (SmoothPLS) successfully recovers the underlying red dashed curve (Theoretical Beta).](man/figures/beta_comparison.png)
