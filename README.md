@@ -26,7 +26,7 @@ This work was developed as part of a PhD project at **[DECATHLON](https://www.de
 
 The core innovation lies in treating categorical predictors not as simple dummy variables, but as functional indicator functions $\mathbb{1}^k_t$. The model computes components by integrating over the specific intervals where a state is present:
 
-$$\Lambda_{k,j} = \int_{T} \mathbb{1}_{\{X(t) = s_k\}} \phi_j(t) dt = \int_{\tau_i = \{t \in \mathcal{T}, X(t) = s_k\}}  \phi_j(t) dt$$
+$$\Lambda_{k,j} = \int_{T} \mathbb{1}_{\{X(t) = s_k\}} \phi_j(t) dt = \int_{\tau_k}  \phi_j(t) dt, \quad \text{with} \quad \tau_k = \\{t \in \mathcal{T}, X(t) = s_k\\}$$
 
 This ensures that the smoothing process respects the physical reality of state transitions while maintaining the continuous framework of Functional PLS.
 
@@ -53,7 +53,7 @@ The complete package documentation—including function references, detailed vig
 
 ### What's inside?
 * **Reference**: Comprehensive manual for all functions (including `smoothPLS`, `funcPLS`, and `naivePLS`).
-* **Articles (Vignettes)**: Step-by-step tutorials, such as the comparison of PLS methods for One-State Categorical Functional Data (CFD).
+* **Articles (Vignettes)**: Step-by-step tutorials, such as the comparison of PLS methods for Categorical Functional Data (CFD).
 * **Getting Started**: Quick installation guide and basic usage.
 
 ---
