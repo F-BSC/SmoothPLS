@@ -193,7 +193,7 @@ beta_list_generation <- function(N_states=3){
 #' This function generate synthetic data of nind X(t).
 #' For 'cat' curve_type it is in state 0 or 1 by two
 #' different exponential laws.
-#' For curve_type = 'num' it is noised cosinus.
+#' For curve_type = 'num' it is noised cosine.
 #'
 #' @param nind number of individuals, default 100
 #' @param start first time, default 0
@@ -203,7 +203,7 @@ beta_list_generation <- function(N_states=3){
 #' @param lambda_1 lambda parameter for exponential law for state 1, default 0.1
 #' @param prob_start Start state 1 probability, binomial law, default 0.5
 #' @param noise_sd noise added to the signal, default 0.1
-#' @param seed seed for reproductability, default 123
+#' @param seed seed for reproducibility, default 123
 #'
 #' @returns the dataframe of the individuals
 #' @export
@@ -588,13 +588,13 @@ generate_X_df_test <- function(TTRatio = 0.2, nind=500, start=0, end=100,
 
 #' generate_X_df_SFD
 #'
-#' This function generate synthetic data of nind X which are noised cosinuses.
+#' This function generate synthetic data of nind X which are noised cosines.
 #'
 #' @param nind number of individuals, default 500
 #' @param start first time, default 0
 #' @param end last time, default 100
 #' @param noise_sd noise added to the signal, default 0.1
-#' @param seed seed for reproductability, default 123
+#' @param seed seed for reproducibility, default 123
 #'
 #' @returns a dataframe
 #' @export
@@ -624,7 +624,7 @@ generate_X_df_SFD <- function(nind = 100, start = 0, end = 100,
     phase <- stats::runif(1, 0, pi/2)
     phase <- 1
 
-    # cosinus + noise
+    # cosine + noise
     values <- amplitude * cos(2 * pi * freq * time_vec/max(time_vec) + phase) +
       stats::rnorm(length(time_vec), mean = 0, sd = noise_sd)
 
@@ -640,13 +640,13 @@ generate_X_df_SFD <- function(nind = 100, start = 0, end = 100,
 
 #' generate_X_df_SFD_data
 #'
-#' This function generate test data of nind X which are noised cosinuses.
+#' This function generate test data of nind X which are noised cosines.
 #'
 #' @param nind number of individuals, default 500
 #' @param start first time, default 0
 #' @param end last time, default 100
 #' @param noise_sd noise added to the signal, default 0.1
-#' @param seed seed for reproductability, default 123
+#' @param seed seed for reproducibility, default 123
 #'
 #' @returns a dataframe
 #' @export
@@ -673,7 +673,7 @@ generate_X_df_SFD_data <- function(nind = 100, start = 0, end = 100,
     amplitude <- 2
     phase <- 1
 
-    # cosinus + noise
+    # cosine + noise
     values <- amplitude * cos(2 * pi * freq * time_vec/max(time_vec) + phase) +
       stats::rnorm(length(time_vec), mean = 0, sd = noise_sd)
 
@@ -1012,7 +1012,7 @@ generate_probabilities <- function(N_proba) {
 }
 
 
-#' transfert_probabilities
+#' transfer_probabilities
 #'
 #' This function gives transfer probabilities between states. row -> columns.
 #'
@@ -1022,11 +1022,11 @@ generate_probabilities <- function(N_proba) {
 #' @export
 #'
 #' @examples
-#' transfert_probabilities(3)
-#' transfert_probabilities(5)
+#' transfer_probabilities(3)
+#' transfer_probabilities(5)
 #'
 #' @author Francois Bassac
-transfert_probabilities <- function(N_states){
+transfer_probabilities <- function(N_states){
   # This function gives transfer probabilities between states.
 
   names = c()
@@ -1099,7 +1099,7 @@ initial_state_determination <- function(N_states){
 #' @examples
 #' N_states = 3
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #' determine_next_state(1, transition_df)
 #'
 #' @author Francois Bassac
@@ -1135,7 +1135,7 @@ determine_next_state <- function(current_state, transition_df){
 #' @param start a value of starting time, default 0
 #' @param end a value of ending time, default 100
 #' @param lambdas a vector of N_states lambda values from lambda_determination(N_states)
-#' @param transition_df a dataframe with the transition matrix from transfert_probabilities(N_states)
+#' @param transition_df a dataframe with the transition matrix from transfer_probabilities(N_states)
 #' @param seed a integer, random seed
 #'
 #' @returns a dataframe of a multistates Categorical Functional Data
@@ -1146,7 +1146,7 @@ determine_next_state <- function(current_state, transition_df){
 #' @examples
 #' N_states = 4
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #'
 #' df = generate_X_df_multistates(nind = 100, N_states, start=0, end=100,
 #' lambdas,  transition_df)
@@ -1223,7 +1223,7 @@ generate_X_df_multistates <- function(nind = 100, N_states=3, start=0, end=100,
 #' @examples
 #' N_states = 3
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #'
 #' df = generate_X_df_multistates(nind = 100, N_states, start=0, end=100,
 #' lambdas, transition_df)
@@ -1267,7 +1267,7 @@ state_indicator <- function(data, id_col='id', time_col = 'time'){
 #' @examples
 #' N_states = 3
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #'
 #' df = generate_X_df_multistates(nind = 100, N_states, start=0, end=100,
 #' lambdas, transition_df)
@@ -1332,7 +1332,7 @@ state_indicator_old <- function(data, id_col='id', time_col = 'time'){
 #' @examples
 #' N_states = 3
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #'
 #' df = generate_X_df_multistates(nind = 100, N_states, start=0, end=100,
 #' lambdas, transition_df)
@@ -1379,7 +1379,7 @@ split_in_state_df <- function(data, id_col='id', time_col='time'){
 #' @examples
 #' N_states = 3
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #'
 #' df = generate_X_df_multistates(nind = 100, N_states, start=0, end=100,
 #' lambdas, transition_df)
@@ -1428,7 +1428,7 @@ remove_duplicate_states <- function(data, id_col='id',
 #' @examples
 #' N_states = 3
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #'
 #' df = generate_X_df_multistates(nind = 100, N_states, start=0, end=100,
 #' lambdas, transition_df)
@@ -1468,7 +1468,7 @@ build_df_per_state <- function(data_list, id_col='id', time_col='time'){
 #' @examples
 #' N_states = 3
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #'
 #' df = generate_X_df_multistates(nind = 100, N_states, start=0, end=100,
 #' lambdas, transition_df)

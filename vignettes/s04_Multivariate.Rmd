@@ -85,7 +85,7 @@ lambdas = lambda_determination(N_states)
 lambdas
 ```
 
-## tranfert_probabilities
+## tranfer_probabilities
 ```{r}
 # Initialized the transition matrix
 transition_df = transfert_probabilities(N_states)

@@ -548,7 +548,7 @@ determine_curve_name <- function(curve_number, curve_type=NULL,
 #'
 #' This function assemble the metrics of all the basis of the basis list for
 #' multivariate use case.
-#' It take care on the categorical case by de-multiplying the basis per state.
+#' It take care on the categorical case by multiplying the basis per state.
 #'
 #' @param basis_list a list of basis fd object
 #' @param df_list a list of dataframe (id, time, value_or_state)

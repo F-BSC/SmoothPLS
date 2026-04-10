@@ -13,7 +13,7 @@
 #' @param time_col_obj a list of character of the names of the time columns
 #' @param print_steps a boolean to print the different steps, default FALSE
 #' @param plot_rmsep a boolean to plot the RMSEP, default TRUE
-#' @param print_nbComp a boolean to print the optimal number od components,
+#' @param print_nbComp a boolean to print the optimal number or components,
 #' default TRUE
 #' @param plot_reg_curves a boolean to plot the regression curves, default
 #' FALSE

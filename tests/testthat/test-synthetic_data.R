@@ -56,7 +56,7 @@ test_that("generate_Y_df calculates Y with correct dimensions and noise", {
 test_that("generate_X_df_multistates respects N_states", {
   N_states <- 3 # [cite: 880]
   lambdas <- lambda_determination(N_states)
-  transition_df <- transfert_probabilities(N_states)
+  transition_df <- transfer_probabilities(N_states)
 
   df_multi <- generate_X_df_multistates(nind = 5, N_states = N_states,
                                         lambdas = lambdas,

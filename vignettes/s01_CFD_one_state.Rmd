@@ -1,8 +1,8 @@
 ---
-title: "comparaison_one_state_02"
+title: "comparison_one_state_02"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{comparaison_one_state_02}
+  %\VignetteIndexEntry{comparison_one_state_02}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

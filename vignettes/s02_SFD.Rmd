@@ -19,7 +19,7 @@ library(SmoothPLS)
 library(ggplot2)
 ```
 
-This notebook present a way of performing th Smooth PLS algorithm for a 
+This notebook present a way of performing the SmoothPLS algorithm for a 
 Scalar Functional Data.
 
 It shows that Smooth PLS over perform FPLS with a time vector regul_time without

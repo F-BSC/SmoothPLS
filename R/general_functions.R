@@ -671,7 +671,7 @@ mae_values <- function(y, y_hat) {
 #' This function return the % of variance explained by Y_hat comparing to Y.
 #'
 #' @param Y a reference value
-#' @param Y_hat a modelized value Y_hat = model(X)
+#' @param Y_hat a modeled value Y_hat = model(X)
 #'
 #' @returns a value in %
 #' @export
@@ -694,7 +694,7 @@ evaluate_variance_explained <-function(Y, Y_hat){
 #' Y and Y_hat
 #'
 #' @param Y a vector of real values
-#' @param Y_hat a vector of modelized values
+#' @param Y_hat a vector of modeled values
 #'
 #' @returns a dataframe
 #' @export
@@ -837,7 +837,7 @@ eval_max_min_y <- function(f_list, regul_time){
 #' @examples
 #' N_states = 3
 #' lambdas = lambda_determination(N_states)
-#' transition_df = transfert_probabilities(N_states)
+#' transition_df = transfer_probabilities(N_states)
 #'
 #' df = generate_X_df_multistates(nind = 100, N_states, start=0, end=100,
 #' lambdas,  transition_df)

@@ -1257,7 +1257,7 @@ p_w_building <- function(coefficient,
 #' evaluate_gamma_ij
 #'
 #' This function evaluates int_0^T w_i_fd p_j_t dt for all j
-#' return a list, i^th element length is (i-1)
+#' return a list, the element i length is (i-1)
 #'
 #' @param w_i_list a list of fd functions w_i(t)
 #' @param p_i_list a list of fd functions p_i(t)
@@ -1270,7 +1270,7 @@ p_w_building <- function(coefficient,
 #' @author Francois Bassac
 evaluate_gamma_ij <- function(w_i_list, p_i_list){
   # This function evaluates int_0^T w_i_fd p_j_t dt for all j
-  # return a list, i^th element length is (i-1)
+  # return a list, the element i length is (i-1)
 
   gamma_ij_list = list()
 
