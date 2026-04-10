@@ -8,8 +8,6 @@ editor_options:
 
 <img src="man/figures/logo.png" align="right" height="139"/>
 
-<!-- badges: start -->
-
 [![R-CMD-check](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml)
 [![GitHub
 Release](https://img.shields.io/github/v/release/FrancoisBassac/SmoothPLS?label=version&color=blue)](https://github.com/FrancoisBassac/SmoothPLS/releases)
@@ -20,8 +18,6 @@ stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecy
 ![Downloads](https://img.shields.io/github/downloads/FrancoisBassac/SmoothPLS/total.svg)
 [![GitHub last
 commit](https://img.shields.io/github/last-commit/FrancoisBassac/SmoothPLS)](https://github.com/FrancoisBassac/SmoothPLS/commits/dev)
-
-<!-- badges: end -->
 
 ## Overview
 
