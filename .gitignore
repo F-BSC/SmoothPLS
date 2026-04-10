@@ -7,6 +7,5 @@ devtools.history.R
 .httr-oauth
 .DS_Store
 .quarto
-!inst/doc
-!inst/doc/*.pdf
 test.R
+inst/doc

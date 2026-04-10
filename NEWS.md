@@ -1,5 +1,11 @@
 # NEWS: SmoothPLS
 
+# SmoothPLS 0.1.4 (2026-04-09)
+
+## Performance Improvements
+* Implemented dynamic load balancing for parallel computing in `evaluate_lambda` functions.
+* Numerical integration steps are now up to 8x faster on multi-core machines while preventing RAM overhead on massive datasets (e.g. >100.000 evaluations).
+
 ## SmoothPLS 0.1.3 (2026-04-09)
 
 ### Improvements 
