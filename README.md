@@ -4,11 +4,8 @@ editor_options:
     wrap: 72
 ---
 
-# SmoothPLS
+# SmoothPLS <img src="man/figures/logo.png" align="right" height="139"/>
 
-<img src="man/figures/logo.png" align="right" height="139"/>
-
-<!-- badges: start -->
 [![R-CMD-check](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml)
 [![GitHub
 Release](https://img.shields.io/github/v/release/FrancoisBassac/SmoothPLS?label=version&color=blue)](https://github.com/FrancoisBassac/SmoothPLS/releases)
@@ -16,17 +13,15 @@ Release](https://img.shields.io/github/v/release/FrancoisBassac/SmoothPLS?label=
 stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 [![Documentation](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://FrancoisBassac.github.io/SmoothPLS/)
-![Downloads](https://img.shields.io/github/downloads/FrancoisBassac/SmoothPLS/total.svg)
 [![GitHub last
 commit](https://img.shields.io/github/last-commit/FrancoisBassac/SmoothPLS)](https://github.com/FrancoisBassac/SmoothPLS/commits/dev)
-<!-- badges: end -->
 
 ## Overview
 
-**SmoothPLS** is an R package designed for **Hybrid Functional Data
-Analysis**. It implements a novel approach to Functional Partial Least
+*SmoothPLS* is an R package designed for *Hybrid Functional Data
+Analysis*. It implements a novel approach to Functional Partial Least
 Squares (FPLS) by integrating categorical functional predictors through
-the concept of **Active Area Integration**.
+the concept of *Active Area Integration*.
 
 This work was developed as part of a PhD project at
 [**DECATHLON**](https://www.decathlon.fr/) in collaboration with
@@ -36,36 +31,42 @@ This work was developed as part of a PhD project at
 
 -   **Smooth PLS**: Integration of categorical states as indicator
     functions for smoother regression curves.
--   **Hybrid Data**: Seamlessly handle both Scalar Functional Data (SFD)
-    and Categorical Functional Data (CFD).
--   **Interpretability**: Provides regression curves $\beta$ even for
-    discrete state changes.
+-   **Hybrid Data**: Seamlessly handles both Scalar Functional Data
+    (SFD) and Categorical Functional Data (CFD).
+-   **Interpretability**: Provides continuous regression curves.
 -   **Comparison Suite**: Built-in functions to compare results with
     Naive (discretized) PLS and Standard **Functional PLS**.
 
 ------------------------------------------------------------------------
 
-## Mathematical Intuition
+## Methodological Background
 
-The core innovation lies in treating categorical predictors not as
-simple dummy variables, but as functional indicator functions
-$\mathbb{1}^s_t$.
-$$ \mathbb{1}_s^t = \begin{cases} 1 & \text{if } X(t) = s \\ 0 & \text{otherwise} \end{cases} $$
+SmoothPLS builds upon the fundamental principles of Functional PLS
+(FPLS) regression, specifically the approximation of functional
+predictors through basis expansions, as established by Aguilera, Preda
+et al. (2010) [1].
 
-The model computes components by integrating over the specific intervals
-where a state is present:
+The primary contribution lies in modeling categorical state changes as
+functional indicator functions, $\mathbb{1}^s_t$. Instead of
+discretizing transitions, the model computes components via *Active Area
+Integration* (illustrated in the package logo), effectively integrating
+basis functions over the specific intervals, $\tau_s$, where a state is
+active:
 
-$$\Lambda_{s,j} = \int_{\mathcal{T}} \mathbb{1}^s_t \phi_j(t) dt = \int_{\tau_s} \phi_j(t) dt, \quad \text{with} \quad \tau_k = \lbrace t \in \mathcal{T}, X(t) = k\rbrace$$
+$$\Lambda_{s,j} = \int_{\mathcal{T}} \mathbb{1}^s_t \phi_j(t) dt = \int_{\tau_s} \phi_j(t) dt, \quad \text{with} \quad \tau_s = \lbrace t \in \mathcal{T} \mid X(t) = s\rbrace \quad \text{and} \quad \mathbb{1}_s^t = \begin{cases} 1 & \text{if } X(t) = s \\ 0 & \text{otherwise} \end{cases}$$
 
-This ensures that the smoothing process respects the physical reality of
-state transitions while maintaining the continuous framework of
-Functional PLS.
+This formulation ensures that the smoothing process respects the
+continuous nature of state transitions within the Functional PLS
+framework.
 
 ------------------------------------------------------------------------
 
 ## Installation
 
-Currently in development. Install the latest stable version using:
+![Downloads](https://img.shields.io/github/downloads/FrancoisBassac/SmoothPLS/total.svg)
+
+The package is currently in development. The latest stable version can
+be installed via:
 
 ``` r
 # install.packages("devtools")
@@ -74,32 +75,33 @@ devtools::install_github("FrancoisBassac/SmoothPLS")
 
 ------------------------------------------------------------------------
 
-## 📖 Documentation
+## Documentation
+
+[![Documentation](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://FrancoisBassac.github.io/SmoothPLS/)
 
 The complete package documentation—including function references,
 detailed vignettes, and usage examples—is available online:
 
-[![Documentation](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://FrancoisBassac.github.io/SmoothPLS/)
-
-👉 [**Explore the SmoothPLS documentation
+[**Explore the SmoothPLS documentation
 website**](https://FrancoisBassac.github.io/SmoothPLS/)
 
 ------------------------------------------------------------------------
 
-### What's inside?
+### Documentation Overview
 
 -   **Reference**: Comprehensive manual for all functions (including
     `smoothPLS`, `funcPLS`, and `naivePLS`).
 -   **Articles (Vignettes)**: Step-by-step tutorials, such as the
-    comparison of PLS methods for Categorical Functional Data (CFD).
+    comparison of PLS methods for Categorical Functional Data (CFD) and
+    multivariate functional data.
 -   **Getting Started**: Quick installation guide and basic usage.
 
 ------------------------------------------------------------------------
 
-## 🚀 Quick Start Example
+## Quick Start Example
 
-Based on the single-state CFD vignette, here is how to fit and compare
-models:
+The following example demonstrates how to fit and compare models, based
+on the single-state CFD vignette:
 
 ``` r
 library(SmoothPLS)
@@ -121,29 +123,29 @@ plot(spls_model$reg_obj$CatFD_1_state_1, main="SmoothPLS Regression Curve")
 
 ------------------------------------------------------------------------
 
-### ⚡ Performance Tuning: Parallel Processing
+### Performance Tuning: Parallel Processing
 
-By default, `SmoothPLS` uses the `future` framework to automatically
-parallelize the heavy numerical integration steps (Lambda matrix
-evaluation) when `parallel = TRUE`.
+When `parallel = TRUE`, `SmoothPLS` utilizes the `future` framework to
+parallelize the numerical integration steps (e.g., $\Lambda$ matrix
+evaluation).
 
-To prevent performance degradation (overhead) on smaller datasets, the
-package uses **dynamic load balancing**. Instead of a simple binary
-ON/OFF switch, it calculates an optimal number of background workers
-required for your specific task to maximize efficiency.
+To mitigate computational overhead on smaller datasets, the package
+implements dynamic load balancing. It calculates the optimal number of
+background workers required for the specific task to maximize
+efficiency.
 
-The default threshold is set to **2500 integral evaluations per core**.
-The engine will recruit one core for every 2500 integrals (calculated as
-*Individuals* $\times$ *Basis functions*). For example: \* **Under 2,500
-integrals:** The model runs sequentially (1 core) to avoid unnecessary
-setup overhead. \* **5,000 integrals:** The engine spins up exactly 2
-cores. \* **Massive datasets (e.g., 50,000+ integrals):** The engine
-recruits the maximum number of available cores on your machine (*always
-leaving 2 cores free to keep your operating system responsive*).
+The default threshold is set to 2500 integral evaluations per core. The
+engine allocates one core for every 2500 integrals (calculated as
+individuals $\times$ basis functions). For instance: \* *Under 2,500
+integrals:* The model executes sequentially (1 core) to avoid setup
+overhead. \* *5,000 integrals:* The engine allocates exactly 2 cores. \*
+*Large datasets (e.g., 50,000+ integrals):* The engine recruits the
+maximum number of available cores, reserving 2 cores to maintain
+operating system stability.
 
-You can manually adjust this threshold based on your specific hardware
-(e.g., lower it if you are on a UNIX system with low forking overhead)
-by setting a global option before running your model:
+This threshold can be manually adjusted based on specific hardware
+capabilities (e.g., lowered for UNIX systems with low forking overhead)
+by setting a global option before model execution:
 
 ``` r
 # Lower the threshold to 500 evaluations per core
@@ -152,9 +154,9 @@ options(SmoothPLS.parallel_threshold = 500)
 
 ------------------------------------------------------------------------
 
-## 🔗 Some Links
+## Affiliations and Applications
 
-### 👟 Industrial Partners & Applications
+### Industrial Partners
 
 -   [**Decathlon**](https://www.decathlon.fr/) – Main industrial
     partner.
@@ -166,7 +168,7 @@ options(SmoothPLS.parallel_threshold = 500)
     -   [Official Website](https://www.kiprun.com/)
     -   [App Store / Play Store](https://pacer.kiprun.com/)
 
-### 🔬 Research Institutions
+### Research Institutions
 
 -   [**Inria**](https://www.inria.fr/fr) – National Institute for
     Research in Digital Science and Technology.
@@ -175,16 +177,16 @@ options(SmoothPLS.parallel_threshold = 500)
 
 ------------------------------------------------------------------------
 
-## 🗺️ Roadmap & Future Releases
+## Roadmap and Future Releases
 
-**SmoothPLS** is actively developed. The upcoming updates focus on
-computational efficiency and expanding the model's theoretical
+**SmoothPLS** is under active development. Upcoming updates will focus
+on computational efficiency and the expansion of theoretical
 capabilities:
 
 -   **[v0.1.4] Parallel Processing:** Implementation of multicore
     computing to drastically reduce integration time for large datasets
     (e.g., thousands of Active Areas).
--   **[v0.1.5] Hybrid Data Framework:** Support for integrating standard
+-   **[v0.1.6] Hybrid Data Framework:** Support for integrating standard
     non-functional covariates (e.g., user age, weight) alongside
     Categorical and Scalar Functional Data.
 -   **[v0.2.0] Penalized Splines (Univariate):** Addition of roughness
@@ -195,25 +197,23 @@ capabilities:
 
 ------------------------------------------------------------------------
 
-## A detailed example : One-State Categorical Functional Data
+## Detailed Example: One-State Categorical Functional Data
 
 This example illustrates how SmoothPLS processes Categorical Functional
-Data (CFD) by modeling transitions as functional objects. For a deeper
-dive, see the [full
+Data (CFD) by modeling transitions as functional objects. For
+comprehensive details, refer to the [full
 vignette](https://francoisbassac.github.io/SmoothPLS/articles/s01_CFD_one_state.html).
 
-1.  Data Visualization We simulate categorical time series where
-    individuals switch between state 0 and state 1 over time.
+### 1. Data Visualization
 
-### Generate synthetic categorical data
+We simulate a categorical time series where individuals alternate
+between state 0 and state 1 over time.
 
 ``` r
 library(SmoothPLS)
 
 df_x <- generate_X_df(nind = 100, start = 0, end = 100, curve_type = 'cat')
 ```
-
-### Visualize the first 5 individuals
 
 ``` r
 plot_CFD_individuals(df_x, by_cfda = TRUE)
@@ -222,9 +222,11 @@ plot_CFD_individuals(df_x, by_cfda = TRUE)
 ![Figure 1: Synthetic binary state trajectories for 5
 individuals.](man/figures/trajectories_example.png)
 
-2.  Model Fitting & Prediction We fit the SmoothPLS model to a noised
-    response $Y$ and compare the resulting regression curve $\beta(t)$
-    with the ground truth.
+### 2. Model Fitting and Prediction
+
+The SmoothPLS model is fitted to a response variable with added noise,
+$Y$, and the resulting regression curve, $\beta(t)$, is compared against
+the ground truth.
 
 ``` r
 # Define a B-spline basis
@@ -235,23 +237,17 @@ plot(basis)
 ![Figure 2: Cubic B-splines basis of 10
 functions.](man/figures/10_BSplines.png)
 
-### Generate response Y linked to the time spent in state 1
-
 ``` r
+# Generate response Y linked to the time spent in state 1
 Y_df <- generate_Y_df(df_x, curve_type = 'cat', 
                       beta_real_func_or_list = beta_1_real_func)
-```
 
-### Fit the SmoothPLS model
-
-``` r
+# Fit the SmoothPLS model
 spls_obj <- smoothPLS(df_list = df_x, Y = Y_df$Y_noised, 
                       basis_obj = basis, curve_type_obj = 'cat',
                       print_steps = FALSE, print_nbComp = FALSE, 
                       plot_rmsep = FALSE, plot_reg_curves = FALSE)
 ```
-
-### Plot the recovered regression curve vs the theoretical one
 
 ``` r
 # Extract parameters for plotting
@@ -275,3 +271,13 @@ legend("topleft",
 ![Figure 3: The blue curve (SmoothPLS) successfully recovers the
 underlying red dashed curve (Theoretical
 Beta).](man/figures/beta_comparison.png)
+
+------------------------------------------------------------------------
+
+## References
+
+[1] Aguilera, A. M., Escabias, M., Preda, C., & Saporta, G. (2010).
+"Using basis expansions for estimating functional PLS regression.
+Applications with chemometric data". *Chemometrics and Intelligent
+Laboratory Systems*, *104*(2), 289-305.
+<https://doi.org/10.1016/j.chemolab.2010.09.007>
