@@ -3,7 +3,7 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml)
 [![GitHub Release](https://img.shields.io/github/v/release/FrancoisBassac/SmoothPLS?label=version&color=blue)](https://github.com/FrancoisBassac/SmoothPLS/releases)
-[![Lifecycle: Maturing](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 [![Documentation](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://FrancoisBassac.github.io/SmoothPLS/)
 ![Downloads](https://img.shields.io/github/downloads/FrancoisBassac/SmoothPLS/total.svg)
