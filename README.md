@@ -51,13 +51,13 @@ This work was developed as part of a PhD project at
 
 The core innovation lies in treating categorical predictors not as
 simple dummy variables, but as functional indicator functions
-$\mathbb{1}^k_t$.
-$$ \mathbb{1}_k^t = \begin{cases} 1 & \text{if } X(t) = k \\ 0 & \text{otherwise} \end{cases} $$
+$\mathbb{1}^s_t$.
+$$ \mathbb{1}_s^t = \begin{cases} 1 & \text{if } X(t) = s \\ 0 & \text{otherwise} \end{cases} $$
 
 The model computes components by integrating over the specific intervals
 where a state is present:
 
-$$\Lambda_{k,j} = \int_{\mathcal{T}} \mathbb{1}^k_t \phi_j(t) dt = \int_{\tau_k} \phi_j(t) dt, \quad \text{with} \quad \tau_k = \lbrace t \in \mathcal{T}, X(t) = k\rbrace$$
+$$\Lambda_{s,j} = \int_{\mathcal{T}} \mathbb{1}^s_t \phi_j(t) dt = \int_{\tau_s} \phi_j(t) dt, \quad \text{with} \quad \tau_k = \lbrace t \in \mathcal{T}, X(t) = k\rbrace$$
 
 This ensures that the smoothing process respects the physical reality of
 state transitions while maintaining the continuous framework of
