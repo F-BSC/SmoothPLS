@@ -13,7 +13,8 @@ funcPLS_predict(
   time_col_obj = "time",
   int_mode = 1,
   nb_pt = 10,
-  subdivisions = 100
+  subdivisions = 100,
+  parallel = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ mode 2, default 10}
 
 \item{subdivisions}{a integer, the number of subdivisions for integration
 mode 1, default 100}
+
+\item{parallel}{a boolean to use parallelization, default TRUE}
 }
 \value{
 a numeric vector

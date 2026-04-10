@@ -19,7 +19,8 @@ smoothPLS(
   print_nbComp = TRUE,
   plot_reg_curves = FALSE,
   jackknife = TRUE,
-  validation = "LOO"
+  validation = "LOO",
+  parallel = TRUE
 )
 }
 \arguments{
@@ -57,6 +58,8 @@ default TRUE}
 
 \item{validation}{a character for the validation input of pls() function,
 default 'LOO'}
+
+\item{parallel}{a boolean to use parallelization, default TRUE}
 }
 \value{
 a list of the plsr_model and the regression curves (and intercept).

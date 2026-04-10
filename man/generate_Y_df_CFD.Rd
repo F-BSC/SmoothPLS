@@ -14,7 +14,8 @@ generate_Y_df_CFD(
   int_mode = 1,
   nb_pt = 10,
   subdivisions = 100,
-  seed = 123
+  seed = 123,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ generate_Y_df_CFD(
 default value : 100}
 
 \item{seed}{a integer, random seed}
+
+\item{parallel}{a boolean to enable parallel processing, default FALSE}
 }
 \value{
 a dataframe of Y real and noised values

@@ -13,7 +13,8 @@ evaluate_lambda(
   time_col = "time",
   nb_pt = 10,
   subdivisions = 100,
-  regul_time = seq(basis$rangeval[1], basis$rangeval[2], 1)
+  regul_time = seq(basis$rangeval[1], basis$rangeval[2], 1),
+  parallel = TRUE
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ default value : 100}
 
 \item{regul_time}{regul_time a vector of time regularization values default
 basis rangeval per 1}
+
+\item{parallel}{a boolean to use parallelization, default TRUE}
 }
 \value{
 a matrix \eqn{\Lambda_i = \int_0^T X(t) \phi_i(t) dt}

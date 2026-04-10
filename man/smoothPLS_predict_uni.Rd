@@ -13,7 +13,8 @@ smoothPLS_predict_uni(
   time_col = "time",
   nb_pt = 10,
   subdivisions = 100,
-  regul_time = seq(delta_list[[2]]$basis$rangeval[1], delta_list[[2]]$rangeval[2], 1)
+  regul_time = seq(delta_list[[2]]$basis$rangeval[1], delta_list[[2]]$rangeval[2], 1),
+  parallel = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ default value : 100}
 
 \item{regul_time}{a vector of time regularization values default delta_fd
 basis rangeval per 1, NEEDED for curve_type = 'num'!}
+
+\item{parallel}{a boolean to use parallelization, default TRUE}
 }
 \value{
 a vector of predicted values

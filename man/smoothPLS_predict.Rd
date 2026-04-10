@@ -13,7 +13,8 @@ smoothPLS_predict(
   regul_time_obj = NULL,
   int_mode = 1,
   nb_pt = 10,
-  subdivisions = 100
+  subdivisions = 100,
+  parallel = TRUE
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ default 10}
 
 \item{subdivisions}{a integer, number of subdivision in integrate function,
 default 100}
+
+\item{parallel}{a boolean to use parallelization, default TRUE}
 }
 \value{
 a numeric vector of the prediction

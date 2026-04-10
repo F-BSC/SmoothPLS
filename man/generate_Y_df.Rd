@@ -15,7 +15,8 @@ generate_Y_df(
   time_col = "time",
   int_mode = 1,
   nb_pt = 10,
-  subdivisions = 100
+  subdivisions = 100,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ generate_Y_df(
 
 \item{subdivisions}{default parameter of R function integrate;
 default value : 100}
+
+\item{parallel}{a boolean to use parallelization, default FALSE}
 }
 \value{
 a dataframe of Y real and noised values

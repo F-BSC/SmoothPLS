@@ -49,7 +49,7 @@ all_curves_in_pls = TRUE #Keep all or (all - 1) states in PLS method if FALSE.
 int_mode = 1 # in case of integration errors.
 ```
 
-# CFD One statedata generation
+# CFD One state data generation
 ## df_cfd_os
 ```{r}
 df_cfd_os = generate_X_df(nind = nind, 

@@ -76,7 +76,7 @@ test_that("smoothPLS_predict consistency", {
   fitted_pls <- as.numeric(spls_res$plsr_model$fitted.values[,,
                                                             spls_res$nbCP_opti])
 
-  expect_equal(as.numeric(Y_hat), fitted_pls, tolerance = 1e-3)
+  expect_equal(as.numeric(Y_hat), fitted_pls, tolerance = 1e-4)
 })
 
 test_that("smoothPLS handles multivariate mixed inputs", {
