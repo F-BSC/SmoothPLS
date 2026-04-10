@@ -997,22 +997,17 @@ plot_model_metrics_base <- function(train_results, test_results,
     metric_data <- long_results[long_results$Metric == metric, ]
 
     p <- ggplot(metric_data, aes(x = .data$Model,
-                                 y = .data$Value, fill = .data$Set)) +
+                                 y = .data$Value,
+                                 fill = .data$Set)) +
       geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
-      geom_text(aes(label = .data$Label),
+      geom_text(aes(label = .data$Label), # Ici aussi
                 position = position_dodge(width = 0.9),
-                vjust = -0.3, size = 3) +
+                vjust = -0.3, size = 3)+
       labs(title = paste("Comparison", metric, "per model"),
            y = metric, x = "Model") +
       scale_fill_manual(values = c("Train" = "#1b9e77", "Test" = "#d95f02")) +
       theme_minimal() +
       theme(plot.title = element_text(hjust = 0.5))
-
-    p <- ggplot(metric_data, aes(x = .data$Model, y = .data$Value, fill = .data$Set)) +
-      geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
-      geom_text(aes(label = .data$Label), # Ici aussi
-                position = position_dodge(width = 0.9),
-                vjust = -0.3, size = 3)
 
     print(p)
   }

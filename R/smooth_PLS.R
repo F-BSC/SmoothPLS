@@ -91,9 +91,10 @@ smoothPLS <- function(df_list, Y,
   if(print_nbComp){
     cat("### Smooth PLS ### \n")
     if(parallel){
-      cat("## Use parallelization ## \n")
-      nb_cores <- max(future::availableCores() - 2, 1)
-      cat(paste0("## Parallelization on ", nb_cores, " cores ## \n"))
+      cat("## Use parallelization in case of heavy computational load. ## \n")
+      #nb_cores <- max(future::availableCores() - 2, 1)
+      cat("## Threshold can be manualy adjusted : (default 2500)")
+      cat("## >options(SmoothPLS.parallel_threshold = 500 ##")
     }
   }
 
@@ -629,7 +630,6 @@ evaluate_lambda_CFD <- function(df, basis, int_mode = 1,
   }
 
   ids = unique(df[[id_col]])
-  n_ind = length(ids)
 
   if (inherits(basis, "basisfd")) {
     nbasis <- basis$nbasis
@@ -848,6 +848,8 @@ evaluate_lambda_SFD <- function(df, basis,
                                     id_col = id_col, time_col = time_col)
 
   # Pre-evaluate basis to save massive computational overhead
+  basis_list = from_basis_to_fdlist(basis)
+
   eval_basis_list <- lapply(1:n_col, function(j) {
     as.vector(fda::eval.fd(evalarg = regul_time, fdobj = basis_list[[j]]))
   })
@@ -1494,7 +1496,6 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
 
     y_hat = smoothPLS_CFD_predict(df_predict = df_predict,
                                   delta_spls = delta_list,
-                                  int_mode = int_mode,
                                   id_col = id_col,
                                   time_col = time_col,
                                   nb_pt = nb_pt, subdivisions = subdivisions,
@@ -1522,8 +1523,90 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
   return(y_hat)
 }
 
+#' smoothPLS_CFD_predict (Updated v0.1.4)
+#'
+#' @description
+#' Predicts the response variable for Categorical Functional Data (CFD) by
+#' integrating the regression coefficient function over active state intervals.
+#'
+#' @param df_predict Dataframe containing columns for id, time, and state.
+#' @param delta_spls A list containing the scalar intercept and the functional
+#' regression coefficient (fd object).
+#' @param id_col Character, name of the id column, default 'id'.
+#' @param time_col Character, name of the time column, default 'time'.
+#' @param subdivisions integer, maximum number of sub-intervals for integration,
+#' default 100
+#' @param ... Additional parameters passed to evaluate_id_func_integral
+#' (e.g., rel_tol, subdivisions).
+#' @param parallel a boolean to enable parallel processing, default TRUE.
+#'
+#' @return A numeric vector of predicted values for each individual.
+#'
+#' @importFrom future availableCores plan multisession sequential
+#' @importFrom future.apply future_lapply
+#'
+#' @author Francois Bassac
+smoothPLS_CFD_predict <- function(df_predict, delta_spls, id_col = 'id',
+                                  time_col = 'time', subdivisions = 100,
+                                  parallel = TRUE, ...) {
 
-#' smoothPLS_CFD_predict (Updated v0.1.2)
+  ids_predict <- unique(df_predict[[id_col]])
+  n_ind <- length(ids_predict)
+
+  # --- 1. Dynamic Load Balancing ---
+  # Load is the number of individuals
+  computational_load <- n_ind
+  nb_cores <- get_optimal_cores(parallel = parallel,
+                                computational_load = computational_load)
+
+  # --- 2. Setup Parallel Plan ---
+  if (nb_cores > 1) {
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
+
+  delta_0 <- delta_spls[[1]]
+  delta_1_func <- from_fd_to_func(delta_spls[[2]])
+
+  # --- 3. Chunking ---
+  if (nb_cores <= 1) {
+    chunk_indices <- list(1:n_ind)
+  } else {
+    actual_breaks <- min(nb_cores, n_ind)
+    chunk_indices <- split(1:n_ind, cut(1:n_ind, breaks = actual_breaks,
+                                        labels = FALSE))
+  }
+
+  # --- 4. Distributed Computation ---
+  res_list <- future.apply::future_lapply(chunk_indices, function(idx_chunk) {
+    chunk_ids <- ids_predict[idx_chunk]
+
+    # Process the chunk sequentially
+    chunk_y_hat <- sapply(chunk_ids, function(current_id) {
+      df_id <- df_predict[df_predict[[id_col]] == current_id, ]
+      res_int <- evaluate_id_func_integral(id_df = df_id,
+                                           func = delta_1_func,
+                                           id_col = id_col,
+                                           time_col = time_col,
+                                           subdivisions = subdivisions,
+                                           ...)
+      return(delta_0 + res_int$integral)
+    })
+
+    return(chunk_y_hat)
+  }, future.seed = TRUE)
+
+  # --- 5. Combine Results ---
+  # unlist rassemble proprement les vecteurs des chunks
+  y_hat <- unlist(res_list, use.names = FALSE)
+
+  return(y_hat)
+}
+
+#' smoothPLS_CFD_predict_para_v1 (Updated v0.1.2)
 #'
 #' @description
 #' Predicts the response variable for Categorical Functional Data (CFD) by
@@ -1546,7 +1629,7 @@ smoothPLS_predict_uni <- function(df_predict, delta_list, curve_type = NULL,
 #' @importFrom future.apply future_lapply future_sapply
 #'
 #' @author Francois Bassac
-smoothPLS_CFD_predict <- function(df_predict, delta_spls, id_col = 'id',
+smoothPLS_CFD_predict_para_v1 <- function(df_predict, delta_spls, id_col = 'id',
                                   time_col = 'time', subdivisions = 100,
                                   parallel = TRUE, ...) {
 
@@ -1626,8 +1709,96 @@ smoothPLS_CFD_predict_Deprecated <- function(df_predict, delta_spls,
   return(y_hat)
 }
 
-
 #' smoothPLS_SFD_predict
+#'
+#' @description
+#' Predicts the response Y for Scalar Functional Data using the analytic L2 inner product.
+#' This implementation follows the theory from Chapter 7.
+#'
+#' @param df_predict Dataframe with columns (id, time, value).
+#' @param delta_spls List containing (intercept, delta_fd_object).
+#' @param basis_obj Optional basis for signal reconstruction. If NULL, uses the basis from delta_fd
+#' @param id_col Character, name of id column.
+#' @param time_col Character, name of time column.
+#' @param parallel a boolean to enable parallel processing, default TRUE.
+#' @param ... Additional arguments for Data2fd or inprod.
+#'
+#' @return A numeric vector of predicted values
+#'
+#' @importFrom future availableCores plan multisession sequential
+#' @importFrom future.apply future_lapply
+#' @importFrom fda Data2fd inprod
+#'
+#' @author Francois Bassac
+smoothPLS_SFD_predict <- function(df_predict, delta_spls, basis_obj = NULL,
+                                  id_col = 'id', time_col = 'time',
+                                  parallel = TRUE, ...) {
+
+  ids <- unique(df_predict[[id_col]])
+  n_ind <- length(ids)
+
+  # --- 1. Dynamic Load Balancing ---
+  # Load is the number of individuals
+  computational_load <- n_ind
+  nb_cores <- get_optimal_cores(parallel = parallel,
+                                computational_load = computational_load)
+
+  # --- 2. Setup Parallel Plan ---
+  if (nb_cores > 1) {
+    old_plan <- future::plan(future::multisession, workers = nb_cores)
+    on.exit(future::plan(old_plan), add = TRUE)
+  } else {
+    old_plan <- future::plan(future::sequential)
+    on.exit(future::plan(old_plan), add = TRUE)
+  }
+
+  # --- 3. Extract Model Parameters ---
+  delta_0 <- delta_spls[[1]]
+  delta_fd <- delta_spls[[2]]
+
+  if(!inherits(delta_fd, "fd")) {
+    stop("smoothPLS_SFD_predict() : delta_fd must be an 'fd' object.")
+  }
+  if(is.null(basis_obj)) {
+    basis_obj <- delta_fd$basis
+  }
+
+  value_col <- setdiff(names(df_predict), c(id_col, time_col))
+
+  # --- 4. Chunking ---
+  if (nb_cores <= 1) {
+    chunk_indices <- list(1:n_ind)
+  } else {
+    actual_breaks <- min(nb_cores, n_ind)
+    chunk_indices <- split(1:n_ind, cut(1:n_ind, breaks = actual_breaks,
+                                        labels = FALSE))
+  }
+
+  # --- 5. Distributed Computation ---
+  res_list <- future.apply::future_lapply(chunk_indices, function(idx_chunk) {
+
+    chunk_ids <- ids[idx_chunk]
+
+    # Process the chunk sequentially
+    chunk_y_hat <- sapply(chunk_ids, function(current_id) {
+      df_id <- df_predict[df_predict[[id_col]] == current_id, ]
+      x_fd <- fda::Data2fd(argvals = df_id[[time_col]],
+                           y = df_id[[value_col]],
+                           basisobj = basis_obj)
+      inner_prod <- fda::inprod(x_fd, delta_fd)
+      return(delta_0 + inner_prod)
+    })
+
+    return(chunk_y_hat)
+  }, future.seed = TRUE)
+
+  # --- 6. Combine Results ---
+  y_hat <- unlist(res_list, use.names = FALSE)
+
+  return(y_hat)
+}
+
+#' smoothPLS_SFD_predict_para_v1
 #'
 #' @description
 #' Predicts the response Y for Scalar Functional Data using the analytic L2 inner product.
@@ -1648,7 +1819,7 @@ smoothPLS_CFD_predict_Deprecated <- function(df_predict, delta_spls,
 #' @importFrom fda Data2fd inprod
 #'
 #' @author Francois Bassac
-smoothPLS_SFD_predict <- function(df_predict, delta_spls, basis_obj = NULL,
+smoothPLS_SFD_predict_para_v1 <- function(df_predict, delta_spls, basis_obj = NULL,
                                   id_col = 'id', time_col = 'time',
                                   parallel = TRUE, ...) {
 
