@@ -135,13 +135,12 @@ basis rangeval per 1</p></dd>
 <span class="r-in"><span>lambda_0<span class="op">=</span><span class="fl">0.2</span>, lambda_1<span class="op">=</span><span class="fl">0.1</span>, prob_start<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">basis</span> <span class="op">=</span> <span class="fu"><a href="create_bspline_basis.html">create_bspline_basis</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Lambda</span> <span class="op">=</span> <span class="fu">evaluate_lambda</span><span class="op">(</span><span class="va">df</span>, <span class="va">basis</span>, curve_type <span class="op">=</span> <span class="st">'cat'</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package 'future' was built under R version 4.4.3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">=</span> <span class="fu"><a href="generate_X_df.html">generate_X_df</a></span><span class="op">(</span>nind<span class="op">=</span><span class="fl">100</span>, start<span class="op">=</span><span class="fl">0</span>, end<span class="op">=</span><span class="fl">100</span>, curve_type <span class="op">=</span> <span class="st">'num'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">basis</span> <span class="op">=</span> <span class="fu"><a href="create_bspline_basis.html">create_bspline_basis</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Lambda</span> <span class="op">=</span> <span class="fu">evaluate_lambda</span><span class="op">(</span><span class="va">df</span>, <span class="va">basis</span>, curve_type <span class="op">=</span> <span class="st">'num'</span>, int_mode <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> evaluate_lambda_SFD() : int_mode to 2 for pracma::trapz for</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         integration stability.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

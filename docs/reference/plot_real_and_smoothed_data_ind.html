@@ -95,13 +95,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">N_states</span> <span class="op">=</span> <span class="fl">3</span></span></span>
 <span class="r-in"><span><span class="va">lambdas</span> <span class="op">=</span> <span class="fu"><a href="lambda_determination.html">lambda_determination</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">transition_df</span> <span class="op">=</span> <span class="fu"><a href="transfer_probabilities.html">transfer_probabilities</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in transfer_probabilities(N_states):</span> could not find function "transfer_probabilities"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">=</span> <span class="fu"><a href="generate_X_df_multistates.html">generate_X_df_multistates</a></span><span class="op">(</span>nind <span class="op">=</span> <span class="fl">100</span>, <span class="va">N_states</span>, start<span class="op">=</span><span class="fl">0</span>, end<span class="op">=</span><span class="fl">100</span>,</span></span>
 <span class="r-in"><span><span class="va">lambdas</span>,  <span class="va">transition_df</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'transition_df' not found</span>
 <span class="r-in"><span><span class="va">df_processed</span> <span class="op">=</span> <span class="fu"><a href="cat_data_to_indicator.html">cat_data_to_indicator</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in cat_data_to_indicator(df):</span> could not find function "cat_data_to_indicator"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">df_regul</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df_wide</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
@@ -113,7 +110,9 @@
 <span class="r-in"><span><span class="va">df_wide</span><span class="op">[[</span><span class="va">name</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="convert_to_wide_format.html">convert_to_wide_format</a></span><span class="op">(</span><span class="va">df_regul</span><span class="op">[[</span><span class="va">name</span><span class="op">]</span><span class="op">]</span>, id_col<span class="op">=</span><span class="st">'id'</span>,</span></span>
 <span class="r-in"><span>time_col<span class="op">=</span><span class="st">'time'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'df_processed' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "state_1 regularisation"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "state_2 regularisation"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "state_3 regularisation"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">basis</span> <span class="op">=</span> <span class="fu"><a href="create_bspline_basis.html">create_bspline_basis</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -123,9 +122,13 @@
 <span class="r-in"><span><span class="va">df_fd</span><span class="op">[[</span><span class="va">name</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu">fda</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fda/man/Data2fd.html" class="external-link">Data2fd</a></span><span class="op">(</span>argvals <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">df_wide</span><span class="op">[[</span><span class="va">name</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, <span class="va">basis</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "state_1 fd transformation"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "state_2 fd transformation"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "state_3 fd transformation"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">plot_real_and_smoothed_data_ind</span><span class="op">(</span><span class="va">df_wide</span>, <span class="va">df_fd</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>, id<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in graphics::par(mfrow = c(1, length(df_wide))):</span> invalid value specified for graphical parameter "mfrow"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Real and fd values for the individual n=1"</span>
+<span class="r-plt img"><img src="plot_real_and_smoothed_data_ind-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

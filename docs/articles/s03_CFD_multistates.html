@@ -71,17 +71,9 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SmoothPLS</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'fda::matplot' by 'graphics::matplot' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'pls::loadings' by 'stats::loadings' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading</span></span>
-<span><span class="co">#&gt; 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::filter' by 'stats::filter' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/FrancoisBassac/SmoothPLS" class="external-link">SmoothPLS</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/khliland/pls" class="external-link">pls</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'pls' was built under R version 4.4.2</span></span>
+<span><span class="co">#&gt; Warning: package 'pls' was built under R version 4.4.3</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'pls'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
@@ -131,7 +123,7 @@ Categorical Functional Data (MS-CFD).</p>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialized the transition matrix</span></span>
-<span><span class="va">transition_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/transfert_probabilities.html" class="external-link">transfert_probabilities</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span>
+<span><span class="va">transition_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/transfer_probabilities.html">transfer_probabilities</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span>
 <span><span class="va">transition_df</span></span>
 <span><span class="co">#&gt;               dir1      dir2       dir3</span></span>
 <span><span class="co">#&gt; state_1 0.00000000 0.0774743 0.92252570</span></span>
@@ -178,15 +170,15 @@ Categorical Functional Data (MS-CFD).</p>
 <h2 id="data-processing">Data processing<a class="anchor" aria-label="anchor" href="#data-processing"></a>
 </h2>
 <p>We have to prepare the data before the FPLS method. For each state,
-we build its indicatrice function.</p>
+we build its indicator function.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df_cfd</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "id"    "time"  "state"</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="cat_data_to_indicatrice">cat_data_to_indicatrice<a class="anchor" aria-label="anchor" href="#cat_data_to_indicatrice"></a>
+<h3 id="cat_data_to_indicator">cat_data_to_indicator<a class="anchor" aria-label="anchor" href="#cat_data_to_indicator"></a>
 </h3>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_processed</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/cat_data_to_indicatrice.html" class="external-link">cat_data_to_indicatrice</a></span><span class="op">(</span><span class="va">df_cfd</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">df_processed</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat_data_to_indicator.html">cat_data_to_indicator</a></span><span class="op">(</span><span class="va">df_cfd</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">df_processed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 3</span></span>
@@ -241,7 +233,7 @@ we build its indicatrice function.</p>
 <p>Y generation is based on the following equation : $Y = <em>0 +
 </em>{i=1}^K _0^T _i(t) ind_i(t) dt $ with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mi>n</mi><msub><mi>d</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><msub><mo stretchy="false" form="postfix">}</mo><mrow><mi>t</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mi>T</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow></msub></mrow><annotation encoding="application/x-tex">ind_i(t) = \{0, 1\}_{t \in [0, T]}</annotation></semantics></math>
-the indicatrice function of the state
+the indicator function of the state
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>.</p>
 <p>We link
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\beta_i</annotation></semantics></math>
@@ -252,18 +244,19 @@ with the
 <span>                     beta_real_func_or_list <span class="op">=</span>  <span class="va">beta_func_list</span>,</span>
 <span>                     beta_0_real <span class="op">=</span> <span class="va">beta_0_real</span>,</span>
 <span>                     NotS_ratio <span class="op">=</span> <span class="va">NotS_ratio</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'future' was built under R version 4.4.3</span></span>
 <span><span class="va">Y</span> <span class="op">=</span> <span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "id"       "Y_beta1"  "Y_beta2"  "Y_beta3"  "Y_real"   "Y_noised"</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id  Y_beta1    Y_beta2      Y_beta3    Y_real  Y_noised</span></span>
-<span><span class="co">#&gt; 1  1 29.21242   8.445168 -12.27938095  90.81031  83.70702</span></span>
-<span><span class="co">#&gt; 2  2 29.33400  43.357133  -6.28448556 131.83875 128.92156</span></span>
-<span><span class="co">#&gt; 3  3 61.59767 -32.556458   1.38131403  95.85463 115.60919</span></span>
-<span><span class="co">#&gt; 4  4 21.89818  21.223380  -0.02003002 108.53363 109.42723</span></span>
-<span><span class="co">#&gt; 5  5 56.99972   4.546594  -1.81193494 125.16648 126.80503</span></span>
-<span><span class="co">#&gt; 6  6 18.74040  24.931901  -6.06344099 103.04096 124.77715</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  1 29.21242   8.445168 -12.27938095  90.81031  91.70391</span></span>
+<span><span class="co">#&gt; 2  2 29.33400  43.357133  -6.28448556 131.83875 133.47730</span></span>
+<span><span class="co">#&gt; 3  3 61.59767 -32.556458   1.38131403  95.85463 117.59081</span></span>
+<span><span class="co">#&gt; 4  4 21.89818  21.223380  -0.02003002 108.53363 114.37513</span></span>
+<span><span class="co">#&gt; 5  5 56.99972   4.546594  -1.81193494 125.16648 109.13350</span></span>
+<span><span class="co">#&gt; 6  6 18.74040  24.931901  -6.06344099 103.04096  94.33601</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="test-set">Test set<a class="anchor" aria-label="anchor" href="#test-set"></a>
@@ -273,7 +266,7 @@ with the
 <span><span class="va">df_test</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_X_df_multistates.html">generate_X_df_multistates</a></span><span class="op">(</span>nind <span class="op">=</span> <span class="va">nind_test</span>, <span class="va">N_states</span>, <span class="va">start</span>, <span class="va">end</span>,</span>
 <span>                              <span class="va">lambdas</span>,  <span class="va">transition_df</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_test_processed</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/cat_data_to_indicatrice.html" class="external-link">cat_data_to_indicatrice</a></span><span class="op">(</span><span class="va">df_test</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">df_test_processed</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat_data_to_indicator.html">cat_data_to_indicator</a></span><span class="op">(</span><span class="va">df_test</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">Y_df_test</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_Y_df.html">generate_Y_df</a></span><span class="op">(</span><span class="va">df_test_processed</span>, curve_type <span class="op">=</span> <span class="va">curve_type</span>,</span>
 <span>                          beta_real_func_or_list <span class="op">=</span> <span class="va">beta_func_list</span>,</span>
@@ -295,7 +288,7 @@ with the
 <span><span class="co">#&gt; ### Naive PLS ### </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
-<span><span class="co">#&gt; =&gt; Data formating.</span></span>
+<span><span class="co">#&gt; =&gt; Data formatting.</span></span>
 <span><span class="co">#&gt; =&gt; PLS model.</span></span></code></pre></div>
 <p><img src="s03_CFD_multistates_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; [1] "Optimal number of PLS components :  4"</span></span></code></pre>
@@ -323,7 +316,7 @@ with the
 <span><span class="co">#&gt; =&gt; Evaluate metrix and root_metric.</span></span>
 <span><span class="co">#&gt; =&gt; plsr(Y ~ trans_alphas).</span></span></code></pre></div>
 <p><img src="s03_CFD_multistates_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  4 .</span></span>
+<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  5 .</span></span>
 <span><span class="co">#&gt; =&gt; Build Intercept and regression curves for optimal number of components.</span></span>
 <span><span class="co">#&gt;  ==&gt; Build  regression curve for : CatFD_1_1</span></span>
 <span><span class="co">#&gt;  ==&gt; Build  regression curve for : CatFD_1_2</span></span>
@@ -341,10 +334,13 @@ with the
 <span>                     print_steps <span class="op">=</span> <span class="cn">TRUE</span>, plot_rmsep <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     print_nbComp <span class="op">=</span> <span class="cn">TRUE</span>, plot_reg_curves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
+<span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
+<span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
 <span><span class="co">#&gt; =&gt; Orthonormalize basis.</span></span>
-<span><span class="co">#&gt; =&gt; Data objects formating.</span></span>
+<span><span class="co">#&gt; =&gt; Data objects formatting.</span></span>
 <span><span class="co">#&gt; =&gt; Evaluate Lambda matrix.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_1.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_2.</span></span>
@@ -393,17 +389,17 @@ with the
 <span>  </span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; [1] "State_1"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 16.508353624482 / DIST : 11.0314619032886"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 29.35771321548 / DIST : 12.1643874463008"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -97.5807530400409 / DIST : 38.0034665676067"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 3.72098051938215 / DIST : 11.4910155188119"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 25.0386959831357 / DIST : 12.396413572732"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -151.510446910693 / DIST : 32.9996112554268"</span></span>
 <span><span class="co">#&gt; [1] "State_2"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -24.5437368903076 / DIST : 13.8035954719839"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 34.9726370135252 / DIST : 18.1278375794415"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -79.5832409085427 / DIST : 46.6402437750422"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 21.6384611829502 / DIST : 11.8442729473802"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 44.961118917043 / DIST : 17.9601660134444"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -133.512934779195 / DIST : 39.8105772928267"</span></span>
 <span><span class="co">#&gt; [1] "State_3"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 104.419870266053 / DIST : 29.5476645925441"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 32.0542919126671 / DIST : 10.9087010603926"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -175.099318045128 / DIST : 50.0606852145429"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 71.025199322987 / DIST : 27.6231009463399"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 26.3848272414933 / DIST : 11.1751571035391"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -229.02901191578 / DIST : 48.0770061426967"</span></span></code></pre></div>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">N_states</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">start</span> <span class="op">=</span> <span class="fl">0</span></span>
@@ -493,9 +489,9 @@ with the
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">train_results</span></span>
 <span><span class="co">#&gt;              PRESS     RMSE       MAE        R2     var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  14470.45 12.02932  9.491085 0.8324632  83.24632     4</span></span>
-<span><span class="co">#&gt; FPLS      15673.88 12.51954 10.267672 0.8185302  66.79698     4</span></span>
-<span><span class="co">#&gt; SmoothPLS 64016.98 25.30158 20.707567 0.2588209 277.94668     8</span></span></code></pre></div>
+<span><span class="co">#&gt; NaivePLS  13559.18 11.64439  9.801626 0.8401608  84.01608     4</span></span>
+<span><span class="co">#&gt; FPLS      13622.80 11.67167  9.407000 0.8394108  70.23009     5</span></span>
+<span><span class="co">#&gt; SmoothPLS 73362.15 27.08545 21.832970 0.1351872 274.32359     8</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="test-set-1">Test set<a class="anchor" aria-label="anchor" href="#test-set-1"></a>
@@ -504,7 +500,7 @@ with the
 <code class="sourceCode R"><span><span class="va">Y_test</span> <span class="op">=</span> <span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_noised</span></span>
 <span></span>
 <span><span class="co"># Naive</span></span>
-<span><span class="va">df_test_wide</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/naivePLS_formating.html" class="external-link">naivePLS_formating</a></span><span class="op">(</span>df_list <span class="op">=</span> <span class="va">df_test</span>,</span>
+<span><span class="va">df_test_wide</span> <span class="op">=</span> <span class="fu"><a href="../reference/naivePLS_formatting.html">naivePLS_formatting</a></span><span class="op">(</span>df_list <span class="op">=</span> <span class="va">df_test</span>,</span>
 <span>                                  regul_time_obj <span class="op">=</span> <span class="va">regul_time</span>,</span>
 <span>                                  curve_type_obj <span class="op">=</span> <span class="va">curve_type</span>, </span>
 <span>                                  id_col_obj <span class="op">=</span> <span class="st">'id'</span>, time_col_obj <span class="op">=</span> <span class="st">'time'</span><span class="op">)</span></span>
@@ -537,10 +533,10 @@ with the
 <span><span class="va">test_results</span><span class="op">[</span><span class="st">"SmoothPLS"</span>, <span class="st">"nb_cp"</span><span class="op">]</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">nbCP_opti</span></span></code></pre></div>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_results</span></span>
-<span><span class="co">#&gt;              PRESS      RMSE       MAE        R2     var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  1629.118  8.072466  6.566654 0.8931642 104.78335     4</span></span>
-<span><span class="co">#&gt; FPLS      2045.938  9.046409  7.468720 0.8658295  63.63048     4</span></span>
-<span><span class="co">#&gt; SmoothPLS 9395.897 19.386487 16.376717 0.3838270 273.43670     8</span></span></code></pre></div>
+<span><span class="co">#&gt;               PRESS      RMSE       MAE         R2     var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS   2145.521  9.263954  8.224727  0.8269473 109.30089     4</span></span>
+<span><span class="co">#&gt; FPLS       1828.114  8.551291  6.671840  0.8525486  78.18203     5</span></span>
+<span><span class="co">#&gt; SmoothPLS 16226.443 25.476612 20.943841 -0.3087869 317.83813     8</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plot-results">Plot results<a class="anchor" aria-label="anchor" href="#plot-results"></a>
@@ -548,15 +544,15 @@ with the
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">train_results</span></span>
 <span><span class="co">#&gt;              PRESS     RMSE       MAE        R2     var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  14470.45 12.02932  9.491085 0.8324632  83.24632     4</span></span>
-<span><span class="co">#&gt; FPLS      15673.88 12.51954 10.267672 0.8185302  66.79698     4</span></span>
-<span><span class="co">#&gt; SmoothPLS 64016.98 25.30158 20.707567 0.2588209 277.94668     8</span></span>
+<span><span class="co">#&gt; NaivePLS  13559.18 11.64439  9.801626 0.8401608  84.01608     4</span></span>
+<span><span class="co">#&gt; FPLS      13622.80 11.67167  9.407000 0.8394108  70.23009     5</span></span>
+<span><span class="co">#&gt; SmoothPLS 73362.15 27.08545 21.832970 0.1351872 274.32359     8</span></span>
 <span></span>
 <span><span class="va">test_results</span></span>
-<span><span class="co">#&gt;              PRESS      RMSE       MAE        R2     var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  1629.118  8.072466  6.566654 0.8931642 104.78335     4</span></span>
-<span><span class="co">#&gt; FPLS      2045.938  9.046409  7.468720 0.8658295  63.63048     4</span></span>
-<span><span class="co">#&gt; SmoothPLS 9395.897 19.386487 16.376717 0.3838270 273.43670     8</span></span></code></pre></div>
+<span><span class="co">#&gt;               PRESS      RMSE       MAE         R2     var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS   2145.521  9.263954  8.224727  0.8269473 109.30089     4</span></span>
+<span><span class="co">#&gt; FPLS       1828.114  8.551291  6.671840  0.8525486  78.18203     5</span></span>
+<span><span class="co">#&gt; SmoothPLS 16226.443 25.476612 20.943841 -0.3087869 317.83813     8</span></span></code></pre></div>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_model_metrics_base.html">plot_model_metrics_base</a></span><span class="op">(</span><span class="va">train_results</span>, <span class="va">test_results</span><span class="op">)</span></span></code></pre></div>
 <p><img src="s03_CFD_multistates_files/figure-html/unnamed-chunk-31-1.png" width="700"><img src="s03_CFD_multistates_files/figure-html/unnamed-chunk-31-2.png" width="700"><img src="s03_CFD_multistates_files/figure-html/unnamed-chunk-31-3.png" width="700"><img src="s03_CFD_multistates_files/figure-html/unnamed-chunk-31-4.png" width="700"></p>

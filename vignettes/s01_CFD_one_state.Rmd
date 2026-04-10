@@ -245,11 +245,12 @@ r_squared_values(Y_df_test$Y_real, Y_hat_fpls_test)
 # Smooth PLS
 ```{r}
 spls_obj = smoothPLS(df_list = df, Y = Y, basis_obj = basis,
-                       curve_type_obj = 'cat', orth_obj = TRUE, int_mode = 1,
-                       print_steps = TRUE, print_nbComp = TRUE, 
-                       plot_rmsep = TRUE, plot_reg_curves = TRUE,
-                       id_col_obj = 'id',time_col_obj = 'time',
-                       jackknife = TRUE, validation = 'LOO')
+                     curve_type_obj = 'cat', orth_obj = TRUE, int_mode = 1,
+                     print_steps = TRUE, print_nbComp = TRUE, 
+                     plot_rmsep = TRUE, plot_reg_curves = TRUE,
+                     id_col_obj = 'id',time_col_obj = 'time',
+                     jackknife = TRUE, validation = 'LOO',
+                     parallel=FALSE)
 ```
 ## delta
 Delta Smooth_PLS

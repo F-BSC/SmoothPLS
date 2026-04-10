@@ -308,7 +308,7 @@ lambdas
 
 ```{r}
 # Initialized the transition matrix
-transition_df = transfert_probabilities(N_states)
+transition_df = transfer_probabilities(N_states)
 transition_df
 ```
 
@@ -359,8 +359,8 @@ order(unique(df$state)) # Warning, give the indices of the order!
 state_ordered = unique(df$state)[order(unique(df$state))]
 state_ordered
 ```
-## state_indicatrice
-This function transform a categorical functional data with its indicatrices
+## state_indicator
+This function transform a categorical functional data with its indicator function
 into a dedicated list of all the state (one per different state)
 
 This function sort the states by ascending order (if numeric) and put the name
@@ -372,7 +372,7 @@ This function will also work with character states.
 ordered.*
 
 ```{r}
-si_df = state_indicatrices(df, id_col='id', time_col='time')
+si_df = state_indicator(df, id_col='id', time_col='time')
 names(si_df)
 ```
 
@@ -381,7 +381,7 @@ head(si_df)
 ```
 
 ## split_in_state_df
-This function transform a categorical functional data with its indicatrices
+This function transform a categorical functional data with its indicator function
 into a dedicated list of all the state (one per different state)
 ```{r}
 split_df = split_in_state_df(si_df, id_col='id', time_col='time')
@@ -395,8 +395,8 @@ head(split_df[[4]])
 ```
 
 ## build_df_per_state
-This function takes the data_list with one dataframe per state indicatrice 
-and remove the duplicated state of each state indicatrice with the function 
+This function takes the data_list with one dataframe per state indicator function 
+and remove the duplicated state of each state indicator with the function 
 *remove_duplicate_states()*.
 
 ```{r}
@@ -409,12 +409,12 @@ mode(states_df)
 plot_CFD_individuals(states_df[[1]])
 ```
 
-## cat_data_to_indicatrice
+## cat_data_to_indicator
 This function apply all functions to go from a categorical functional data
-with different states to a list of one dataframe per state indicatrice 
+with different states to a list of one dataframe per state indicator function. 
 whose duplicated states where removed
 ```{r}
-df_list = cat_data_to_indicatrice(df)
+df_list = cat_data_to_indicator(df)
 names(df_list)
 head(df_list$state_1)
 ```

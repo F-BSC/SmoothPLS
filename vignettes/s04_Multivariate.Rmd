@@ -88,7 +88,7 @@ lambdas
 ## tranfer_probabilities
 ```{r}
 # Initialized the transition matrix
-transition_df = transfert_probabilities(N_states)
+transition_df = transfer_probabilities(N_states)
 transition_df
 ```
 
@@ -131,12 +131,12 @@ for(i in 1:N_states){
 ## Y evaluation
 Y generation is based on the following equation : 
 $Y = \beta_0 + \sum_{i=1}^K \int_0^T \beta_i(t) ind_i(t) dt $
-with $ind_i(t) = \{0, 1\}_{t \in [0, T]}$ the indicatrice function of the state $i$.
+with $ind_i(t) = \{0, 1\}_{t \in [0, T]}$ the indicator function of the state $i$.
 
 We link $\beta_i$ with the $state_i$.
 
 ```{r}
-df_processed = cat_data_to_indicatrice(data = df_cfd)
+df_processed = cat_data_to_indicator(data = df_cfd)
 ```
 
 
@@ -256,7 +256,7 @@ df_cfd_test = generate_X_df_multistates(nind = nind_test, N_states, start, end,
 
 ### Y_df_cfd_test
 ```{r}
-df_cfd_test_processed = cat_data_to_indicatrice(df_cfd_test)
+df_cfd_test_processed = cat_data_to_indicator(df_cfd_test)
 
 Y_df_cfd_test = generate_Y_df(df_cfd_test_processed, curve_type = 'cat',
                           beta_real_func_or_list = beta_func_list,
@@ -625,7 +625,7 @@ train_results
 Y_test = Y_cfd_test + Y_sfd_test + Y_cfd_os_test
 
 # Naive
-df_test_wide = naivePLS_formating(df_list = list(df_cfd_test, 
+df_test_wide = naivePLS_formatting(df_list = list(df_cfd_test, 
                                                  df_sfd_test, 
                                                  df_cfd_os_test),
                                   regul_time_obj = regul_time,

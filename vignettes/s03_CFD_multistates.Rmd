@@ -57,7 +57,7 @@ lambdas
 ## tranfer_probabilities
 ```{r}
 # Initialized the transition matrix
-transition_df = transfert_probabilities(N_states)
+transition_df = transfer_probabilities(N_states)
 transition_df
 ```
 
@@ -91,15 +91,15 @@ plot(basis, main=paste0(nbasis, " ", basis$type," functions basis"))
 
 # Data processing
 We have to prepare the data before the FPLS method. For each state, we build its 
-indicatrice function.
+indicator function.
 
 ```{r}
 names(df_cfd)
 ```
 
-## cat_data_to_indicatrice
+## cat_data_to_indicator
 ```{r}
-df_processed = cat_data_to_indicatrice(df_cfd)
+df_processed = cat_data_to_indicator(df_cfd)
 
 length(df_processed)
 names(df_processed)
@@ -132,7 +132,7 @@ for(i in 1:length(beta_func_list)){
 # Y evaluation
 Y generation is based on the following equation : 
 $Y = \beta_0 + \sum_{i=1}^K \int_0^T \beta_i(t) ind_i(t) dt $
-with $ind_i(t) = \{0, 1\}_{t \in [0, T]}$ the indicatrice function of the state $i$.
+with $ind_i(t) = \{0, 1\}_{t \in [0, T]}$ the indicator function of the state $i$.
 
 We link $\beta_i$ with the $state_i$.
 
@@ -158,7 +158,7 @@ df_test = generate_X_df_multistates(nind = nind_test, N_states, start, end,
 ```
 
 ```{r}
-df_test_processed = cat_data_to_indicatrice(df_test)
+df_test_processed = cat_data_to_indicator(df_test)
 
 Y_df_test = generate_Y_df(df_test_processed, curve_type = curve_type,
                           beta_real_func_or_list = beta_func_list,
@@ -327,7 +327,7 @@ train_results
 Y_test = Y_df_test$Y_noised
 
 # Naive
-df_test_wide = naivePLS_formating(df_list = df_test,
+df_test_wide = naivePLS_formatting(df_list = df_test,
                                   regul_time_obj = regul_time,
                                   curve_type_obj = curve_type, 
                                   id_col_obj = 'id', time_col_obj = 'time')

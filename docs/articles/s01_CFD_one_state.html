@@ -71,15 +71,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SmoothPLS</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'fda::matplot' by 'graphics::matplot' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'pls::loadings' by 'stats::loadings' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading</span></span>
-<span><span class="co">#&gt; 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::filter' by 'stats::filter' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/FrancoisBassac/SmoothPLS" class="external-link">SmoothPLS</a></span><span class="op">)</span></span>
 <span><span class="co">#library(ggplot2)</span></span></code></pre></div>
 <p>This vignette show the comparison for a one state Categorical
 Functional Data (CFD) between the naive PLS, Functional PLS and Smooth
@@ -162,6 +154,7 @@ PLS.</p>
 <code class="sourceCode R"><span><span class="va">Y_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_Y_df.html">generate_Y_df</a></span><span class="op">(</span><span class="va">df</span>, curve_type <span class="op">=</span> <span class="st">'cat'</span>,</span>
 <span>                     beta_real_func_or_list <span class="op">=</span> <span class="va">beta_real_func</span>, </span>
 <span>                     <span class="va">beta_0_real</span>, <span class="va">NotS_ratio</span>, id_col <span class="op">=</span> <span class="st">'id'</span>, time_col <span class="op">=</span> <span class="st">'time'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'future' was built under R version 4.4.3</span></span>
 <span></span>
 <span><span class="va">Y_df_test</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_Y_df.html">generate_Y_df</a></span><span class="op">(</span><span class="va">df_test</span>, curve_type <span class="op">=</span> <span class="st">'cat'</span>, </span>
 <span>                          beta_real_func_or_list <span class="op">=</span>  <span class="va">beta_real_func</span>, </span>
@@ -222,7 +215,7 @@ following chunks.</p>
 <span><span class="co">#&gt; ### Naive PLS ### </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
-<span><span class="co">#&gt; =&gt; Data formating.</span></span>
+<span><span class="co">#&gt; =&gt; Data formatting.</span></span>
 <span><span class="co">#&gt; =&gt; PLS model.</span></span></code></pre></div>
 <p><img src="s01_CFD_one_state_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; [1] "Optimal number of PLS components :  2"</span></span></code></pre>
@@ -252,17 +245,17 @@ following chunks.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Y_hat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.7535569</span></span>
+<span><span class="co">#&gt; [1] 0.7678782</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.8121943</span></span>
+<span><span class="co">#&gt; [1] 0.8320421</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Press \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Press</span></span>
 <span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Y_hat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 11934.96</span></span>
+<span><span class="co">#&gt; [1] 11516.94</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"RMSEP \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; RMSEP</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Y_hat</span><span class="op">)</span><span class="op">/</span><span class="va">nind</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 10.92472</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 10.7317</span></span></code></pre></div>
 <p>On test set :</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y_hat_test</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">naive_pls_obj</span><span class="op">$</span><span class="va">plsr_model</span>,</span>
@@ -276,19 +269,19 @@ following chunks.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_noised \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_noised</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_test</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.7149837</span></span>
+<span><span class="co">#&gt; [1] 0.600826</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_real \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_real</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_test</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.7061518</span></span>
+<span><span class="co">#&gt; [1] 0.7949041</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Press \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Press</span></span>
 <span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_test</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 3195.561</span></span>
+<span><span class="co">#&gt; [1] 2230.391</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"RMSEP \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; RMSEP</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_test</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_test</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 11.30586</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 9.445404</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -308,7 +301,7 @@ following chunks.</p>
 <span><span class="co">#&gt; =&gt; Evaluate metrix and root_metric.</span></span>
 <span><span class="co">#&gt; =&gt; plsr(Y ~ trans_alphas).</span></span></code></pre></div>
 <p><img src="s01_CFD_one_state_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  5 .</span></span>
+<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  2 .</span></span>
 <span><span class="co">#&gt; =&gt; Build Intercept and regression curves for optimal number of components.</span></span>
 <span><span class="co">#&gt;  ==&gt; Build  regression curve for : CatFD_1_state_1</span></span></code></pre>
 <p><img src="s01_CFD_one_state_files/figure-html/unnamed-chunk-12-2.png" width="700"></p>
@@ -337,9 +330,9 @@ following chunks.</p>
 <span>              <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_fpls</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_fpls</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 46.07352</span></span>
+<span><span class="co">#&gt; [1] 48.49346</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_fpls</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_fpls</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 45.68481</span></span>
+<span><span class="co">#&gt; [1] 48.21771</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"NotS_ratio \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; NotS_ratio</span></span>
@@ -348,11 +341,11 @@ following chunks.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_noised \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_noised</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_fpls</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] -3.309624</span></span>
+<span><span class="co">#&gt; [1] -3.685889</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_real \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_real</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_fpls</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] -3.90061</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] -4.428922</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y_hat_fpls_test</span> <span class="op">=</span> <span class="fu"><a href="../reference/smoothPLS_predict.html">smoothPLS_predict</a></span><span class="op">(</span>df_predict <span class="op">=</span> <span class="va">df_test</span>, </span>
 <span>                                    delta_list <span class="op">=</span> <span class="va">fpls_obj</span><span class="op">$</span><span class="va">reg_obj</span>,</span>
@@ -360,9 +353,9 @@ following chunks.</p>
 <span>                                    regul_time_obj <span class="op">=</span> <span class="va">regul_time</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_fpls_test</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_fpls_test</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 7.629597</span></span>
+<span><span class="co">#&gt; [1] 3.945121</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_fpls_test</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_fpls_test</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 9.066582</span></span>
+<span><span class="co">#&gt; [1] 10.27909</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2</span></span>
@@ -371,11 +364,11 @@ following chunks.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_noised \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_noised</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_fpls_test</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.7584961</span></span>
+<span><span class="co">#&gt; [1] 0.730098</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_real \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_real</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_fpls_test</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.8661806</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.9642203</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -383,16 +376,17 @@ following chunks.</p>
 </h2>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spls_obj</span> <span class="op">=</span> <span class="fu"><a href="../reference/smoothPLS.html">smoothPLS</a></span><span class="op">(</span>df_list <span class="op">=</span> <span class="va">df</span>, Y <span class="op">=</span> <span class="va">Y</span>, basis_obj <span class="op">=</span> <span class="va">basis</span>,</span>
-<span>                       curve_type_obj <span class="op">=</span> <span class="st">'cat'</span>, orth_obj <span class="op">=</span> <span class="cn">TRUE</span>, int_mode <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                       print_steps <span class="op">=</span> <span class="cn">TRUE</span>, print_nbComp <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>                       plot_rmsep <span class="op">=</span> <span class="cn">TRUE</span>, plot_reg_curves <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                       id_col_obj <span class="op">=</span> <span class="st">'id'</span>,time_col_obj <span class="op">=</span> <span class="st">'time'</span>,</span>
-<span>                       jackknife <span class="op">=</span> <span class="cn">TRUE</span>, validation <span class="op">=</span> <span class="st">'LOO'</span><span class="op">)</span></span>
+<span>                     curve_type_obj <span class="op">=</span> <span class="st">'cat'</span>, orth_obj <span class="op">=</span> <span class="cn">TRUE</span>, int_mode <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                     print_steps <span class="op">=</span> <span class="cn">TRUE</span>, print_nbComp <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>                     plot_rmsep <span class="op">=</span> <span class="cn">TRUE</span>, plot_reg_curves <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     id_col_obj <span class="op">=</span> <span class="st">'id'</span>,time_col_obj <span class="op">=</span> <span class="st">'time'</span>,</span>
+<span>                     jackknife <span class="op">=</span> <span class="cn">TRUE</span>, validation <span class="op">=</span> <span class="st">'LOO'</span>,</span>
+<span>                     parallel<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
 <span><span class="co">#&gt; =&gt; Orthonormalize basis.</span></span>
-<span><span class="co">#&gt; =&gt; Data objects formating.</span></span>
+<span><span class="co">#&gt; =&gt; Data objects formatting.</span></span>
 <span><span class="co">#&gt; =&gt; Evaluate Lambda matrix.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_1.</span></span>
 <span><span class="co">#&gt; =&gt; PLSR model.</span></span>
@@ -406,7 +400,7 @@ following chunks.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">delta_0</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">Intercept</span></span>
 <span><span class="va">delta_0</span></span>
-<span><span class="co">#&gt; [1] 4.688372</span></span>
+<span><span class="co">#&gt; [1] -0.2851742</span></span>
 <span></span>
 <span><span class="va">delta</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">CatFD_1_state_1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">delta</span><span class="op">)</span></span></code></pre></div>
@@ -439,9 +433,9 @@ following chunks.</p>
 <span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_spls</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_spls</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 3.07609</span></span>
+<span><span class="co">#&gt; [1] 3.127829</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_spls</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_spls</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 8.969449</span></span>
+<span><span class="co">#&gt; [1] 8.926796</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2</span></span>
@@ -450,11 +444,11 @@ following chunks.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_noised \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_noised</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_spls</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.8338779</span></span>
+<span><span class="co">#&gt; [1] 0.8393909</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_real \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_real</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_spls</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.9781553</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.9774143</span></span></code></pre></div>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y_hat_spls_test</span> <span class="op">=</span> <span class="fu"><a href="../reference/smoothPLS_predict.html">smoothPLS_predict</a></span><span class="op">(</span>df_predict <span class="op">=</span> <span class="va">df_test</span>,</span>
 <span>                                    delta_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">delta_0</span>, <span class="va">delta</span><span class="op">)</span>,</span>
@@ -464,9 +458,9 @@ following chunks.</p>
 <span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_spls</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_spls_test</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 47.03738</span></span>
+<span><span class="co">#&gt; [1] 47.52298</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="../reference/press_values.html">press_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_spls</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Y_hat_spls_test</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 47.24747</span></span>
+<span><span class="co">#&gt; [1] 46.99441</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2</span></span>
@@ -475,11 +469,11 @@ following chunks.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_noised \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_noised</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_noised</span>, <span class="va">Y_hat_spls_test</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.7871684</span></span>
+<span><span class="co">#&gt; [1] 0.7219523</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"R^2 on Y_df_test$Y_real \n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R^2 on Y_df_test$Y_real</span></span>
 <span><span class="fu"><a href="../reference/r_squared_values.html">r_squared_values</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">$</span><span class="va">Y_real</span>, <span class="va">Y_hat_spls_test</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.9820812</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.9839068</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -502,9 +496,9 @@ following chunks.</p>
 <span>                                      y <span class="op">=</span> <span class="va">naive_pls_obj</span><span class="op">$</span><span class="va">opti_reg_coef</span><span class="op">)</span></span>
 <span>                            <span class="op">)</span></span>
 <span>                          <span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -1.83133992755997 / DIST : 3.47340938618729"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : -3.94412502584321 / DIST : 11.6410526992505"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -225.246463512732 / DIST : 54.6427740883803"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -8.64690065515022 / DIST : 3.62140840065327"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : -1.60878829989084 / DIST : 4.33943943908411"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -212.658700236693 / DIST : 58.3398953923996"</span></span></code></pre></div>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">y_lim</span> <span class="op">=</span> <span class="fu"><a href="../reference/eval_max_min_y.html">eval_max_min_y</a></span><span class="op">(</span>f_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">spls_obj</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">CatFD_1_state_1</span>,</span>
 <span>                                     <span class="va">fpls_obj</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">CatFD_1_state_1</span>,</span>
@@ -619,9 +613,9 @@ following chunks.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">train_results</span></span>
 <span><span class="co">#&gt;               PRESS      RMSE      MAE        R2    var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  11934.955 10.924722 8.735498 0.7535569 75.35569     2</span></span>
-<span><span class="co">#&gt; FPLS      11061.315 10.517279 8.430120 0.7715966 67.62400     5</span></span>
-<span><span class="co">#&gt; SmoothPLS  8045.101  8.969449 7.270023 0.8338779 83.38604     2</span></span></code></pre></div>
+<span><span class="co">#&gt; NaivePLS  11516.938 10.731700 8.899796 0.7678782 76.78782     2</span></span>
+<span><span class="co">#&gt; FPLS       9650.888  9.823893 7.972429 0.8054881 61.72924     2</span></span>
+<span><span class="co">#&gt; SmoothPLS  7968.769  8.926796 7.044480 0.8393909 84.17329     2</span></span></code></pre></div>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">Y_train</span> <span class="op">-</span> <span class="va">Y_hat_fpls</span><span class="op">)</span></span>
@@ -672,10 +666,10 @@ following chunks.</p>
 <span>                                  curve_type_obj <span class="op">=</span> <span class="st">'cat'</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_results</span></span>
-<span><span class="co">#&gt;              PRESS     RMSE      MAE        R2     var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  2425.340 9.849548 8.317628 0.7149837  88.32737     2</span></span>
-<span><span class="co">#&gt; FPLS      2055.073 9.066582 7.437308 0.7584961  91.06221     5</span></span>
-<span><span class="co">#&gt; SmoothPLS 1811.086 8.511372 7.218302 0.7871684 113.47377     2</span></span></code></pre></div>
+<span><span class="co">#&gt;              PRESS     RMSE       MAE        R2     var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS  3906.659 12.50065 10.269340 0.6008260  89.90318     2</span></span>
+<span><span class="co">#&gt; FPLS      2641.492 10.27909  8.317701 0.7300980  80.29085     2</span></span>
+<span><span class="co">#&gt; SmoothPLS 2721.213 10.43305  8.373668 0.7219523 109.83704     2</span></span></code></pre></div>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">Y_test</span> <span class="op">-</span> <span class="va">Y_hat_fpls</span><span class="op">)</span></span>
@@ -742,14 +736,17 @@ following chunks.</p>
 <span>                       print_steps <span class="op">=</span> <span class="cn">TRUE</span>, plot_rmsep <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>                       print_nbComp <span class="op">=</span> <span class="cn">TRUE</span>, plot_reg_curves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
+<span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
+<span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
 <span><span class="co">#&gt; =&gt; Orthonormalize basis.</span></span>
-<span><span class="co">#&gt; =&gt; Data objects formating.</span></span>
+<span><span class="co">#&gt; =&gt; Data objects formatting.</span></span>
 <span><span class="co">#&gt; =&gt; Evaluate Lambda matrix.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_1.</span></span>
 <span><span class="co">#&gt; =&gt; PLSR model.</span></span>
-<span><span class="co">#&gt; =&gt; Optimal number of PLS components : 2</span></span></code></pre></div>
+<span><span class="co">#&gt; =&gt; Optimal number of PLS components : 3</span></span></code></pre></div>
 <p><img src="s01_CFD_one_state_files/figure-html/unnamed-chunk-37-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; =&gt; Evaluate SmoothPLS functions and &lt;w_i, p_j&gt; coef.</span></span>
 <span><span class="co">#&gt; =&gt; Build regression functions and intercept.</span></span>
@@ -784,8 +781,8 @@ following chunks.</p>
 <span>                          regul_time <span class="op">=</span> <span class="va">regul_time</span>, </span>
 <span>                          fun_fd_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">delta_2</span>, </span>
 <span>                                             <span class="va">fpls_obj_2</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">CatFD</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -2.22300226853528 / DIST : 2.77040137597071"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : -3.27136626327646 / DIST : 4.96953315597249"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -14.7996269337727 / DIST : 3.80924706990471"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : -3.71157039027193 / DIST : 4.03448526199711"</span></span></code></pre></div>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"curve_1 : smooth PLS regression curve.\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; curve_1 : smooth PLS regression curve.</span></span>
@@ -803,9 +800,9 @@ following chunks.</p>
 <span>                                      y <span class="op">=</span> <span class="va">naive_pls_obj</span><span class="op">$</span><span class="va">opti_reg_coef</span><span class="op">)</span></span>
 <span>                            <span class="op">)</span></span>
 <span>                          <span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -2.22300226853528 / DIST : 2.77040137597071"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : -3.27136626327646 / DIST : 4.96953315597249"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -225.246463512732 / DIST : 54.6427740883803"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -14.7996269337727 / DIST : 3.80924706990471"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : -3.71157039027193 / DIST : 4.03448526199711"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -212.658700236693 / DIST : 58.3398953923996"</span></span></code></pre></div>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">y_lim</span> <span class="op">=</span> <span class="fu"><a href="../reference/eval_max_min_y.html">eval_max_min_y</a></span><span class="op">(</span>f_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">spls_obj_2</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">CatFD_1_state_1</span>,</span>
 <span>                                     <span class="va">fpls_obj_2</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">CatFD_1_state_1</span>,</span>
@@ -899,10 +896,10 @@ following chunks.</p>
 <span><span class="va">train_results_f</span><span class="op">[</span><span class="st">"SmoothPLS"</span>, <span class="st">"nb_cp"</span><span class="op">]</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">nbCP_opti</span></span></code></pre></div>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">train_results_f</span></span>
-<span><span class="co">#&gt;                PRESS      RMSE       MAE         R2    var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS   11934.955 10.924722  8.735498  0.7535569 75.35569     2</span></span>
-<span><span class="co">#&gt; FPLS      226721.578 47.615289 46.088442 -3.6815395 70.45743     5</span></span>
-<span><span class="co">#&gt; SmoothPLS   8160.272  9.033422  7.238715  0.8314998 83.15078     2</span></span></code></pre></div>
+<span><span class="co">#&gt;                PRESS     RMSE       MAE         R2    var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS   11516.938 10.73170  8.899796  0.7678782 76.78782     2</span></span>
+<span><span class="co">#&gt; FPLS      222817.860 47.20359 45.837142 -3.4908532 74.37618     2</span></span>
+<span><span class="co">#&gt; SmoothPLS   8908.397  9.43843  7.593621  0.8204529 82.27065     2</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="test-set-1">Test set<a class="anchor" aria-label="anchor" href="#test-set-1"></a>
@@ -937,10 +934,10 @@ following chunks.</p>
 <span><span class="va">test_results_f</span><span class="op">[</span><span class="st">"SmoothPLS"</span>, <span class="st">"nb_cp"</span><span class="op">]</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">nbCP_opti</span></span></code></pre></div>
 <div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_results_f</span></span>
-<span><span class="co">#&gt;              PRESS     RMSE      MAE        R2     var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  2425.340 9.849548 8.317628 0.7149837  88.32737     2</span></span>
-<span><span class="co">#&gt; FPLS      1933.648 8.794652 7.583591 0.7727654  81.92490     5</span></span>
-<span><span class="co">#&gt; SmoothPLS 1827.665 8.550240 7.122234 0.7852201 113.37052     2</span></span></code></pre></div>
+<span><span class="co">#&gt;              PRESS      RMSE       MAE        R2     var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS  3906.659 12.500654 10.269340 0.6008260  89.90318     2</span></span>
+<span><span class="co">#&gt; FPLS      2209.414  9.400881  7.643499 0.7742468  83.69394     2</span></span>
+<span><span class="co">#&gt; SmoothPLS 2787.106 10.558610  8.876089 0.7152194 106.68436     2</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plot-fourier-results">Plot Fourier Results<a class="anchor" aria-label="anchor" href="#plot-fourier-results"></a>

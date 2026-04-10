@@ -71,19 +71,11 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SmoothPLS</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'fda::matplot' by 'graphics::matplot' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'pls::loadings' by 'stats::loadings' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading</span></span>
-<span><span class="co">#&gt; 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::filter' by 'stats::filter' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/FrancoisBassac/SmoothPLS" class="external-link">SmoothPLS</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.4.3</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/khliland/pls" class="external-link">pls</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'pls' was built under R version 4.4.2</span></span>
+<span><span class="co">#&gt; Warning: package 'pls' was built under R version 4.4.3</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'pls'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
@@ -149,6 +141,7 @@ model.</p>
 <span>                     beta_real_func_or_list <span class="op">=</span> <span class="va">beta_func_cfd_os</span>, </span>
 <span>                     beta_0_real <span class="op">=</span> <span class="va">beta_0_real</span>, </span>
 <span>                     <span class="va">NotS_ratio</span>, id_col <span class="op">=</span> <span class="st">'id'</span>, time_col <span class="op">=</span> <span class="st">'time'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'future' was built under R version 4.4.3</span></span>
 <span></span>
 <span><span class="va">Y_cfd_os</span> <span class="op">=</span> <span class="va">Y_df_cfd_os</span><span class="op">$</span><span class="va">Y_noised</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -166,19 +159,19 @@ model.</p>
 <code class="sourceCode R"><span><span class="co"># Initialized the lambdas values</span></span>
 <span><span class="va">lambdas</span> <span class="op">=</span> <span class="fu"><a href="../reference/lambda_determination.html">lambda_determination</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span>
 <span><span class="va">lambdas</span></span>
-<span><span class="co">#&gt; [1] 0.09774521 0.24247179 0.17027315</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.1702731 0.1530059 0.1305147</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="tranfer_probabilities">tranfer_probabilities<a class="anchor" aria-label="anchor" href="#tranfer_probabilities"></a>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialized the transition matrix</span></span>
-<span><span class="va">transition_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/transfert_probabilities.html" class="external-link">transfert_probabilities</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span>
+<span><span class="va">transition_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/transfer_probabilities.html">transfer_probabilities</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span>
 <span><span class="va">transition_df</span></span>
-<span><span class="co">#&gt;              dir1      dir2      dir3</span></span>
-<span><span class="co">#&gt; state_1 0.0000000 0.2390474 0.7609526</span></span>
-<span><span class="co">#&gt; state_2 0.2808689 0.0000000 0.7191311</span></span>
-<span><span class="co">#&gt; state_3 0.4803545 0.5196455 0.0000000</span></span></code></pre></div>
+<span><span class="co">#&gt;              dir1      dir2       dir3</span></span>
+<span><span class="co">#&gt; state_1 0.0000000 0.9016216 0.09837842</span></span>
+<span><span class="co">#&gt; state_2 0.3499127 0.0000000 0.65008728</span></span>
+<span><span class="co">#&gt; state_3 0.7288435 0.2711565 0.00000000</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="df_cfd">df_cfd<a class="anchor" aria-label="anchor" href="#df_cfd"></a>
@@ -189,11 +182,11 @@ model.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df_cfd</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id       time state</span></span>
 <span><span class="co">#&gt; 1  1  0.0000000     3</span></span>
-<span><span class="co">#&gt; 2  1  0.1854512     1</span></span>
-<span><span class="co">#&gt; 3  1  1.2378816     3</span></span>
-<span><span class="co">#&gt; 4  1  3.0833124     1</span></span>
-<span><span class="co">#&gt; 5  1 30.9745675     2</span></span>
-<span><span class="co">#&gt; 6  1 36.8121448     1</span></span></code></pre></div>
+<span><span class="co">#&gt; 2  1  0.2419449     2</span></span>
+<span><span class="co">#&gt; 3  1  0.9142719     3</span></span>
+<span><span class="co">#&gt; 4  1  3.3218733     1</span></span>
+<span><span class="co">#&gt; 5  1 19.3328330     2</span></span>
+<span><span class="co">#&gt; 6  1 28.5837663     1</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_CFD_individuals.html">plot_CFD_individuals</a></span><span class="op">(</span><span class="va">df_cfd</span><span class="op">)</span></span></code></pre></div>
 <p><img src="s04_Multivariate_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
@@ -225,14 +218,14 @@ model.</p>
 <p>Y generation is based on the following equation : $Y = <em>0 +
 </em>{i=1}^K _0^T _i(t) ind_i(t) dt $ with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mi>n</mi><msub><mi>d</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><msub><mo stretchy="false" form="postfix">}</mo><mrow><mi>t</mi><mo>∈</mo><mrow><mo stretchy="true" form="prefix">[</mo><mn>0</mn><mo>,</mo><mi>T</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow></msub></mrow><annotation encoding="application/x-tex">ind_i(t) = \{0, 1\}_{t \in [0, T]}</annotation></semantics></math>
-the indicatrice function of the state
+the indicator function of the state
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>.</p>
 <p>We link
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\beta_i</annotation></semantics></math>
 with the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><msub><mi>e</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">state_i</annotation></semantics></math>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_processed</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/cat_data_to_indicatrice.html" class="external-link">cat_data_to_indicatrice</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">df_cfd</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df_processed</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat_data_to_indicator.html">cat_data_to_indicator</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">df_cfd</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y_df_cfd</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_Y_df.html">generate_Y_df</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">df_processed</span>, curve_type <span class="op">=</span> <span class="va">curve_type</span>,</span>
 <span>                     beta_real_func_or_list <span class="op">=</span>  <span class="va">beta_func_list</span>,</span>
@@ -243,13 +236,13 @@ with the
 <span><span class="co">#&gt; [1] "id"       "Y_beta1"  "Y_beta2"  "Y_beta3"  "Y_real"   "Y_noised"</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">Y_df_cfd</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   id    Y_beta1    Y_beta2     Y_beta3    Y_real  Y_noised</span></span>
-<span><span class="co">#&gt; 1  1  59.339721  -4.203897  -4.2142006 116.35372 106.67075</span></span>
-<span><span class="co">#&gt; 2  2  17.955727  27.442682  -5.2792013 105.55131 101.57468</span></span>
-<span><span class="co">#&gt; 3  3  61.806168 -11.195180   0.3741212 116.41721 143.34600</span></span>
-<span><span class="co">#&gt; 4  4  37.945910  -5.915691 -12.1662298  85.29609  86.51422</span></span>
-<span><span class="co">#&gt; 5  5   5.317098   8.118650 -18.5061778  60.36167  62.59529</span></span>
-<span><span class="co">#&gt; 6  6 -21.933821  27.938739  -9.9306366  61.50638  91.13644</span></span></code></pre></div>
+<span><span class="co">#&gt;   id     Y_beta1  Y_beta2    Y_beta3    Y_real  Y_noised</span></span>
+<span><span class="co">#&gt; 1  1  -0.5744336 11.21356 -14.042536  62.02869  63.46824</span></span>
+<span><span class="co">#&gt; 2  2   6.2252019 61.28043  -2.508630 130.42910 133.06873</span></span>
+<span><span class="co">#&gt; 3  3  40.1709997 56.28836   2.320227 164.21168 199.22766</span></span>
+<span><span class="co">#&gt; 4  4   4.3292435 49.43442  -8.168835 111.02693 120.43732</span></span>
+<span><span class="co">#&gt; 5  5   0.2873630 30.97867 -16.434604  80.26353  54.43515</span></span>
+<span><span class="co">#&gt; 6  6 -15.0665482 77.83615  -3.998699 124.20301 110.17974</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -10394,7 +10387,7 @@ the signal and the seed for repeatability.</p>
 <code class="sourceCode R"><span><span class="va">df_sfd_long</span> <span class="op">=</span> <span class="fu"><a href="../reference/convert_to_wide_format.html">convert_to_wide_format</a></span><span class="op">(</span><span class="va">df_sfd_regul</span><span class="op">)</span></span>
 <span><span class="va">df_sfd_long</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 100 × 102</span></span></span>
-<span><span class="co">#&gt;       id    t0    t1    t2    t3    t4    t5    t6      t7      t8       t9</span></span>
+<span><span class="co">#&gt;       id   `0`   `1`   `2`   `3`   `4`   `5`   `6`     `7`     `8`      `9`</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 1.26  0.719 1.05  0.730 0.611 0.535 0.577 0.002<span style="text-decoration: underline;">11</span>  0.390   0.086<span style="text-decoration: underline;">2</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     2 0.938 0.966 0.743 0.496 0.571 0.646 0.299 0.352   -<span style="color: #BB0000;">0.107</span>   0.002<span style="text-decoration: underline;">28</span></span></span>
@@ -10407,12 +10400,12 @@ the signal and the seed for repeatability.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     9 1.32  1.21  1.03  0.554 0.717 0.463 0.393 0.441    0.254  -<span style="color: #BB0000;">0.257</span>  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    10 1.18  1.17  0.847 0.776 1.00  0.572 0.414 0.059<span style="text-decoration: underline;">9</span>   0.137  -<span style="color: #BB0000;">0.022</span><span style="color: #BB0000; text-decoration: underline;">6</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 90 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 91 more variables: t10 &lt;dbl&gt;, t11 &lt;dbl&gt;, t12 &lt;dbl&gt;, t13 &lt;dbl&gt;, t14 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   t15 &lt;dbl&gt;, t16 &lt;dbl&gt;, t17 &lt;dbl&gt;, t18 &lt;dbl&gt;, t19 &lt;dbl&gt;, t20 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   t21 &lt;dbl&gt;, t22 &lt;dbl&gt;, t23 &lt;dbl&gt;, t24 &lt;dbl&gt;, t25 &lt;dbl&gt;, t26 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   t27 &lt;dbl&gt;, t28 &lt;dbl&gt;, t29 &lt;dbl&gt;, t30 &lt;dbl&gt;, t31 &lt;dbl&gt;, t32 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   t33 &lt;dbl&gt;, t34 &lt;dbl&gt;, t35 &lt;dbl&gt;, t36 &lt;dbl&gt;, t37 &lt;dbl&gt;, t38 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   t39 &lt;dbl&gt;, t40 &lt;dbl&gt;, t41 &lt;dbl&gt;, t42 &lt;dbl&gt;, t43 &lt;dbl&gt;, t44 &lt;dbl&gt;, …</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 91 more variables: `10` &lt;dbl&gt;, `11` &lt;dbl&gt;, `12` &lt;dbl&gt;, `13` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `14` &lt;dbl&gt;, `15` &lt;dbl&gt;, `16` &lt;dbl&gt;, `17` &lt;dbl&gt;, `18` &lt;dbl&gt;, `19` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `20` &lt;dbl&gt;, `21` &lt;dbl&gt;, `22` &lt;dbl&gt;, `23` &lt;dbl&gt;, `24` &lt;dbl&gt;, `25` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `26` &lt;dbl&gt;, `27` &lt;dbl&gt;, `28` &lt;dbl&gt;, `29` &lt;dbl&gt;, `30` &lt;dbl&gt;, `31` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `32` &lt;dbl&gt;, `33` &lt;dbl&gt;, `34` &lt;dbl&gt;, `35` &lt;dbl&gt;, `36` &lt;dbl&gt;, `37` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `38` &lt;dbl&gt;, `39` &lt;dbl&gt;, `40` &lt;dbl&gt;, `41` &lt;dbl&gt;, `42` &lt;dbl&gt;, `43` &lt;dbl&gt;, …</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="generate_y_df">generate_Y_df<a class="anchor" aria-label="anchor" href="#generate_y_df"></a>
@@ -10500,7 +10493,7 @@ the signal and the seed for repeatability.</p>
 <h4 id="y_df_cfd_test">Y_df_cfd_test<a class="anchor" aria-label="anchor" href="#y_df_cfd_test"></a>
 </h4>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_cfd_test_processed</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/cat_data_to_indicatrice.html" class="external-link">cat_data_to_indicatrice</a></span><span class="op">(</span><span class="va">df_cfd_test</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">df_cfd_test_processed</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat_data_to_indicator.html">cat_data_to_indicator</a></span><span class="op">(</span><span class="va">df_cfd_test</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">Y_df_cfd_test</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_Y_df.html">generate_Y_df</a></span><span class="op">(</span><span class="va">df_cfd_test_processed</span>, curve_type <span class="op">=</span> <span class="st">'cat'</span>,</span>
 <span>                          beta_real_func_or_list <span class="op">=</span> <span class="va">beta_func_list</span>,</span>
@@ -10565,10 +10558,13 @@ the signal and the seed for repeatability.</p>
 <span>                     print_steps <span class="op">=</span> <span class="cn">TRUE</span>, plot_rmsep <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>                     print_nbComp <span class="op">=</span> <span class="cn">TRUE</span>, plot_reg_curves <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
+<span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
+<span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
 <span><span class="co">#&gt; =&gt; Orthonormalize basis.</span></span>
-<span><span class="co">#&gt; =&gt; Data objects formating.</span></span>
+<span><span class="co">#&gt; =&gt; Data objects formatting.</span></span>
 <span><span class="co">#&gt; =&gt; Evaluate Lambda matrix.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_1.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_2.</span></span>
@@ -10609,9 +10605,12 @@ the signal and the seed for repeatability.</p>
 <span>                       id_col_obj <span class="op">=</span> <span class="st">'id'</span>, </span>
 <span>                       time_col_obj <span class="op">=</span>  <span class="st">'time'</span>, plot_reg_curves <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
+<span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
+<span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
 <span><span class="co">#&gt; evaluate_lambda_SFD() : int_mode to 2 for pracma::trapz for</span></span>
 <span><span class="co">#&gt;         integration stability.</span></span>
-<span><span class="co">#&gt; =&gt; Optimal number of PLS components : 4</span></span></code></pre></div>
+<span><span class="co">#&gt; =&gt; Optimal number of PLS components : 2</span></span></code></pre></div>
 <p><img src="s04_Multivariate_files/figure-html/unnamed-chunk-33-1.png" width="700"></p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -10656,6 +10655,9 @@ the signal and the seed for repeatability.</p>
 <span>                       id_col_obj <span class="op">=</span> <span class="st">'id'</span>, </span>
 <span>                       time_col_obj <span class="op">=</span>  <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
+<span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
+<span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
 <span><span class="co">#&gt; evaluate_lambda_SFD() : int_mode to 2 for pracma::trapz for</span></span>
 <span><span class="co">#&gt;         integration stability.</span></span>
 <span><span class="co">#&gt; =&gt; Optimal number of PLS components : 8</span></span></code></pre></div>
@@ -10702,7 +10704,10 @@ the signal and the seed for repeatability.</p>
 <span>                       orth_obj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>                       id_col_obj <span class="op">=</span> <span class="st">'id'</span>, time_col_obj <span class="op">=</span>  <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
-<span><span class="co">#&gt; =&gt; Optimal number of PLS components : 4</span></span></code></pre></div>
+<span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
+<span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
+<span><span class="co">#&gt; =&gt; Optimal number of PLS components : 3</span></span></code></pre></div>
 <p><img src="s04_Multivariate_files/figure-html/unnamed-chunk-37-1.png" width="700"></p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -10746,6 +10751,9 @@ the signal and the seed for repeatability.</p>
 <span>                       orth_obj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>                       id_col_obj <span class="op">=</span> <span class="st">'id'</span>, time_col_obj <span class="op">=</span>  <span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
+<span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
+<span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
 <span><span class="co">#&gt; =&gt; Optimal number of PLS components : 2</span></span></code></pre></div>
 <p><img src="s04_Multivariate_files/figure-html/unnamed-chunk-39-1.png" width="700"></p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
@@ -10799,10 +10807,10 @@ the signal and the seed for repeatability.</p>
 <span><span class="co">#&gt; ### Naive PLS ### </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
-<span><span class="co">#&gt; =&gt; Data formating.</span></span>
+<span><span class="co">#&gt; =&gt; Data formatting.</span></span>
 <span><span class="co">#&gt; =&gt; PLS model.</span></span></code></pre></div>
 <p><img src="s04_Multivariate_files/figure-html/unnamed-chunk-41-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; [1] "Optimal number of PLS components :  3"</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; [1] "Optimal number of PLS components :  4"</span></span></code></pre>
 <p><img src="s04_Multivariate_files/figure-html/unnamed-chunk-41-2.png" width="700"><img src="s04_Multivariate_files/figure-html/unnamed-chunk-41-3.png" width="700"><img src="s04_Multivariate_files/figure-html/unnamed-chunk-41-4.png" width="700"><img src="s04_Multivariate_files/figure-html/unnamed-chunk-41-5.png" width="700"><img src="s04_Multivariate_files/figure-html/unnamed-chunk-41-6.png" width="700"></p>
 </div>
 <div class="section level3">
@@ -10852,10 +10860,13 @@ the signal and the seed for repeatability.</p>
 <span>                     print_steps <span class="op">=</span> <span class="cn">TRUE</span>, plot_rmsep <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>                     print_nbComp <span class="op">=</span> <span class="cn">TRUE</span>, plot_reg_curves <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
+<span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
+<span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
 <span><span class="co">#&gt; =&gt; Orthonormalize basis.</span></span>
-<span><span class="co">#&gt; =&gt; Data objects formating.</span></span>
+<span><span class="co">#&gt; =&gt; Data objects formatting.</span></span>
 <span><span class="co">#&gt; =&gt; Evaluate Lambda matrix.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_1.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_2.</span></span>
@@ -10909,25 +10920,25 @@ the signal and the seed for repeatability.</p>
 <span>  </span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; [1] "Curve_1 : CatFD_1_state_1"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 45.4589826860238 / DIST : 19.5786719328243"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 47.7264427112818 / DIST : 16.6800712981905"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 41.7853080053792 / DIST : 19.8904261170394"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -11.7456881520385 / DIST : 10.4141611316537"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 6.92618317055371 / DIST : 11.1715131044844"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 18.1477818516194 / DIST : 17.1388392835038"</span></span>
 <span><span class="co">#&gt; [1] "Curve_2 : CatFD_1_state_2"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -40.5225109041998 / DIST : 12.680855486958"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 7.66623377518385 / DIST : 14.1092514812064"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 59.2224396709471 / DIST : 32.3428166380675"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 11.3707739559399 / DIST : 10.1368392812849"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 34.2991617994903 / DIST : 14.9062729502682"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 35.5849135171866 / DIST : 28.2953845872559"</span></span>
 <span><span class="co">#&gt; [1] "Curve_3 : CatFD_1_state_3"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 91.8973851311462 / DIST : 24.495743725414"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 41.441205013474 / DIST : 15.5356588797087"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -36.0380669118072 / DIST : 14.072527054915"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 97.2087956267524 / DIST : 25.9397567958679"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 55.6085365298964 / DIST : 15.6469019417299"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : -59.6755930655668 / DIST : 16.6241493848678"</span></span>
 <span><span class="co">#&gt; [1] "Curve_4 : NumFD_2_value"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 62.6470399758628 / DIST : 16.1620170424467"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 60.4408606527109 / DIST : 16.5230477732026"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 41.7853080053792 / DIST : 19.8904261170394"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : 67.2637559607324 / DIST : 16.4251345443308"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 64.43474416561 / DIST : 16.5426851737539"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 18.1477818516194 / DIST : 17.1388392835038"</span></span>
 <span><span class="co">#&gt; [1] "Curve_5 : CatFD_3_state_1"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -55.1993775230364 / DIST : 23.3076284188578"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : -9.54953628762132 / DIST : 13.1747836727349"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 59.2224396709464 / DIST : 34.6536636774368"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -8.18494011193616 / DIST : 17.7432828442507"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 8.56651310111738 / DIST : 8.55653421647756"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 35.5849135171866 / DIST : 34.07878284966"</span></span></code></pre></div>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">N_curves</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">start</span> <span class="op">=</span> <span class="fl">0</span></span>
@@ -11026,10 +11037,10 @@ the signal and the seed for repeatability.</p>
 <span><span class="va">train_results</span><span class="op">[</span><span class="st">"SmoothPLS"</span>, <span class="st">"nb_cp"</span><span class="op">]</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">nbCP_opti</span></span></code></pre></div>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">train_results</span></span>
-<span><span class="co">#&gt;               PRESS     RMSE      MAE        R2    var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS   34127.99 18.47376 15.23133 0.8747350  87.4735     3</span></span>
-<span><span class="co">#&gt; FPLS       62305.04 24.96098 20.34398 0.7713126  79.3705     4</span></span>
-<span><span class="co">#&gt; SmoothPLS 237842.40 48.76909 39.20683 0.1270117 196.5517     4</span></span></code></pre></div>
+<span><span class="co">#&gt;                PRESS      RMSE       MAE        R2     var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS    9548.907  9.771851  8.119854 0.9728481  97.28481     4</span></span>
+<span><span class="co">#&gt; FPLS       35695.204 18.893175 15.600878 0.8985022  91.07308     4</span></span>
+<span><span class="co">#&gt; SmoothPLS 167866.277 40.971487 33.072852 0.5226792 206.08672     4</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="test-set-1">Test set<a class="anchor" aria-label="anchor" href="#test-set-1"></a>
@@ -11038,7 +11049,7 @@ the signal and the seed for repeatability.</p>
 <code class="sourceCode R"><span><span class="va">Y_test</span> <span class="op">=</span> <span class="va">Y_cfd_test</span> <span class="op">+</span> <span class="va">Y_sfd_test</span> <span class="op">+</span> <span class="va">Y_cfd_os_test</span></span>
 <span></span>
 <span><span class="co"># Naive</span></span>
-<span><span class="va">df_test_wide</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/naivePLS_formating.html" class="external-link">naivePLS_formating</a></span><span class="op">(</span>df_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">df_cfd_test</span>, </span>
+<span><span class="va">df_test_wide</span> <span class="op">=</span> <span class="fu"><a href="../reference/naivePLS_formatting.html">naivePLS_formatting</a></span><span class="op">(</span>df_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">df_cfd_test</span>, </span>
 <span>                                                 <span class="va">df_sfd_test</span>, </span>
 <span>                                                 <span class="va">df_cfd_os_test</span><span class="op">)</span>,</span>
 <span>                                  regul_time_obj <span class="op">=</span> <span class="va">regul_time</span>,</span>
@@ -11083,25 +11094,25 @@ the signal and the seed for repeatability.</p>
 <span><span class="va">test_results</span><span class="op">[</span><span class="st">"SmoothPLS"</span>, <span class="st">"nb_cp"</span><span class="op">]</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">nbCP_opti</span></span></code></pre></div>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_results</span></span>
-<span><span class="co">#&gt;              PRESS     RMSE      MAE        R2     var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  10079.46 20.07930 17.35914 0.9010631  80.18489     3</span></span>
-<span><span class="co">#&gt; FPLS      17808.40 26.68962 21.40891 0.8251981  70.03083     4</span></span>
-<span><span class="co">#&gt; SmoothPLS 71027.91 53.30212 44.29219 0.3028116 164.57063     4</span></span></code></pre></div>
+<span><span class="co">#&gt;               PRESS     RMSE       MAE        R2     var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS   2511.155 10.02229  8.466702 0.9647426 104.23750     4</span></span>
+<span><span class="co">#&gt; FPLS       7814.629 17.68008 14.928440 0.8902802  88.81967     4</span></span>
+<span><span class="co">#&gt; SmoothPLS 45104.212 42.47550 36.815910 0.3667232 200.45022     4</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plot-results">Plot results<a class="anchor" aria-label="anchor" href="#plot-results"></a>
 </h3>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">train_results</span></span>
-<span><span class="co">#&gt;               PRESS     RMSE      MAE        R2    var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS   34127.99 18.47376 15.23133 0.8747350  87.4735     3</span></span>
-<span><span class="co">#&gt; FPLS       62305.04 24.96098 20.34398 0.7713126  79.3705     4</span></span>
-<span><span class="co">#&gt; SmoothPLS 237842.40 48.76909 39.20683 0.1270117 196.5517     4</span></span>
+<span><span class="co">#&gt;                PRESS      RMSE       MAE        R2     var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS    9548.907  9.771851  8.119854 0.9728481  97.28481     4</span></span>
+<span><span class="co">#&gt; FPLS       35695.204 18.893175 15.600878 0.8985022  91.07308     4</span></span>
+<span><span class="co">#&gt; SmoothPLS 167866.277 40.971487 33.072852 0.5226792 206.08672     4</span></span>
 <span><span class="va">test_results</span></span>
-<span><span class="co">#&gt;              PRESS     RMSE      MAE        R2     var_Y nb_cp</span></span>
-<span><span class="co">#&gt; NaivePLS  10079.46 20.07930 17.35914 0.9010631  80.18489     3</span></span>
-<span><span class="co">#&gt; FPLS      17808.40 26.68962 21.40891 0.8251981  70.03083     4</span></span>
-<span><span class="co">#&gt; SmoothPLS 71027.91 53.30212 44.29219 0.3028116 164.57063     4</span></span></code></pre></div>
+<span><span class="co">#&gt;               PRESS     RMSE       MAE        R2     var_Y nb_cp</span></span>
+<span><span class="co">#&gt; NaivePLS   2511.155 10.02229  8.466702 0.9647426 104.23750     4</span></span>
+<span><span class="co">#&gt; FPLS       7814.629 17.68008 14.928440 0.8902802  88.81967     4</span></span>
+<span><span class="co">#&gt; SmoothPLS 45104.212 42.47550 36.815910 0.3667232 200.45022     4</span></span></code></pre></div>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_model_metrics_base.html">plot_model_metrics_base</a></span><span class="op">(</span><span class="va">train_results</span>, <span class="va">test_results</span><span class="op">)</span></span></code></pre></div>
 <p><img src="s04_Multivariate_files/figure-html/unnamed-chunk-53-1.png" width="700"><img src="s04_Multivariate_files/figure-html/unnamed-chunk-53-2.png" width="700"><img src="s04_Multivariate_files/figure-html/unnamed-chunk-53-3.png" width="700"><img src="s04_Multivariate_files/figure-html/unnamed-chunk-53-4.png" width="700"></p>

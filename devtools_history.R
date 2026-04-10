@@ -34,14 +34,19 @@ usethis::use_test("synthetic_data")
 usethis::use_test("smooth_PLS")
 usethis::use_test("fpls")
 usethis::use_test("edge_cases")
-devtools::document() # make documentation
+# Dev
+devtools::install()
 devtools::load_all() # function update
+devtools::document() # make documentation
 devtools::test()
-#devtools::check(vignettes = FALSE)
-#devtools::check()
-#devtools::build_manual(pkg = ".", path = "docpdf")
-#pkgdown::build_site()
+# Quality
 urlchecker::url_check()
 devtools::spell_check()
+devtools::check(vignettes = FALSE)
+# Release preparation
+# devtools::check()
+devtools::build_manual(pkg = ".", path = "docpdf")
+pkgdown::build_site()
+
 #spelling::update_wordlist()
 

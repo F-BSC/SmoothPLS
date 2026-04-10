@@ -71,15 +71,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SmoothPLS</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'fda::matplot' by 'graphics::matplot' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'pls::loadings' by 'stats::loadings' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading</span></span>
-<span><span class="co">#&gt; 'SmoothPLS'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::filter' by 'stats::filter' when</span></span>
-<span><span class="co">#&gt; loading 'SmoothPLS'</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/FrancoisBassac/SmoothPLS" class="external-link">SmoothPLS</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.4.3</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -202,11 +194,11 @@ sampling which allows the pivot table.</p>
 <code class="sourceCode R"><span><span class="va">id_df_long</span> <span class="op">=</span> <span class="fu"><a href="../reference/convert_to_wide_format.html">convert_to_wide_format</a></span><span class="op">(</span><span class="va">id_df_regul</span><span class="op">)</span></span>
 <span><span class="va">id_df_long</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 22</span></span></span>
-<span><span class="co">#&gt;      id    t0    t2    t4    t6    t8   t10   t12   t14   t16   t18   t20   t22</span></span>
+<span><span class="co">#&gt;      id   `0`   `2`   `4`   `6`   `8`  `10`  `12`  `14`  `16`  `18`  `20`  `22`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     0     0     0     0     0     1     1     1     1     1     1     1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: t24 &lt;dbl&gt;, t26 &lt;dbl&gt;, t28 &lt;dbl&gt;, t30 &lt;dbl&gt;, t32 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   t34 &lt;dbl&gt;, t36 &lt;dbl&gt;, t38 &lt;dbl&gt;, t40 &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: `24` &lt;dbl&gt;, `26` &lt;dbl&gt;, `28` &lt;dbl&gt;, `30` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `32` &lt;dbl&gt;, `34` &lt;dbl&gt;, `36` &lt;dbl&gt;, `38` &lt;dbl&gt;, `40` &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -368,27 +360,28 @@ of the total variance due to some gaussian noise.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/generate_Y_df.html">generate_Y_df</a></span><span class="op">(</span><span class="va">df</span>, curve_type <span class="op">=</span> <span class="st">'cat'</span>, </span>
 <span>                     <span class="va">beta_1_real_func</span>, <span class="va">beta_0_real</span>, <span class="va">NotS_ratio</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'future' was built under R version 4.4.3</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "id"       "Y_real"   "Y_noised"</span></span></code></pre></div>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id   Y_real Y_noised</span></span>
-<span><span class="co">#&gt; 1  1 70.03711 63.43979</span></span>
-<span><span class="co">#&gt; 2  2 48.59410 45.88469</span></span>
-<span><span class="co">#&gt; 3  3 59.85310 78.20055</span></span>
-<span><span class="co">#&gt; 4  4 24.01073 24.84068</span></span>
-<span><span class="co">#&gt; 5  5 56.93758 58.45942</span></span>
-<span><span class="co">#&gt; 6  6 61.43766 81.62557</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  1 70.03711 67.32771</span></span>
+<span><span class="co">#&gt; 2  2 48.59410 66.94154</span></span>
+<span><span class="co">#&gt; 3  3 59.85310 60.68305</span></span>
+<span><span class="co">#&gt; 4  4 24.01073 25.53257</span></span>
+<span><span class="co">#&gt; 5  5 56.93758 77.12549</span></span>
+<span><span class="co">#&gt; 6  6 61.43766 66.86308</span></span></code></pre></div>
 <p>We can look at the variance :</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 554.2192</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 739.6589</span></span>
+<span><span class="co">#&gt; [1] 633.4237</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.7492903</span></span>
+<span><span class="co">#&gt; [1] 0.874958</span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.2507097</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.125042</span></span></code></pre></div>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span><span class="op">)</span></span>
@@ -404,12 +397,12 @@ df_test:</p>
 <span>                          <span class="va">NotS_ratio</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">Y_df_test</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id   Y_real Y_noised</span></span>
-<span><span class="co">#&gt; 1  1 70.03711 66.10489</span></span>
-<span><span class="co">#&gt; 2  2 48.59410 46.97920</span></span>
-<span><span class="co">#&gt; 3  3 59.85310 70.78879</span></span>
-<span><span class="co">#&gt; 4  4 24.01073 24.50541</span></span>
-<span><span class="co">#&gt; 5  5 56.93758 57.84465</span></span>
-<span><span class="co">#&gt; 6  6 61.43766 73.47033</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  1 70.03711 68.42221</span></span>
+<span><span class="co">#&gt; 2  2 48.59410 59.52978</span></span>
+<span><span class="co">#&gt; 3  3 59.85310 60.34778</span></span>
+<span><span class="co">#&gt; 4  4 24.01073 24.91779</span></span>
+<span><span class="co">#&gt; 5  5 56.93758 68.97025</span></span>
+<span><span class="co">#&gt; 6  6 61.43766 64.67139</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -1526,7 +1519,7 @@ the signal and the seed for repeatability.</p>
 <code class="sourceCode R"><span><span class="va">id_df_long</span> <span class="op">=</span> <span class="fu"><a href="../reference/convert_to_wide_format.html">convert_to_wide_format</a></span><span class="op">(</span><span class="va">id_df_regul</span><span class="op">)</span></span>
 <span><span class="va">id_df_long</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 50 × 22</span></span></span>
-<span><span class="co">#&gt;       id    t0    t2    t4    t6      t8     t10    t12    t14    t16    t18</span></span>
+<span><span class="co">#&gt;       id   `0`   `2`   `4`   `6`     `8`    `10`   `12`   `14`   `16`   `18`</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 1.26  1.05  0.611 0.577  0.390   0.264  -<span style="color: #BB0000;">0.329</span> -<span style="color: #BB0000;">0.414</span> -<span style="color: #BB0000;">0.850</span> -<span style="color: #BB0000;">1.17</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     2 0.938 0.743 0.571 0.299 -<span style="color: #BB0000;">0.107</span>  -<span style="color: #BB0000;">0.037</span><span style="color: #BB0000; text-decoration: underline;">1</span> -<span style="color: #BB0000;">0.348</span> -<span style="color: #BB0000;">0.735</span> -<span style="color: #BB0000;">0.824</span> -<span style="color: #BB0000;">1.14</span> </span></span>
@@ -1539,8 +1532,9 @@ the signal and the seed for repeatability.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     9 1.32  1.03  0.717 0.393  0.254  -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">4</span> -<span style="color: #BB0000;">0.406</span> -<span style="color: #BB0000;">0.586</span> -<span style="color: #BB0000;">0.782</span> -<span style="color: #BB0000;">1.15</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    10 1.18  0.847 1.00  0.414  0.137  -<span style="color: #BB0000;">0.117</span>  -<span style="color: #BB0000;">0.467</span> -<span style="color: #BB0000;">0.640</span> -<span style="color: #BB0000;">0.685</span> -<span style="color: #BB0000;">1.32</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 40 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more variables: t20 &lt;dbl&gt;, t22 &lt;dbl&gt;, t24 &lt;dbl&gt;, t26 &lt;dbl&gt;, t28 &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   t30 &lt;dbl&gt;, t32 &lt;dbl&gt;, t34 &lt;dbl&gt;, t36 &lt;dbl&gt;, t38 &lt;dbl&gt;, t40 &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more variables: `20` &lt;dbl&gt;, `22` &lt;dbl&gt;, `24` &lt;dbl&gt;, `26` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `28` &lt;dbl&gt;, `30` &lt;dbl&gt;, `32` &lt;dbl&gt;, `34` &lt;dbl&gt;, `36` &lt;dbl&gt;, `38` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `40` &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -1555,7 +1549,7 @@ the signal and the seed for repeatability.</p>
 <span><span class="co">#&gt; [1] 0.1699978 0.1165647 0.1477226 0.2408948</span></span></code></pre></div>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialized the transition matrix</span></span>
-<span><span class="va">transition_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/transfert_probabilities.html" class="external-link">transfert_probabilities</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span>
+<span><span class="va">transition_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/transfer_probabilities.html">transfer_probabilities</a></span><span class="op">(</span><span class="va">N_states</span><span class="op">)</span></span>
 <span><span class="va">transition_df</span></span>
 <span><span class="co">#&gt;               dir1      dir2      dir3       dir4</span></span>
 <span><span class="co">#&gt; state_1 0.00000000 0.3860865 0.5865265 0.02738700</span></span>
@@ -1631,11 +1625,11 @@ categorical functional data of one state each.</p>
 <span><span class="va">state_ordered</span></span>
 <span><span class="co">#&gt; [1] 1 2 3 4</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="state_indicatrice">state_indicatrice<a class="anchor" aria-label="anchor" href="#state_indicatrice"></a>
+<h3 id="state_indicator">state_indicator<a class="anchor" aria-label="anchor" href="#state_indicator"></a>
 </h3>
 <p>This function transform a categorical functional data with its
-indicatrices into a dedicated list of all the state (one per different
-state)</p>
+indicator function into a dedicated list of all the state (one per
+different state)</p>
 <p>This function sort the states by ascending order (if numeric) and put
 the name ‘state_X’ as the column of the output concerning the ‘X’
 state.</p>
@@ -1643,7 +1637,7 @@ state.</p>
 <p><em>Now for the different lists, the [[i]] element of a list concern
 the [[i]] states ordered.</em></p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">si_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/state_indicatrices.html" class="external-link">state_indicatrices</a></span><span class="op">(</span><span class="va">df</span>, id_col<span class="op">=</span><span class="st">'id'</span>, time_col<span class="op">=</span><span class="st">'time'</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">si_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/state_indicator.html">state_indicator</a></span><span class="op">(</span><span class="va">df</span>, id_col<span class="op">=</span><span class="st">'id'</span>, time_col<span class="op">=</span><span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">si_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "id"      "time"    "state_1" "state_2" "state_3" "state_4"</span></span></code></pre></div>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
@@ -1660,8 +1654,8 @@ the [[i]] states ordered.</em></p>
 <h3 id="split_in_state_df">split_in_state_df<a class="anchor" aria-label="anchor" href="#split_in_state_df"></a>
 </h3>
 <p>This function transform a categorical functional data with its
-indicatrices into a dedicated list of all the state (one per different
-state)</p>
+indicator function into a dedicated list of all the state (one per
+different state)</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">split_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/split_in_state_df.html">split_in_state_df</a></span><span class="op">(</span><span class="va">si_df</span>, id_col<span class="op">=</span><span class="st">'id'</span>, time_col<span class="op">=</span><span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">split_df</span><span class="op">)</span></span>
@@ -1684,8 +1678,8 @@ state)</p>
 <h3 id="build_df_per_state">build_df_per_state<a class="anchor" aria-label="anchor" href="#build_df_per_state"></a>
 </h3>
 <p>This function takes the data_list with one dataframe per state
-indicatrice and remove the duplicated state of each state indicatrice
-with the function <em>remove_duplicate_states()</em>.</p>
+indicator function and remove the duplicated state of each state
+indicator with the function <em>remove_duplicate_states()</em>.</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">states_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/build_df_per_state.html">build_df_per_state</a></span><span class="op">(</span><span class="va">split_df</span>, id_col<span class="op">=</span><span class="st">'id'</span>, time_col<span class="op">=</span><span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">states_df</span><span class="op">)</span></span>
@@ -1697,13 +1691,13 @@ with the function <em>remove_duplicate_states()</em>.</p>
 <p><img src="s00_synthetic_data_files/figure-html/unnamed-chunk-47-1.png" alt="Indicator function per state" width="700"></p>
 </div>
 <div class="section level3">
-<h3 id="cat_data_to_indicatrice">cat_data_to_indicatrice<a class="anchor" aria-label="anchor" href="#cat_data_to_indicatrice"></a>
+<h3 id="cat_data_to_indicator">cat_data_to_indicator<a class="anchor" aria-label="anchor" href="#cat_data_to_indicator"></a>
 </h3>
 <p>This function apply all functions to go from a categorical functional
 data with different states to a list of one dataframe per state
-indicatrice whose duplicated states where removed</p>
+indicator function. whose duplicated states where removed</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SmoothPLS/man/cat_data_to_indicatrice.html" class="external-link">cat_data_to_indicatrice</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">df_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat_data_to_indicator.html">cat_data_to_indicator</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "state_1" "state_2" "state_3" "state_4"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">$</span><span class="va">state_1</span><span class="op">)</span></span>
