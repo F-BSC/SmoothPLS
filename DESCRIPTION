@@ -1,6 +1,6 @@
 Package: SmoothPLS
 Type: Package
-Title: PLS Algorithm for Categorical and Scalar Functional Data 
+Title: Partial Least-Squares Algorithm for Categorical and Scalar Functional Data 
 Version: 0.1.5
 Date: 2026-04-10
 Authors@R: c(
@@ -10,17 +10,22 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: Performs the PLS algorithm for
-    functional data.
-    It was developed during a PhD thesis between DECATHLON and INRIA 2022-2026.
-    The Smooth PLS method does not decompose the data into a basis. Its 
-    philosophy is that we know as precisely the data as we want and that for 
-    every PLS component the weight functions are decomposed into the basis.
-    For both one-state, multi-states Categorical Functional Data (CFD) and 
-    Scalar Functional Data, the smooth PLS algorithm is implemented for a 
-    scalar response.
-    In order to have a naive baseline, naive PLS method on value function of 
-    time and Functional PLS are also implemented.
+Description: Performs the Partial Least-Squares ('PLS') algorithm for
+    functional data through the concept of active area integration. This 
+    approach builds upon the basis expansion methods for functional 'PLS' 
+    regression described in Aguilera et al. (2010) 
+    <doi:10.1016/j.chemolab.2010.09.007>. The package seamlessly handles both 
+    Scalar Functional Data ('SFD') and Categorical Functional Data ('CFD'), 
+    providing interpretable regression curves even for discrete 
+    state changes. It was developed during a PhD thesis between 'DECATHLON' 
+    and Institut national de recherche en sciences et technologies du 
+    numerique ('INRIA') 2022-2026. The 'SmoothPLS' method does not directly
+    decompose the data into a basis; rather, it assumes the data is known as 
+    precisely as desired, and for every 'PLS' component, the weight functions are 
+    decomposed into the basis. For both single-state and multi-state 'CFD' 
+    as well as 'SFD', the algorithm is implemented for a scalar response. 
+    To provide a baseline, a naive 'PLS' method on time-value functions and 
+    standard Functional 'PLS' are also implemented.
 License: MIT + file LICENSE
 URL: https://github.com/FrancoisBassac/SmoothPLS, 
      https://FrancoisBassac.github.io/SmoothPLS/
