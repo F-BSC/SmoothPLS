@@ -2,6 +2,7 @@ This is a resubmission. In this version I have addressed the comments from Uwe L
 * Removed the redundant phrase starting the Description field and started with "Performs...".
 * Added single quotes around acronyms and software names (e.g., 'SmoothPLS') or expanded them to resolve spellcheck notes.
 * Added the methodological reference (Aguilera et al., 2010) with its DOI directly in the Description field.
+(Note: The specific PhD thesis and research papers detailing the exact 'SmoothPLS' implementation are currently being finalized and their DOIs will be added in a future package update).
 
 ## Test environments
 * local Windows 11 install, R 4.4.1
