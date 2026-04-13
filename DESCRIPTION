@@ -10,7 +10,7 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: SmoothPLS performs the PLS algorithm for
+Description: Performs the PLS algorithm for
     functional data.
     It was developed during a PhD thesis between DECATHLON and INRIA 2022-2026.
     The Smooth PLS method does not decompose the data into a basis. Its 
