@@ -83,7 +83,7 @@ time vector.</p>
 <h2 id="parameters">Parameters<a class="anchor" aria-label="anchor" href="#parameters"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nind</span> <span class="op">=</span> <span class="fl">300</span> <span class="co"># number of individuals (train set)</span></span>
+<code class="sourceCode R"><span><span class="va">nind</span> <span class="op">=</span> <span class="fl">100</span> <span class="co"># number of individuals (train set)</span></span>
 <span><span class="va">start</span> <span class="op">=</span> <span class="fl">0</span> <span class="co"># First time</span></span>
 <span><span class="va">end</span> <span class="op">=</span> <span class="fl">100</span> <span class="co"># end time</span></span>
 <span></span>
@@ -98,7 +98,7 @@ time vector.</p>
 <span><span class="va">NotS_ratio</span> <span class="op">=</span> <span class="fl">0.2</span> <span class="co"># noise variance over total variance for Y</span></span>
 <span><span class="va">beta_0_real</span><span class="op">=</span><span class="fl">5.4321</span> <span class="co"># Intercept value for the link between X(t) and Y</span></span>
 <span></span>
-<span><span class="va">nbasis</span> <span class="op">=</span> <span class="fl">10</span> <span class="co"># number of basis functions</span></span>
+<span><span class="va">nbasis</span> <span class="op">=</span> <span class="fl">7</span> <span class="co"># number of basis functions</span></span>
 <span><span class="va">norder</span> <span class="op">=</span> <span class="fl">4</span> <span class="co"># 4 for cubic splines basis</span></span>
 <span></span>
 <span><span class="va">regul_time_0</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">start</span>, <span class="va">end</span>, <span class="fl">1</span><span class="op">)</span></span>
@@ -142,7 +142,7 @@ time vector.</p>
 <span>                        lambda_0 <span class="op">=</span> <span class="va">lambda_0</span>, lambda_1 <span class="op">=</span> <span class="va">lambda_1</span>,</span>
 <span>                        prob_start <span class="op">=</span> <span class="va">prob_start</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"We have "</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df_test</span><span class="op">$</span><span class="va">id</span><span class="op">)</span><span class="op">)</span>, <span class="st">" id on test set."</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "We have 75 id on test set."</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "We have 25 id on test set."</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="y_df-y_df_test">Y_df &amp; Y_df_test<a class="anchor" aria-label="anchor" href="#y_df-y_df_test"></a>
@@ -207,7 +207,7 @@ time vector.</p>
 <span><span class="co">#&gt; ### Smooth PLS ### </span></span>
 <span><span class="co">#&gt; ## Use parallelization in case of heavy computational load. ## </span></span>
 <span><span class="co">#&gt; ## Threshold can be manualy adjusted : (default 2500) ## </span></span>
-<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500 ## </span></span>
+<span><span class="co">#&gt; ## &gt;options(SmoothPLS.parallel_threshold = 500) ## </span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions.</span></span>
 <span><span class="co">#&gt; =&gt; Input format assertions OK.</span></span>
 <span><span class="co">#&gt; =&gt; Orthonormalize basis.</span></span>
@@ -215,7 +215,7 @@ time vector.</p>
 <span><span class="co">#&gt; =&gt; Evaluate Lambda matrix.</span></span>
 <span><span class="co">#&gt; ==&gt; Lambda for : CatFD_1_state_1.</span></span>
 <span><span class="co">#&gt; =&gt; PLSR model.</span></span>
-<span><span class="co">#&gt; =&gt; Optimal number of PLS components : 3</span></span></code></pre></div>
+<span><span class="co">#&gt; =&gt; Optimal number of PLS components : 2</span></span></code></pre></div>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; =&gt; Evaluate SmoothPLS functions and &lt;w_i, p_j&gt; coef.</span></span>
 <span><span class="co">#&gt; =&gt; Build regression functions and intercept.</span></span>
@@ -228,7 +228,7 @@ time vector.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">delta_0</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">Intercept</span></span>
 <span><span class="va">delta_0</span></span>
-<span><span class="co">#&gt; [1] 3.041788</span></span>
+<span><span class="co">#&gt; [1] -1.171871</span></span>
 <span></span>
 <span><span class="va">delta</span> <span class="op">=</span> <span class="va">spls_obj</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">CatFD_1_state_1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">delta</span><span class="op">)</span></span></code></pre></div>
@@ -254,23 +254,23 @@ time vector.</p>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; ### Functional PLS ###</span></span></code></pre></div>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  1 .</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  2 .</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-2.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; ### Functional PLS ###</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-3.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  2 .</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  1 .</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-4.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; ### Functional PLS ###</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-5.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  3 .</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  2 .</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-6.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; ### Functional PLS ###</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-7.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  3 .</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  2 .</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-8.png" width="700"></p>
 <pre><code><span><span class="co">#&gt; ### Functional PLS ###</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-9.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  3 .</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Optimal number of PLS components :  2 .</span></span></code></pre>
 <p><img src="s05_lim_fpls_smoothPLS_files/figure-html/unnamed-chunk-7-10.png" width="700"></p>
 </div>
 <div class="section level2">
@@ -302,12 +302,12 @@ time vector.</p>
 <span><span class="fu"><a href="../reference/evaluate_curves_distances.html">evaluate_curves_distances</a></span><span class="op">(</span>real_f <span class="op">=</span> <span class="va">beta_real_func</span>,</span>
 <span>                          regul_time <span class="op">=</span> <span class="va">regul_time_0</span>,</span>
 <span>                          fun_fd_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/append.html" class="external-link">append</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">delta</span><span class="op">)</span>, <span class="va">beta_list</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -4.54225381897056 / DIST : 1.67519075328401"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 29.9625306103135 / DIST : 11.8359704144882"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 8.61517896874591 / DIST : 6.92041072732991"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_4 / INPROD  : -3.47324935363266 / DIST : 1.58939708205077"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_5 / INPROD  : -4.09042794261578 / DIST : 1.50743075221975"</span></span>
-<span><span class="co">#&gt; [1] "real_f -&gt; curve_6 / INPROD  : -4.1467104267325 / DIST : 1.5221523794326"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_1 / INPROD  : -10.1835499195556 / DIST : 3.08621931671152"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_2 / INPROD  : 29.8002032162822 / DIST : 12.5967626116461"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_3 / INPROD  : 1.33245109773122 / DIST : 7.76976625407814"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_4 / INPROD  : -6.43012731439124 / DIST : 2.86568755807268"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_5 / INPROD  : -10.0483167349752 / DIST : 3.09342721862717"</span></span>
+<span><span class="co">#&gt; [1] "real_f -&gt; curve_6 / INPROD  : -10.1041533196196 / DIST : 3.09651339339298"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">pas</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 20.00 10.00  2.00  0.10  0.05</span></span></code></pre></div>
