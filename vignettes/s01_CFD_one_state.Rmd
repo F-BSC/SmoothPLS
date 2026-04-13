@@ -50,7 +50,7 @@ regul_time_0 = seq(start, end, 1)
 int_mode = 1 # in case of integration errors.
 ```
 
-```{r}
+```{r, fig.alt="Beta real function"}
 plot(regul_time, beta_real_func(regul_time))
 lines(regul_time, beta_real_func(regul_time))
 ```
@@ -79,11 +79,11 @@ names(df)
 print(paste0("We have ", length(unique(df_test$id)), " id on test set."))
 ```
 
-```{r plot df individuals}
+```{r plot df individuals, fig.alt="Individuals plot"}
 plot_CFD_individuals(df)
 ```
 
-```{r}
+```{r, fig.alt="Individuals plot by cfda"}
 plot_CFD_individuals(df,by_cfda = TRUE)
 ```
 
@@ -101,7 +101,7 @@ Y = Y_df$Y_noised
 names(Y_df)
 ```
 
-```{r hist Y noised}
+```{r hist Y noised, fig.alt="Y real and noised histograms"}
 par(mfrow=c(1, 2))
 hist(Y_df$Y_real)
 hist(Y_df$Y_noised)
@@ -125,7 +125,7 @@ df_test_wide = convert_to_wide_format(df_test_regul)
 ```
 
 # Basis creation 
-```{r basis creation}
+```{r basis creation, fig.alt="Basis function"}
 basis = create_bspline_basis(start, end, nbasis, norder)
 # ORTHOGONAL
 #basis = fda::create.fourier.basis(rangeval=c(start, end), nbasis=(nbasis)) 
@@ -135,7 +135,7 @@ plot(basis, main=paste0(nbasis, " Function basis")) # note cubic or Fourier
 # Naive PLS
 ## Model
 Here we perform the naive PLS on the data.
-```{r}
+```{r, fig.alt="Naive PLS CV and regression coefficients"}
 naive_pls_obj = naivePLS(df_list = df, Y = Y, curve_type_obj = 'cat',
                          regul_time_obj = regul_time, 
                          id_col_obj = 'id', time_col_obj = 'time', 
@@ -145,7 +145,7 @@ names(naive_pls_obj)
 ```
 ## Regression coefficients
 We can plot the coefficients : 
-```{r}
+```{r, fig.alt="Real function VS naive PLS coefficients"}
 plot(x = regul_time, y = naive_pls_obj$opti_reg_coef, 
      xlab='regul_time', ylab='beta coefficient value', 
      main="naive pls regression coefficients")
@@ -185,14 +185,14 @@ cat("RMSEP \n")
 sqrt(press_values(Y_df_test$Y_real, Y_hat_test)/length(Y_hat_test))
 ```
 # FPLS
-```{r}
+```{r, fig.alt="Functional PLS CV and functional coefficient"}
 fpls_obj = funcPLS(df_list = list(df), Y = Y, basis_obj = basis, 
                      regul_time_obj = regul_time, curve_type_obj = 'cat',
                      plot_rmsep = TRUE, plot_reg_curves = TRUE, 
                      print_steps =TRUE)
 ```
 
-```{r}
+```{r, fig.alt="REal function VS FPLS functional coefficient"}
 y_lim = eval_max_min_y(f_list = list(beta_real_func, 
                                      fpls_obj$reg_obj$CatFD), 
                        regul_time = regul_time_0)
@@ -243,7 +243,7 @@ cat("R^2 on Y_df_test$Y_real \n")
 r_squared_values(Y_df_test$Y_real, Y_hat_fpls_test)
 ```
 # Smooth PLS
-```{r}
+```{r, fig.alt="SmoothPLS CV and functional coefficient"}
 spls_obj = smoothPLS(df_list = df, Y = Y, basis_obj = basis,
                      curve_type_obj = 'cat', orth_obj = TRUE, int_mode = 1,
                      print_steps = TRUE, print_nbComp = TRUE, 
@@ -254,7 +254,7 @@ spls_obj = smoothPLS(df_list = df, Y = Y, basis_obj = basis,
 ```
 ## delta
 Delta Smooth_PLS
-```{r}
+```{r, fig.alt="SmoothPLs functional coefficient 2"}
 delta_0 = spls_obj$reg_obj$Intercept
 delta_0
 
@@ -262,7 +262,7 @@ delta = spls_obj$reg_obj$CatFD_1_state_1
 plot(delta)
 ```
 
-```{r}
+```{r, fig.alt="Real function VS SmoothPLS coefficient"}
 y_lim = eval_max_min_y(f_list = list(beta_real_func, 
                                      delta), 
                        regul_time = regul_time_0)
@@ -334,7 +334,7 @@ evaluate_curves_distances(real_f = beta_real_func,
                           )
 ```
 
-```{r}
+```{r, fig.alt="Curves comparison, all"}
 y_lim = eval_max_min_y(f_list = list(spls_obj$reg_obj$CatFD_1_state_1,
                                      fpls_obj$reg_obj$CatFD_1_state_1,
                                      approxfun(x = regul_time,
@@ -358,7 +358,7 @@ legend("topleft",
        lwd = 1)
 ```
 
-```{r}
+```{r, fig.alt="Curves comparison, real, FPLS, SmoothPLS"}
 y_lim = eval_max_min_y(f_list = list(spls_obj$reg_obj$CatFD_1_state_1,
                                      fpls_obj$reg_obj$CatFD_1_state_1,
                                      beta_real_func ), 
@@ -377,7 +377,7 @@ legend("topleft",
 ```
 
 Plot the second derivatives for the smoothness :
-```{r}
+```{r, fig.alt="FPLS, SmoothPLS secodn derivatives"}
 plot(fda::deriv.fd(expr = delta, Lfdobj = 2), col='blue')
 plot(fda::deriv.fd(expr = fpls_obj$reg_obj$CatFD, Lfdobj = 2),
      add=TRUE, col='red')
@@ -447,7 +447,7 @@ train_results["SmoothPLS", "nb_cp"] = spls_obj$nbCP_opti
 train_results
 ```
 
-```{r}
+```{r, fig.alt="Train error histogram"}
 par(mfrow=c(1,2))
 hist(Y_train - Y_hat_fpls)
 hist(Y_train - Y_hat_spls)
@@ -501,7 +501,7 @@ Y_hat_naivePLS = naivePLS_predict(naive_pls_obj = naive_pls_obj,
 test_results
 ```
 
-```{r}
+```{r, fig.alt="Test error histogram"}
 par(mfrow=c(1,2))
 hist(Y_test - Y_hat_fpls)
 hist(Y_test - Y_hat_spls)
@@ -510,25 +510,25 @@ par(mfrow=c(1,1))
 
 ## Results plots
 ### All
-```{r}
+```{r, fig.alt="PLot models metrics"}
 plot_model_metrics_base(train_results, test_results)
 ```
 
 ### FPLS & SmoothPLS
-```{r}
+```{r, fig.alt="Plot metric FPLS and SmoothPLS"}
 plot_model_metrics_base(train_results, test_results,
                         models_to_plot = c('FPLS', 'SmoothPLS'))
 ```
 
 
 # Fourier basis test
-```{r basis creation Fourier}
+```{r basis creation Fourier, fig.alt="Fourier basis"}
 basis_f = fda::create.fourier.basis(rangeval=c(start, end), nbasis=(nbasis)) 
 plot(basis_f, main=paste0(nbasis, " Function basis")) # note cubic or Fourier
 ```
 
 ## FPLS
-```{r}
+```{r, fig.alt="FPLS CV and functional coefficient Fourier"}
 fpls_obj_2 = funcPLS(df_list = df, Y = Y, basis_obj = basis_f,
                      regul_time_obj = regul_time, curve_type_obj = curve_type,
                      print_steps = TRUE, plot_rmsep = TRUE, 
@@ -536,14 +536,14 @@ fpls_obj_2 = funcPLS(df_list = df, Y = Y, basis_obj = basis_f,
 ```
 
 ## Smooth PLS 
-```{r}
+```{r, fig.alt="SmoothPLs CV and functional coefficient Fourier"}
 spls_obj_2 = smoothPLS(df_list = df, Y = Y, basis_obj = basis_f,
                        orth_obj = FALSE, curve_type_obj = curve_type,
                        print_steps = TRUE, plot_rmsep = TRUE, 
                        print_nbComp = TRUE, plot_reg_curves = TRUE)
 ```
 
-```{r}
+```{r, fig.alt="Fourier SmoothPLs functional coefficient"}
 delta_0_2 = spls_obj_2$reg_obj$Intercept
 
 delta_2 = spls_obj_2$reg_obj$CatFD_1_state_1
@@ -551,7 +551,7 @@ plot(delta_2)
 ```
 
 ## Curve comparison
-```{r}
+```{r, fig.alt="Fourier curve comparison"}
 plot(regul_time_0, beta_real_func(regul_time_0), type='l', xlab="Beta_t",
      ylim = c(-2, 3.5))
 plot(delta_2, add=TRUE, col='blue')
@@ -586,7 +586,7 @@ evaluate_curves_distances(real_f = beta_real_func,
                           )
 ```
 
-```{r}
+```{r, fig.alt="Fourier all curves comparison"}
 y_lim = eval_max_min_y(f_list = list(spls_obj_2$reg_obj$CatFD_1_state_1,
                                      fpls_obj_2$reg_obj$CatFD_1_state_1,
                                      approxfun(x = regul_time,
@@ -610,7 +610,7 @@ legend("topleft",
        lwd = 1)
 ```
 
-```{r}
+```{r, fig.alt="Fourier FPLS SmoothPLS vs TRUE function"}
 y_lim = eval_max_min_y(f_list = list(spls_obj_2$reg_obj$CatFD_1_state_1,
                                      fpls_obj_2$reg_obj$CatFD_1_state_1,
                                      beta_real_func), 
@@ -714,11 +714,11 @@ test_results_f["SmoothPLS", "nb_cp"] = spls_obj$nbCP_opti
 test_results_f
 ```
 ## Plot Fourier Results
-```{r}
+```{r, fig.alt="Fourier plot models metrics"}
 plot_model_metrics_base(train_results_f, test_results_f)
 ```
 
-```{r}
+```{r, fig.alt="Fourier plot metrics FPLS SmoothPLS"}
 plot_model_metrics_base(train_results_f, test_results_f,
                         models_to_plot = c('FPLS', 'SmoothPLS'))
 ```
