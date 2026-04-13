@@ -23,7 +23,7 @@ method by increasing the increments on the regularization time vector.
 
 # Parameters
 ```{r}
-nind = 300 # number of individuals (train set)
+nind = 100 # number of individuals (train set)
 start = 0 # First time
 end = 100 # end time
 
@@ -38,7 +38,7 @@ TTRatio = 0.2 # Train Test Ratio means we have floor(nind*TTRatio/(1-TTRatio))
 NotS_ratio = 0.2 # noise variance over total variance for Y
 beta_0_real=5.4321 # Intercept value for the link between X(t) and Y
 
-nbasis = 10 # number of basis functions
+nbasis = 7 # number of basis functions
 norder = 4 # 4 for cubic splines basis
 
 regul_time_0 = seq(start, end, 1)
