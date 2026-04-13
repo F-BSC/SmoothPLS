@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>PLS algorithm for Categorical and Scalar Functional Data • SmoothPLS</title>
+<title>Partial Least-Squares Algorithm for Categorical and Scalar Functional Data • SmoothPLS</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -15,9 +15,9 @@
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="PLS algorithm for Categorical and Scalar Functional Data">
-<meta name="description" content="This package performs the Smooth PLS algorithm. It was developed during a PhD thesis between DECATHLON and INRIA 2022-2026. The Smooth PLS method does not decompose the data into a basis. Its philosophy is that we know as precisely the data as we want and that for every PLS component the weight functions are decomposed into the basis. For both one-state, multi-states Categorical Functional Data (CFD) and Scalar Functional Data, the smooth PLS algorithm is implemented for a scalar response. In order to have a naive baseline, naive PLS method on value function of time and Functional PLS are also implemented.">
-<meta property="og:description" content="This package performs the Smooth PLS algorithm. It was developed during a PhD thesis between DECATHLON and INRIA 2022-2026. The Smooth PLS method does not decompose the data into a basis. Its philosophy is that we know as precisely the data as we want and that for every PLS component the weight functions are decomposed into the basis. For both one-state, multi-states Categorical Functional Data (CFD) and Scalar Functional Data, the smooth PLS algorithm is implemented for a scalar response. In order to have a naive baseline, naive PLS method on value function of time and Functional PLS are also implemented.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Partial Least-Squares Algorithm for Categorical and Scalar Functional Data">
+<meta name="description" content="Performs the Partial Least-Squares (PLS) algorithm for functional data through the concept of active area integration. This approach builds upon the basis expansion methods for functional PLS regression described in Aguilera et al. (2010) &lt;doi:10.1016/j.chemolab.2010.09.007&gt;. The package seamlessly handles both Scalar Functional Data (SFD) and Categorical Functional Data (CFD), providing interpretable regression curves even for discrete state changes. It was developed during a PhD thesis between DECATHLON and Institut national de recherche en sciences et technologies du numerique (INRIA) 2022-2026. The SmoothPLS method does not directly decompose the data into a basis; rather, it assumes the data is known as precisely as desired, and for every PLS component, the weight functions are decomposed into the basis. For both single-state and multi-state CFD as well as SFD, the algorithm is implemented for a scalar response. To provide a baseline, a naive PLS method on time-value functions and standard Functional PLS are also implemented.">
+<meta property="og:description" content="Performs the Partial Least-Squares (PLS) algorithm for functional data through the concept of active area integration. This approach builds upon the basis expansion methods for functional PLS regression described in Aguilera et al. (2010) &lt;doi:10.1016/j.chemolab.2010.09.007&gt;. The package seamlessly handles both Scalar Functional Data (SFD) and Categorical Functional Data (CFD), providing interpretable regression curves even for discrete state changes. It was developed during a PhD thesis between DECATHLON and Institut national de recherche en sciences et technologies du numerique (INRIA) 2022-2026. The SmoothPLS method does not directly decompose the data into a basis; rather, it assumes the data is known as precisely as desired, and for every PLS component, the weight functions are decomposed into the basis. For both single-state and multi-state CFD as well as SFD, the algorithm is implemented for a scalar response. To provide a baseline, a naive PLS method on time-value functions and standard Functional PLS are also implemented.">
 <meta property="og:image" content="https://FrancoisBassac.github.io/SmoothPLS/logo.png">
 </head>
 <body>
@@ -72,29 +72,29 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><em>SmoothPLS</em> is an R package designed for <em>Hybrid Functional Data Analysis</em>. It implements a novel approach to Functional Partial Least Squares (FPLS) by integrating categorical functional predictors through the concept of <em>Active Area Integration</em>.</p>
+<p><em>SmoothPLS</em> is a R package designed for <em>Hybrid Functional Data Analysis</em>. It implements a novel approach to Functional Partial Least Squares (FPLS) by integrating categorical functional predictors through the concept of <em>active area integration</em>.</p>
 <p>This work was developed as part of a PhD project at <a href="https://www.decathlon.fr/" class="external-link"><strong>DECATHLON</strong></a> in collaboration with <a href="https://www.inria.fr/fr" class="external-link"><strong>INRIA</strong></a>.</p>
 <div class="section level3">
-<h3 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
+<h3 id="key-features">Key features<a class="anchor" aria-label="anchor" href="#key-features"></a>
 </h3>
 <ul>
 <li>
-<strong>Smooth PLS</strong>: Integration of categorical states as indicator functions for smoother regression curves.</li>
+<strong>SmoothPLS</strong>: integration of categorical states as indicator functions for smoother regression curves.</li>
 <li>
-<strong>Hybrid Data</strong>: Seamlessly handles both Scalar Functional Data (SFD) and Categorical Functional Data (CFD).</li>
+<strong>Hybrid data</strong>: seamlessly handles both Scalar Functional Data (SFD) and Categorical Functional Data (CFD).</li>
 <li>
-<strong>Interpretability</strong>: Provides continuous regression curves.</li>
+<strong>Interpretability</strong>: provides continuous regression curves.</li>
 <li>
-<strong>Comparison Suite</strong>: Built-in functions to compare results with Naive (discretized) PLS and Standard <strong>Functional PLS</strong>.</li>
+<strong>Comparison suite</strong>: built-in functions to compare results with Naive (discretized) PLS and Standard <strong>Functional PLS</strong>.</li>
 </ul>
 <hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="methodological-background">Methodological Background<a class="anchor" aria-label="anchor" href="#methodological-background"></a>
+<h2 id="methodological-background">Methodological background<a class="anchor" aria-label="anchor" href="#methodological-background"></a>
 </h2>
 <p>SmoothPLS builds upon the fundamental principles of Functional PLS (FPLS) regression, specifically the approximation of functional predictors through basis expansions, as established by Aguilera, Preda et al. (2010) [1].</p>
-<p>The primary contribution lies in modeling categorical state changes as functional indicator functions, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mn>𝟙</mn><mi>t</mi><mi>s</mi></msubsup><annotation encoding="application/x-tex">\mathbb{1}^s_t</annotation></semantics></math>. Instead of discretizing transitions, the model computes components via <em>Active Area Integration</em> (illustrated in the package logo), effectively integrating basis functions over the specific intervals, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>s</mi></msub><annotation encoding="application/x-tex">\tau_s</annotation></semantics></math>, where a state is active:</p>
+<p>The primary contribution lies in modeling categorical state changes as functional indicator functions, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mn>𝟙</mn><mi>t</mi><mi>s</mi></msubsup><annotation encoding="application/x-tex">\mathbb{1}^s_t</annotation></semantics></math>. Instead of discretizing transitions, the model computes components via <em>active area integration</em> (illustrated in the package logo), effectively integrating basis functions over the specific intervals, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>τ</mi><mi>s</mi></msub><annotation encoding="application/x-tex">\tau_s</annotation></semantics></math>, where a state is active:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Λ</mi><mrow><mi>s</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mo>∫</mo><mi>𝒯</mi></msub><msubsup><mn>𝟙</mn><mi>t</mi><mi>s</mi></msubsup><msub><mi>ϕ</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><mi>t</mi><mo>=</mo><msub><mo>∫</mo><msub><mi>τ</mi><mi>s</mi></msub></msub><msub><mi>ϕ</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><mi>t</mi><mo>,</mo><mspace width="1.0em"></mspace><mtext mathvariant="normal">with</mtext><mspace width="1.0em"></mspace><msub><mi>τ</mi><mi>s</mi></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>t</mi><mo>∈</mo><mi>𝒯</mi><mo>∣</mo><mi>X</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>s</mi><mo stretchy="false" form="postfix">}</mo><mspace width="1.0em"></mspace><mtext mathvariant="normal">and</mtext><mspace width="1.0em"></mspace><msubsup><mn>𝟙</mn><mi>s</mi><mi>t</mi></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mn>1</mn></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>X</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>s</mi></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>0</mn></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">otherwise</mtext></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\Lambda_{s,j} = \int_{\mathcal{T}} \mathbb{1}^s_t \phi_j(t) dt = \int_{\tau_s} \phi_j(t) dt, \quad \text{with} \quad \tau_s = \lbrace t \in \mathcal{T} \mid X(t) = s\rbrace \quad \text{and} \quad \mathbb{1}_s^t = \begin{cases} 1 &amp; \text{if } X(t) = s \\ 0 &amp; \text{otherwise} \end{cases}</annotation></semantics></math></p>
 <p>This formulation ensures that the smoothing process respects the continuous nature of state transitions within the Functional PLS framework.</p>
 <hr>
@@ -119,21 +119,21 @@
 <p><a href="https://FrancoisBassac.github.io/SmoothPLS/"><strong>Explore the SmoothPLS documentation website</strong></a></p>
 <hr>
 <div class="section level3">
-<h3 id="documentation-overview">Documentation Overview<a class="anchor" aria-label="anchor" href="#documentation-overview"></a>
+<h3 id="documentation-overview">Documentation overview<a class="anchor" aria-label="anchor" href="#documentation-overview"></a>
 </h3>
 <ul>
 <li>
-<strong>Reference</strong>: Comprehensive manual for all functions (including <code>smoothPLS</code>, <code>funcPLS</code>, and <code>naivePLS</code>).</li>
+<strong>Reference</strong>: comprehensive manual for all functions (including <code>smoothPLS</code>, <code>funcPLS</code>, and <code>naivePLS</code>).</li>
 <li>
-<strong>Articles (Vignettes)</strong>: Step-by-step tutorials, such as the comparison of PLS methods for Categorical Functional Data (CFD) and multivariate functional data.</li>
+<strong>Articles (vignettes)</strong>: step-by-step tutorials, such as the comparison of PLS methods for CFD and multivariate functional data.</li>
 <li>
-<strong>Getting Started</strong>: Quick installation guide and basic usage.</li>
+<strong>Getting started</strong>: quick installation guide and basic usage.</li>
 </ul>
 <hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="quick-start-example">Quick Start Example<a class="anchor" aria-label="anchor" href="#quick-start-example"></a>
+<h2 id="quick-start-example">Quick start example<a class="anchor" aria-label="anchor" href="#quick-start-example"></a>
 </h2>
 <p>The following example demonstrates how to fit and compare models, based on the single-state CFD vignette:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -154,10 +154,10 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">spls_model</span><span class="op">$</span><span class="va">reg_obj</span><span class="op">$</span><span class="va">CatFD_1_state_1</span>, main<span class="op">=</span><span class="st">"SmoothPLS Regression Curve"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 <div class="section level3">
-<h3 id="performance-tuning-parallel-processing">Performance Tuning: Parallel Processing<a class="anchor" aria-label="anchor" href="#performance-tuning-parallel-processing"></a>
+<h3 id="performance-tuning-parallel-processing">Performance tuning: parallel processing<a class="anchor" aria-label="anchor" href="#performance-tuning-parallel-processing"></a>
 </h3>
 <p>When <code>parallel = TRUE</code>, <code>SmoothPLS</code> utilizes the <code>future</code> framework to parallelize the numerical integration steps (e.g., <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Λ</mi><annotation encoding="application/x-tex">\Lambda</annotation></semantics></math> matrix evaluation).</p>
-<p>To mitigate computational overhead on smaller datasets, the package implements dynamic load balancing. It calculates the optimal number of background workers required for the specific task to maximize efficiency.</p>
+<p>To mitigate computational overhead on smaller datasets, the package implements dynamic load balancing. It calculates an optimal number of background workers required for the specific task to maximize efficiency.</p>
 <p>The default threshold is set to 2500 integral evaluations per core. The engine allocates one core for every 2500 integrals (calculated as individuals <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>×</mi><annotation encoding="application/x-tex">\times</annotation></semantics></math> basis functions). For instance: * <em>Under 2,500 integrals:</em> The model executes sequentially (1 core) to avoid setup overhead. * <em>5,000 integrals:</em> The engine allocates exactly 2 cores. * <em>Large datasets (e.g., 50,000+ integrals):</em> The engine recruits the maximum number of available cores, reserving 2 cores to maintain operating system stability.</p>
 <p>This threshold can be manually adjusted based on specific hardware capabilities (e.g., lowered for UNIX systems with low forking overhead) by setting a global option before model execution:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -167,10 +167,10 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="affiliations-and-applications">Affiliations and Applications<a class="anchor" aria-label="anchor" href="#affiliations-and-applications"></a>
+<h2 id="affiliations-and-applications">Affiliations and applications<a class="anchor" aria-label="anchor" href="#affiliations-and-applications"></a>
 </h2>
 <div class="section level3">
-<h3 id="industrial-partners">Industrial Partners<a class="anchor" aria-label="anchor" href="#industrial-partners"></a>
+<h3 id="industrial-partners">Industrial partners<a class="anchor" aria-label="anchor" href="#industrial-partners"></a>
 </h3>
 <ul>
 <li>
@@ -187,7 +187,7 @@
 </ul>
 </div>
 <div class="section level3">
-<h3 id="research-institutions">Research Institutions<a class="anchor" aria-label="anchor" href="#research-institutions"></a>
+<h3 id="research-institutions">Research institutions<a class="anchor" aria-label="anchor" href="#research-institutions"></a>
 </h3>
 <ul>
 <li>
@@ -199,27 +199,27 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="roadmap-and-future-releases">Roadmap and Future Releases<a class="anchor" aria-label="anchor" href="#roadmap-and-future-releases"></a>
+<h2 id="roadmap-and-future-releases">Roadmap and future releases<a class="anchor" aria-label="anchor" href="#roadmap-and-future-releases"></a>
 </h2>
 <p><strong>SmoothPLS</strong> is under active development. Upcoming updates will focus on computational efficiency and the expansion of theoretical capabilities:</p>
 <ul>
 <li>
-<strong>[v0.1.4] Parallel Processing:</strong> Implementation of multicore computing to drastically reduce integration time for large datasets (e.g., thousands of Active Areas).</li>
+<strong>[v0.1.4] Parallel processing:</strong> implementation of multicore computing to drastically reduce integration time for large datasets (e.g., thousands of Active Areas).</li>
 <li>
-<strong>[v0.1.6] Hybrid Data Framework:</strong> Support for integrating standard non-functional covariates (e.g., user age, weight) alongside Categorical and Scalar Functional Data.</li>
+<strong>[v0.1.6] Hybrid data framework:</strong> support for integrating standard non-functional covariates (e.g., user age, weight) alongside Categorical and Scalar Functional Data.</li>
 <li>
-<strong>[v0.2.0] Penalized Splines (Univariate):</strong> Addition of roughness penalties to the B-spline coefficients to increase model robustness against noisy kinematic data.</li>
+<strong>[v0.2.0] Penalized functional regression (univariate):</strong> addition of roughness penalties to the B-spline coefficients to increase model robustness.</li>
 <li>
-<strong>[v0.2.1] Penalized Splines (Multivariate):</strong> Extension of the penalized framework to the full multivariate model.</li>
+<strong>[v0.2.1] Penalized functional regression (multivariate):</strong> extension of the penalized framework to the full multivariate model.</li>
 </ul>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="detailed-example-one-state-categorical-functional-data">Detailed Example: One-State Categorical Functional Data<a class="anchor" aria-label="anchor" href="#detailed-example-one-state-categorical-functional-data"></a>
 </h2>
-<p>This example illustrates how SmoothPLS processes Categorical Functional Data (CFD) by modeling transitions as functional objects. For comprehensive details, refer to the <a href="https://francoisbassac.github.io/SmoothPLS/articles/s01_CFD_one_state.html" class="external-link">full vignette</a>.</p>
+<p>This example illustrates how SmoothPLS processes CFD by modeling transitions as functional objects. For comprehensive details, refer to the <a href="https://francoisbassac.github.io/SmoothPLS/articles/s01_CFD_one_state.html" class="external-link">full vignette</a>.</p>
 <div class="section level3">
-<h3 id="id_1-data-visualization">1. Data Visualization<a class="anchor" aria-label="anchor" href="#id_1-data-visualization"></a>
+<h3 id="id_1-data-visualization">1. Data visualization<a class="anchor" aria-label="anchor" href="#id_1-data-visualization"></a>
 </h3>
 <p>We simulate a categorical time series where individuals alternate between state 0 and state 1 over time.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -233,7 +233,7 @@
 </div>
 </div>
 <div class="section level3">
-<h3 id="id_2-model-fitting-and-prediction">2. Model Fitting and Prediction<a class="anchor" aria-label="anchor" href="#id_2-model-fitting-and-prediction"></a>
+<h3 id="id_2-model-fitting-and-prediction">2. Model fitting and prediction<a class="anchor" aria-label="anchor" href="#id_2-model-fitting-and-prediction"></a>
 </h3>
 <p>The SmoothPLS model is fitted to a response variable with added noise, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>, and the resulting regression curve, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta(t)</annotation></semantics></math>, is compared against the ground truth.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
