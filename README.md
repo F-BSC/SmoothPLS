@@ -200,8 +200,9 @@ legend("topleft",
 
 [1] Aguilera, A. M., Escabias, M., Preda, C., & Saporta, G. (2010). "Using basis expansions for estimating functional PLS regression. Applications with chemometric data". *Chemometrics and Intelligent Laboratory Systems*, *104*(2), 289-305. <https://doi.org/10.1016/j.chemolab.2010.09.007>
 
-***
+------------------------------------------------------------------------
 
-<div align="center">
-  ![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2FFrancoisBassac%2FSmoothPLS%2F&label=Visitors&icon=github&color=%23198754&message=&style=flat&tz=Europe%2FParis)
-</div>
+
+<p align="center">
+  <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2FFrancoisBassac%2FSmoothPLS&label=Visitors&icon=github&color=%23198754&style=flat&tz=Europe%2FParis" alt="Visitors" />
+</p>
