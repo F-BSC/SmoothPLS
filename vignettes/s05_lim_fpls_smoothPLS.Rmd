@@ -1,5 +1,5 @@
 ---
-title: "lim_fpls_smoothPLS_03"
+title: "lim_fpls_smoothPLS_05"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{lim_fpls_smoothPLS_03}

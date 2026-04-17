@@ -1,5 +1,5 @@
 ---
-title: "comparison_one_state_02"
+title: "comparison_one_state_PFR"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{comparison_one_state_02}

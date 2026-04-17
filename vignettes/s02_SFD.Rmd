@@ -1,5 +1,5 @@
 ---
-title: "smoothPLS_ScalarFD_04"
+title: "smoothPLS_ScalarFD_02"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{smoothPLS_ScalarFD_04}

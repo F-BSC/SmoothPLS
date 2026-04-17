@@ -1,5 +1,5 @@
 ---
-title: "smoothPLS_multi_states_05"
+title: "smoothPLS_multi_states_03"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{smoothPLS_multi_states_05}
