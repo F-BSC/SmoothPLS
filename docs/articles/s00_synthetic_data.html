@@ -39,11 +39,11 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/s00_synthetic_data.html">synthetic_data_00</a></li>
-    <li><a class="dropdown-item" href="../articles/s01_CFD_one_state.html">comparison_one_state_02</a></li>
-    <li><a class="dropdown-item" href="../articles/s02_SFD.html">smoothPLS_ScalarFD_04</a></li>
-    <li><a class="dropdown-item" href="../articles/s03_CFD_multistates.html">smoothPLS_multi_states_05</a></li>
-    <li><a class="dropdown-item" href="../articles/s04_Multivariate.html">multivariate_smoothPLS_07</a></li>
-    <li><a class="dropdown-item" href="../articles/s05_lim_fpls_smoothPLS.html">lim_fpls_smoothPLS_03</a></li>
+    <li><a class="dropdown-item" href="../articles/s01_CFD_one_state.html">comparison_one_state_01</a></li>
+    <li><a class="dropdown-item" href="../articles/s02_SFD.html">smoothPLS_ScalarFD_02</a></li>
+    <li><a class="dropdown-item" href="../articles/s03_CFD_multistates.html">smoothPLS_multi_states_03</a></li>
+    <li><a class="dropdown-item" href="../articles/s04_Multivariate.html">multivariate_smoothPLS_04</a></li>
+    <li><a class="dropdown-item" href="../articles/s05_lim_fpls_smoothPLS.html">lim_fpls_smoothPLS_05</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -387,12 +387,12 @@ of the total variance due to some gaussian noise.</p>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.125042</span></span></code></pre></div>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">oldpar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_real</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">Y_df</span><span class="op">$</span><span class="va">Y_noised</span><span class="op">)</span></span></code></pre></div>
 <p><img src="s00_synthetic_data_files/figure-html/unnamed-chunk-25-1.png" alt="Y_df real and noised value histograms" width="700"></p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldpar</span><span class="op">)</span></span></code></pre></div>
 <p>We can generate Y_df_test the same way by simply changing df to
 df_test:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
@@ -1592,23 +1592,16 @@ probabilities :</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">proba</span> <span class="op">=</span> <span class="fu">cfda</span><span class="fu">::</span><span class="fu"><a href="https://modal-inria.github.io/cfda/reference/estimate_pt.html" class="external-link">estimate_pt</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">proba</span>, ribbon <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">proba</span>, ribbon <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="s00_synthetic_data_files/figure-html/unnamed-chunk-39-1.png" alt="Marginal probabilities" width="700"></p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">proba</span>, ribbon <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="s00_synthetic_data_files/figure-html/unnamed-chunk-39-2.png" alt="Marginal probabilities" width="700"></p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="multi-state-cfd-manipulation">Multi state CFD manipulation<a class="anchor" aria-label="anchor" href="#multi-state-cfd-manipulation"></a>
-</h2>
+<p><img src="s00_synthetic_data_files/figure-html/unnamed-chunk-39-2.png" alt="Marginal probabilities" width="700">
+# Multi state CFD manipulation</p>
 <p>Before performing the fpls or the smooth-PLS, we have to manipulate
 the categorical functional data of multiple states into multiple
 categorical functional data of one state each.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id     time state</span></span>
 <span><span class="co">#&gt; 1  1  0.00000     2</span></span>
@@ -1618,7 +1611,7 @@ categorical functional data of one state each.</p>
 <span><span class="co">#&gt; 5  1 39.09822     3</span></span>
 <span><span class="co">#&gt; 6  1 42.34901     4</span></span></code></pre></div>
 <p>We need to order the states</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">state</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  num [1:1680] 2 1 2 1 3 4 3 2 3 2 ...</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">state</span><span class="op">)</span></span>
@@ -1628,6 +1621,7 @@ categorical functional data of one state each.</p>
 <span><span class="va">state_ordered</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">state</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">state</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">state_ordered</span></span>
 <span><span class="co">#&gt; [1] 1 2 3 4</span></span></code></pre></div>
+</div>
 <div class="section level3">
 <h3 id="state_indicator">state_indicator<a class="anchor" aria-label="anchor" href="#state_indicator"></a>
 </h3>
@@ -1640,11 +1634,11 @@ state.</p>
 <p>This function will also work with character states.</p>
 <p><em>Now for the different lists, the [[i]] element of a list concern
 the [[i]] states ordered.</em></p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">si_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/state_indicator.html">state_indicator</a></span><span class="op">(</span><span class="va">df</span>, id_col<span class="op">=</span><span class="st">'id'</span>, time_col<span class="op">=</span><span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">si_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "id"      "time"    "state_1" "state_2" "state_3" "state_4"</span></span></code></pre></div>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">si_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id     time state_1 state_2 state_3 state_4</span></span>
 <span><span class="co">#&gt; 1  1  0.00000       0       1       0       0</span></span>
@@ -1660,13 +1654,13 @@ the [[i]] states ordered.</em></p>
 <p>This function transform a categorical functional data with its
 indicator function into a dedicated list of all the state (one per
 different state)</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">split_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/split_in_state_df.html">split_in_state_df</a></span><span class="op">(</span><span class="va">si_df</span>, id_col<span class="op">=</span><span class="st">'id'</span>, time_col<span class="op">=</span><span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">split_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "state_1" "state_2" "state_3" "state_4"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mode.html" class="external-link">mode</a></span><span class="op">(</span><span class="va">split_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "list"</span></span></code></pre></div>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">split_df</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "state_4"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">split_df</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
@@ -1684,13 +1678,13 @@ different state)</p>
 <p>This function takes the data_list with one dataframe per state
 indicator function and remove the duplicated state of each state
 indicator with the function <em>remove_duplicate_states()</em>.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">states_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/build_df_per_state.html">build_df_per_state</a></span><span class="op">(</span><span class="va">split_df</span>, id_col<span class="op">=</span><span class="st">'id'</span>, time_col<span class="op">=</span><span class="st">'time'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">states_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "state_1" "state_2" "state_3" "state_4"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mode.html" class="external-link">mode</a></span><span class="op">(</span><span class="va">states_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "list"</span></span></code></pre></div>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_CFD_individuals.html">plot_CFD_individuals</a></span><span class="op">(</span><span class="va">states_df</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="s00_synthetic_data_files/figure-html/unnamed-chunk-47-1.png" alt="Indicator function per state" width="700"></p>
 </div>
@@ -1700,7 +1694,7 @@ indicator with the function <em>remove_duplicate_states()</em>.</p>
 <p>This function apply all functions to go from a categorical functional
 data with different states to a list of one dataframe per state
 indicator function. whose duplicated states where removed</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat_data_to_indicator.html">cat_data_to_indicator</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df_list</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "state_1" "state_2" "state_3" "state_4"</span></span>

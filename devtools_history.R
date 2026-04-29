@@ -54,6 +54,7 @@ pkgdown::build_site()
 devtools::check_win_devel()
 #usethis::use_build_ignore("pkgdown")
 #usethis::use_build_ignore("test.md")
+devtools::check(as_cran = TRUE)
 devtools::submit_cran()
 
 # codecov TODO

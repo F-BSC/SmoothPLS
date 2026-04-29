@@ -6,6 +6,9 @@
 \usage{
 help_smoothPLS()
 }
+\value{
+No return value, called for side effects (prints instructions to the console).
+}
 \description{
 This function print some information on the package use.
 }

@@ -17,6 +17,7 @@
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/assert_funcPLS_inputs.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/assert_multivariate_naivePLS_inputs.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/assert_multivariate_smoothPLS_inputs.html</loc></url>
+<url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/augment_penalty_matrix.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/beta_1_real_func.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/beta_2_real_func.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/beta_3_real_func.html</loc></url>
@@ -31,10 +32,12 @@
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/build_reg_curve_spls.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/build_spls_functions.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/build_u_ki_list.html</loc></url>
+<url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/calc_penalty_matrix.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/cat_data_to_indicator.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/cat_data_to_indicatrice.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/convert_to_wide_format.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/create_bspline_basis.html</loc></url>
+<url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/cv_pfr_uni.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/determine_curve_name.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/determine_next_state.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/evaluate_curves_distances.html</loc></url>
@@ -52,6 +55,7 @@
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/evaluate_variance_explained.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/evaluate_V_i_function.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/eval_max_min_y.html</loc></url>
+<url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/fit_pfr_uni.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/from_basis_to_fdlist.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/from_fd_to_func.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/funcPLS.html</loc></url>
@@ -72,6 +76,7 @@
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/initial_state_determination.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/is_orthogonal.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/is_orthonormal.html</loc></url>
+<url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/lambda_augmented_uni.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/lambda_determination.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/mae_values.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/multivariate_alpha_building.html</loc></url>
@@ -83,6 +88,8 @@
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/number_of_test_id.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/obj_list_creation.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/orthonormalize_basis_list.html</loc></url>
+<url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/pfr.html</loc></url>
+<url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/plot.cv_pfr_uni.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/plot_CFD_individuals.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/plot_fd_list.html</loc></url>
 <url><loc>https://FrancoisBassac.github.io/SmoothPLS/reference/plot_model_metrics_base.html</loc></url>

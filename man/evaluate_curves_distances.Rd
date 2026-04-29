@@ -13,6 +13,9 @@ evaluate_curves_distances(real_f, regul_time, fun_fd_list = NULL)
 
 \item{fun_fd_list}{a list of fun or fd functions or a fun or a fd function}
 }
+\value{
+No return value, called for side effects (prints distances to the console).
+}
 \description{
 Either for R func or fd function, this function evaluates the distance
 between the real curve and each curve fun or fd which are in the

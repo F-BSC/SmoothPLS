@@ -2,7 +2,7 @@
 title: "smoothPLS_ScalarFD_02"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{smoothPLS_ScalarFD_04}
+  %\VignetteIndexEntry{smoothPLS_ScalarFD_02}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -112,10 +112,10 @@ head(Y_df)
 ```
 
 ```{r hist Y noised}
-par(mfrow=c(1, 2))
+oldpar <- par(mfrow=c(1, 2))
 hist(Y_df$Y_real)
 hist(Y_df$Y_noised)
-par(mfrow=c(1, 1))
+par(oldpar)
 ```
 
 # Basis

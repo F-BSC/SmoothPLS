@@ -2,7 +2,7 @@
 title: "multivariate_smoothPLS_04"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{multivariate_smoothPLS_07}
+  %\VignetteIndexEntry{multivariate_smoothPLS_04}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -211,11 +211,11 @@ beta_func_list_tot = append(beta_list_generation(N_states = N_states),
 
 
 ```{r hist Y noised}
-par(mfrow=c(1, 3))
+oldpar <- par(mfrow=c(1, 3))
 hist(Y_df_sfd$Y_real)
 hist(Y_df_sfd$Y_noised)
 plot(regul_time, beta_4_real_func(regul_time))
-par(mfrow=c(1, 3))
+par(oldpar)
 ```
 
 # Y

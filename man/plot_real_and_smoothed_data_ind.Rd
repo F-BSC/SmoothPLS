@@ -24,7 +24,7 @@ plot_real_and_smoothed_data_ind(
 \item{col_list}{a list of color to separate the states}
 }
 \value{
-a plot
+No return value, called for side effects (generates a plot).
 }
 \description{
 plot_real_and_smoothed_data_ind

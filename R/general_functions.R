@@ -729,6 +729,7 @@ evaluate_results <- function(Y, Y_hat){
 #' @param regul_time a vector of time regularization values
 #' @param fun_fd_list a list of fun or fd functions or a fun or a fd function
 #'
+#' @return No return value, called for side effects (prints distances to the console).
 #' @export
 #'
 #' @author Francois Bassac
@@ -829,7 +830,7 @@ eval_max_min_y <- function(f_list, regul_time){
 #' @param id a value of the id to plot
 #' @param col_list a list of color to separate the states
 #'
-#' @returns a plot
+#' @returns No return value, called for side effects (generates a plot).
 #' @export
 #'
 #' @import graphics
@@ -870,6 +871,10 @@ plot_real_and_smoothed_data_ind <- function(df_wide, df_fd,
                                             time_seq =0:100, id=1,
                                             col_list=c('blue', 'red',
                                                        'green', 'yellow')){
+  # CRAN Fix: Save original par settings and restore them on exit
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar))
+
   graphics::par(mfrow=c(1,length(df_wide)))
   for(i in 1:length(df_wide)){
     plot(time_seq, df_wide[[i]][df_wide[[i]]$id==id, -c(1)], type = 's',
@@ -881,7 +886,6 @@ plot_real_and_smoothed_data_ind <- function(df_wide, df_fd,
     plot(df_fd[[i]][id], add = TRUE, col = col_list[[i]], lwd = 2)
   }
 
-  graphics::par(mfrow=c(1,1))
 }
 
 #' plot_CFD_individuals

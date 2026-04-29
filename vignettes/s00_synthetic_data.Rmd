@@ -234,10 +234,10 @@ var(Y_df$Y_real)/var(Y_df$Y_noised)
 ```
 
 ```{r, fig.alt="Y_df real and noised value histograms"}
-par(mfrow=c(1,2))
+oldpar <- par(mfrow=c(1,2))
 hist(Y_df$Y_real)
 hist(Y_df$Y_noised)
-par(mfrow=c(1,1))
+par(oldpar)
 ```
 
 We can generate Y_df_test the same way by simply changing df to df_test:
@@ -337,10 +337,8 @@ proba = cfda::estimate_pt(df)
 ```
 
 ```{r, fig.alt="Marginal probabilities"}
-par(mfrow=c(1,2))
 plot(proba, ribbon = FALSE)
 plot(proba, ribbon = TRUE)
-par(mfrow=c(1,1))
 ```
 # Multi state CFD manipulation
 

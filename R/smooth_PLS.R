@@ -2143,6 +2143,7 @@ smoothPLS_predict <- function(df_predict_list, delta_list,
 #'
 #' This function print some information on the package use.
 #'
+#' @return No return value, called for side effects (prints instructions to the console).
 #' @export
 #'
 #' @author Francois Bassac
