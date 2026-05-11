@@ -1,6 +1,9 @@
 # SmoothPLS <img src="man/figures/logo.png" align="right" height="139"/>
 
-[![R-CMD-check](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml) [![GitHub Release](https://img.shields.io/github/v/release/FrancoisBassac/SmoothPLS?label=version&color=blue)](https://github.com/FrancoisBassac/SmoothPLS/releases) [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable) ![License](https://img.shields.io/badge/license-MIT-green.svg) [![Documentation](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://FrancoisBassac.github.io/SmoothPLS/) [![GitHub last commit](https://img.shields.io/github/last-commit/FrancoisBassac/SmoothPLS)](https://github.com/FrancoisBassac/SmoothPLS/commits/dev)
+[![CRAN status](https://www.r-pkg.org/badges/version/SmoothPLS)](https://cran.r-project.org/package=SmoothPLS) [![R-CMD-check](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FrancoisBassac/SmoothPLS/actions/workflows/R-CMD-check.yaml) [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+
+[![Documentation](https://img.shields.io/badge/docs-pkgdown-blue.svg)](https://FrancoisBassac.github.io/SmoothPLS/) [![CRAN monthly downloads](https://cranlogs.r-pkg.org/badges/SmoothPLS)](https://cran.r-project.org/package=SmoothPLS) [![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/SmoothPLS)](https://cran.r-project.org/package=SmoothPLS) ![License](https://img.shields.io/badge/license-MIT-green.svg)
+
 
 ## Overview
 
