@@ -34,9 +34,13 @@ This formulation ensures that the smoothing process respects the continuous natu
 
 ## Installation
 
-![Downloads](https://img.shields.io/github/downloads/FrancoisBassac/SmoothPLS/total.svg)
+Install the released version of SmoothPLS from [CRAN](https://cran.r-project.org/package=SmoothPLS) with:
 
-The package is currently in development. The latest stable version can be installed via:
+``` r
+install.packages("SmoothPLS")
+```
+
+You can install the development version from GitHub with:
 
 ``` r
 # install.packages("devtools")
