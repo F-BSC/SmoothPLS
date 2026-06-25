@@ -614,17 +614,12 @@ evaluate_reg_curve_PFR_uni_old <- function(mpfr_model, curve_name){
 #' @author Francois Bassac
 evaluate_reg_curve_PFR_uni <- function(fit_obj, basis_obj) {
 
-  # 1. Vérification de sécurité
   if (!inherits(basis_obj, "basisfd")) {
     stop("basis_obj must be a valid fda 'basisfd' object.")
   }
 
-  # 2. Extraction des coefficients
-  # Le premier élément est l'intercept, on prend tout le reste
   b_hat <- fit_obj$beta_hat[-1]
 
-  # 3. Reconstruction de la courbe avec fda::fd
-  # fda::fd s'attend à recevoir une matrice colonne pour les coefficients
   beta_fd <- fda::fd(coef = as.matrix(b_hat), basisobj = basis_obj)
 
   return(beta_fd)
@@ -637,14 +632,11 @@ build_reg_curve_mpfr <- function(modele_final, curves_names_list,
     cat(paste0("==> Build regression curve for : ", curves_names_list[[1]], "\n"))
   }
 
-  # 1. Évaluation de la courbe fonctionnelle
   delta_curve <- evaluate_reg_curve_PFR_uni(fit_obj = modele_final,
                                             basis_obj = basis_obj)
 
-  # 2. Récupération de l'intercept
   delta_0 <- modele_final$beta_hat[1]
 
-  # 3. Formatage de la liste de sortie
   delta_list <- list(delta_0, delta_curve)
   names(delta_list) <- c("Intercept", curves_names_list[[1]])
 
@@ -691,7 +683,7 @@ build_block_sfd <- function(coef_matrix, basis_obj, LDO = 2) {
     coef_matrix <- as.matrix(coef_matrix)
   }
 
-  # Interaction temporelle : integral(phi * psi)
+  # integral(phi * psi)
   J_matrix <- fda::inprod(basis_obj, basis_obj)
 
   Z_block <- coef_matrix %*% J_matrix
@@ -724,11 +716,9 @@ build_block_sfd <- function(coef_matrix, basis_obj, LDO = 2) {
 #' @return A list with the concatenated design block Z and the base penalty R
 build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, ...) {
 
-  # Identifier tous les états disponibles
-  # (On suppose ici que tu as une colonne d'état, adapte selon le nom de ta variable)
   all_states <- unique(df_cfd$state)
 
-  # Gestion de l'option K ou K-1
+  # K or K-1 option
   states_to_keep <- all_states
   if (!is.null(reference_state)) {
     states_to_keep <- setdiff(all_states, reference_state)
@@ -736,24 +726,19 @@ build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, 
 
   K_prime <- length(states_to_keep)
 
-  # Boucle pour calculer l'aire active (Lambda) de chaque état conservé
   Z_list <- list()
   for (k in 1:K_prime) {
     current_state <- states_to_keep[k]
 
-    # On filtre le dataframe pour ne garder que l'état en cours
     df_state <- df_cfd[df_cfd$state == current_state, ]
 
-    # Ton incroyable fonction de calcul d'aire active
     Lambda_k <- evaluate_lambda(df = df_state, basis = basis_obj, ...)
 
     Z_list[[k]] <- Lambda_k
   }
 
-  # Concaténation horizontale de tous les blocs Lambda (Z = [L1, L2, ..., LK'])
   Z_block <- do.call(cbind, Z_list)
 
-  # La matrice de pénalité de base pour UNE courbe de cet état
   R_base <- calc_penalty_matrix(basis_obj, LDO = LDO)
 
   # Trace Heuristic for CFD:
@@ -767,7 +752,7 @@ build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, 
   return(list(
     type = "cfd",
     Z = Z_block,
-    R = R_base,       # On renvoie la base, l'Assembleur la dupliquera K_prime fois !
+    R = R_base,
     n_coefs = ncol(Z_block), # K_prime * q
     K_prime = K_prime,
     states = states_to_keep,
@@ -791,11 +776,9 @@ build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, 
 #' @return A matrix of dimension n x (1 + P_total)
 build_global_design <- function(block_list, n_obs) {
 
-  # 1. Initialiser avec la colonne de l'intercept
   D_global <- matrix(1, nrow = n_obs, ncol = 1)
   colnames(D_global) <- "Intercept"
 
-  # 2. Concaténer horizontalement tous les blocs Z
   for (i in seq_along(block_list)) {
     D_global <- cbind(D_global, block_list[[i]]$Z)
   }
@@ -807,15 +790,12 @@ build_global_design <- function(block_list, n_obs) {
 #' Helper function: Create a block-diagonal matrix from a list of matrices
 #' (Pure base R for speed and zero dependencies)
 bdiag_base <- function(mat_list) {
-  # Calcul des dimensions totales
   dims <- sapply(mat_list, dim)
   total_rows <- sum(dims[1, ])
   total_cols <- sum(dims[2, ])
 
-  # Initialisation d'une matrice vide
   res <- matrix(0, nrow = total_rows, ncol = total_cols)
 
-  # Remplissage de la diagonale
   current_row <- 1
   current_col <- 1
   for (mat in mat_list) {
@@ -850,16 +830,16 @@ build_global_penalty <- function(block_list, lambda_list) {
 
   for (i in seq_along(block_list)) {
     block <- block_list[[i]]
-    lams <- lambda_list[[i]] # Ceci est un vecteur de taille 1 ou K'
+    lams <- lambda_list[[i]]
 
     if (block$type == "cfd") {
-      # Cas 1 : Un seul lambda global pour tout le CFD
+      # Cas 1 : One lambda for all states
       if (length(lams) == 1) {
         R_penalized <- lams * block$R
         cfd_blocks <- replicate(block$K_prime, R_penalized, simplify = FALSE)
         penalties_to_diag[[i]] <- bdiag_base(cfd_blocks)
 
-        # Cas 2 : Un lambda spécifique par état
+        # Cas 2 : one lambda per state
       } else if (length(lams) == block$K_prime) {
         cfd_blocks <- list()
         for (k in 1:block$K_prime) {
@@ -867,7 +847,6 @@ build_global_penalty <- function(block_list, lambda_list) {
         }
         penalties_to_diag[[i]] <- bdiag_base(cfd_blocks)
 
-        # Erreur de saisie utilisateur
       } else {
         stop(paste("Block", i, "is a CFD with", block$K_prime,
                    "states. You must provide either 1 or", block$K_prime, "lambdas."))
@@ -882,10 +861,8 @@ build_global_penalty <- function(block_list, lambda_list) {
     }
   }
 
-  # 2. Assembler la méga-matrice sur la diagonale
   R_lambda_global <- bdiag_base(penalties_to_diag)
 
-  # 3. Augmenter la matrice (R_0_lambda) pour protéger l'intercept
   R_0_lambda <- augment_penalty_matrix(R_lambda_global)
 
   return(R_0_lambda)
@@ -910,18 +887,16 @@ fit_pfr_multi <- function(D_global, Y, R_0_lambda) {
 
   A <- DtD + R_0_lambda
 
-  # Le tryCatch protège le code si la matrice devient numériquement singulière
   A_inv <- tryCatch(solve(A), error = function(e) NULL)
 
   if (is.null(A_inv)) {
-    return(NULL) # Code d'erreur intercepté par la validation croisée
+    return(NULL)
   }
 
   beta_hat <- A_inv %*% DtY
   Y_hat <- D_global %*% beta_hat
   res <- Y - Y_hat
 
-  # L'astuce magique de la matrice Hat : diag(D * A^-1 * D')
   h_diag <- rowSums((D_global %*% A_inv) * D_global)
 
   return(list(
@@ -931,6 +906,8 @@ fit_pfr_multi <- function(D_global, Y, R_0_lambda) {
     h_diag = h_diag
   ))
 }
+
+
 #' Multivariate Exact LOOCV for PFR
 #'
 #' @param block_list A list of blocks generated by the build_block_* functions
@@ -940,25 +917,20 @@ fit_pfr_multi <- function(D_global, Y, R_0_lambda) {
 #' @return A list with the optimal lambda combination and the minimum RMSEP
 cv_pfr_multi <- function(block_list, Y, list_of_lambda_lists) {
 
-  # 1. La matrice de design globale est invariante par rapport à lambda !
-  # On la calcule UNE SEULE FOIS ici, c'est un gain de temps massif.
   D_global <- build_global_design(block_list, length(Y))
 
   n_models <- length(list_of_lambda_lists)
   rmsep_vec <- numeric(n_models)
 
-  # 2. La boucle de validation croisée
+  # 2. CV validation loop
   for (i in 1:n_models) {
 
     current_lambda_list <- list_of_lambda_lists[[i]]
 
-    # Construire la méga-matrice de pénalité dynamique
     R_0_lam <- build_global_penalty(block_list, current_lambda_list)
 
-    # Ajuster le modèle
     fit <- fit_pfr_multi(D_global, Y, R_0_lam)
 
-    # Gestion des matrices singulières
     if (is.null(fit)) {
       rmsep_vec[i] <- Inf
       next
@@ -969,7 +941,7 @@ cv_pfr_multi <- function(block_list, Y, list_of_lambda_lists) {
     rmsep_vec[i] <- sqrt(mean(res_loo^2))
   }
 
-  # 3. Extraction du vainqueur
+  # 3. winner
   best_idx <- which.min(rmsep_vec)
 
   return(list(
@@ -1068,29 +1040,27 @@ reconstruct_coefficients <- function(beta_hat, block_list) {
 #' @return A list of lambda combinations ready for cv_pfr_multi.
 generate_lambda_grid <- function(flat_candidate_list, block_sizes) {
 
-  # 1. Vérification de sécurité
+  # 1. safety check
   if (length(flat_candidate_list) != sum(block_sizes)) {
     stop("The number of candidate vectors must equal the sum of block_sizes.")
   }
 
-  # 2. Création du produit cartésien complet (Tableau plat)
+  # 2. Flaqtten step
   grid_df <- expand.grid(flat_candidate_list)
   n_models <- nrow(grid_df)
 
   list_of_lambda_lists <- list()
 
-  # 3. Re-packaging ligne par ligne
+  # 3. Re-packaging
   for (i in 1:n_models) {
 
-    current_row <- as.numeric(grid_df[i, ]) # Vecteur plat de 8 valeurs
+    current_row <- as.numeric(grid_df[i, ])
     repackaged_list <- list()
     current_idx <- 1
 
-    # On découpe le vecteur plat pour reconstruire la structure en blocs
     for (b in seq_along(block_sizes)) {
       size <- block_sizes[b]
 
-      # Extraction des paramètres pour ce bloc spécifique
       repackaged_list[[b]] <- current_row[current_idx:(current_idx + size - 1)]
       current_idx <- current_idx + size
     }
@@ -1143,15 +1113,15 @@ generate_lambda_grid <- function(flat_candidate_list, block_sizes) {
 #'
 #' @author Francois Bassac
 mpfr <- function(df_list, Y,
-                 basis_list,                   # Liste des objets basis (NULL pour les NFD)
-                 types,                        # Remplace curve_type_obj ('nfd', 'sfd', 'cfd')
-                 candidate_list = NULL,               # Liste des grilles de lambda
-                 block_sizes,                  # Tailles des blocs pour la grille
-                 LDO = 2,                      # Ordre de la pénalité
-                 reference_state = NULL,       # État de référence pour les CFD
-                 regul_time_list = NULL,       # Liste des vecteurs de temps de régularisation
-                 id_col = 'id',                # Remplace id_col_obj
-                 time_col = 'time',            # Remplace time_col_obj
+                 basis_list,
+                 types,
+                 candidate_list = NULL,
+                 block_sizes = NULL,
+                 LDO = 2,
+                 reference_state = NULL,
+                 regul_time_list = NULL,
+                 id_col = 'id',
+                 time_col = 'time',
                  int_mode = 1,
                  print_steps = FALSE,
                  plot_rmsep = TRUE,
@@ -1159,14 +1129,12 @@ mpfr <- function(df_list, Y,
                  parallel = TRUE) {
 
 
-  # ETAPE 0 : DATA PREPROCESSING
+  # STEP 0 : DATA PREPROCESSING
 
   if (print_steps) cat("=> Data assertions and formatting...\n")
 
-  # 1. Assertions strictes sur les nouveaux formats
   assert_mpfr_inputs(data_list = df_list, Y = Y, types = types, basis_list = basis_list)
 
-  # 2. Nettoyage et formatage léger (Remplace TOTALEMENT ton ancien build_new_data_list)
   clean_data_list <- preprocess_mpfr_data(data_list = df_list,
                                           types = types,
                                           id_col = id_col,
@@ -1177,7 +1145,7 @@ mpfr <- function(df_list, Y,
 
 
 
-  # ETAPE 1 : LES USINES A BLOCS
+  # Step 1 : Blocks
 
   if (print_steps) cat("=> Building structural blocks...\n")
 
@@ -1196,7 +1164,6 @@ mpfr <- function(df_list, Y,
                                          LDO = LDO)
 
     } else if (ctype %in% c("cfd", "sfd_step")) {
-      # On injecte les paramètres supplémentaires via les '...' de build_block_cfd
       block_list[[i]] <- build_block_cfd(
         df_cfd = clean_data_list[[i]],
         basis_obj = basis_list[[i]],
@@ -1228,12 +1195,12 @@ mpfr <- function(df_list, Y,
     block_sizes = block_sizes)
 
 
-  if (print_steps) cat("=> Running Exact LOOCV Optimization...\n")
+  if (print_steps) cat("=> Running LOOCV Optimization...\n")
   cv_results <- cv_pfr_multi(block_list = block_list,
                              Y = Y,
                              list_of_lambda_lists = list_of_lambda_lists)
-
-  best_lambdas <- cv_results$optimal_lambda_list # Récupération du meilleur jeu de paramètres
+  # best hyperparameters gathering
+  best_lambdas <- cv_results$optimal_lambda_list
 
   if (plot_rmsep) {
     if(length(types) > 1) {
@@ -1280,7 +1247,7 @@ mpfr <- function(df_list, Y,
   }
 
 
-  # ETAPE 4 : MODÈLE FINAL ET TRONÇONNEUR
+  # ETAPE 4 : Final model and cutter
 
   if (print_steps) cat("=> Fitting final model and slicing curves...\n")
 
@@ -1289,19 +1256,15 @@ mpfr <- function(df_list, Y,
 
   final_fit <- fit_pfr_multi(D_global, Y, R_0_lam_opt)
 
-  # Reconstruction dynamique des courbes
   reconstructed_curves <- reconstruct_coefficients(final_fit$beta_hat, block_list)
 
-  # Nommer les éléments de la liste de sortie (en gardant "Intercept" en position 1)
   names(reconstructed_curves)[-1] <- curves_names_list
 
   if (plot_reg_curves) {
-    # Tracer toutes les courbes fonctionnelles reconstruites
     for (curve in reconstructed_curves[-1]) {
       if (inherits(curve, "fd")) {
         plot(curve)
       } else if (is.list(curve)) {
-        # Cas d'un CFD avec K' états : on boucle sur les sous-courbes
         for (sub_curve in curve) plot(sub_curve)
       }
     }
@@ -1364,25 +1327,21 @@ mpfr <- function(df_list, Y,
 #' @author Francois Bassac
 pfr <- function(X_func, Y, basis_obj, curve_type = "cfd",
                 lambda_grid = 10^seq(-5, 5, length.out = 30),
-                LDO = 2, reference_state = NULL, ...) {
+                LDO = 2, reference_state = NULL, block_size=c(1), ...) {
 
-  # Dans le cas univarié standard, on suppose qu'on applique
-  # 1 seul hyperparamètre de lissage global pour toute la courbe (ou tous les états).
-  default_block_size <- c(1)
 
-  # Appel direct au moteur multivarié en "forçant" le format liste
   res <- mpfr(
     df_list = list(X_func),
     Y = Y,
-    basis_obj = list(basis_obj),       # Converti en liste pour l'assembleur
-    types = list(curve_type), # Converti en liste pour l'assembleur
+    basis_obj = list(basis_obj),       # list conversionfor assembleur
+    types = list(curve_type),          # list conversionfor assembleur
     candidate_list = list(lambda_grid),
-    block_sizes = default_block_size,
+    block_sizes = block_size,
     LDO = LDO,
     reference_state = reference_state,
-    regul_time_list = NULL,       # Liste des vecteurs de temps de régularisation
-    id_col = 'id',                # Remplace id_col_obj
-    time_col = 'time',            # Remplace time_col_obj
+    regul_time_list = NULL,       #
+    id_col = 'id',
+    time_col = 'time',
     int_mode = 1,
     print_steps = FALSE,
     plot_rmsep = TRUE,
