@@ -36,9 +36,8 @@ build_u_ki_list <- function(N_states, nbComp, ms_pls_models){
 
 #### Multivariate ####
 
-#' smoothPLS_multi
-#'
-#' This function performs the smooth PLS algorithm for both the univariate case
+
+#' Performs the smooth PLS algorithm for both the univariate case
 #' for a Scalar Functional Data or a Categorical Functional Data and the
 #' multivariate case for a mix of functional data of different nature
 #' (SFD or CFD).

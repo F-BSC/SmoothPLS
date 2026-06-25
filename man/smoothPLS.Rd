@@ -2,7 +2,12 @@
 % Please edit documentation in R/smooth_PLS.R
 \name{smoothPLS}
 \alias{smoothPLS}
-\title{smoothPLS_multi}
+\title{Performs the smooth PLS algorithm for both the univariate case
+for a Scalar Functional Data or a Categorical Functional Data and the
+multivariate case for a mix of functional data of different nature
+(SFD or CFD).
+For some input, if the same value is needed for all the different curves,
+no need to make a list with the value per curve.}
 \usage{
 smoothPLS(
   df_list,
@@ -65,7 +70,7 @@ default 'LOO'}
 a list of the plsr_model and the regression curves (and intercept).
 }
 \description{
-This function performs the smooth PLS algorithm for both the univariate case
+Performs the smooth PLS algorithm for both the univariate case
 for a Scalar Functional Data or a Categorical Functional Data and the
 multivariate case for a mix of functional data of different nature
 (SFD or CFD).

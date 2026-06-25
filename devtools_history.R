@@ -34,6 +34,7 @@ usethis::use_test("synthetic_data")
 usethis::use_test("smooth_PLS")
 usethis::use_test("fpls")
 usethis::use_test("edge_cases")
+usethis::use_test("test-pfr_utils")
 # Dev
 devtools::install()
 devtools::load_all() # function update
