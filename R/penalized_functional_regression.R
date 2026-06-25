@@ -682,6 +682,14 @@ build_block_nfd <- function(X_nfd) {
 #' @param LDO Linear Differential Operator for the penalty (default 2)
 #' @return A list with the design block Z and the penalty base R
 build_block_sfd <- function(coef_matrix, basis_obj, LDO = 2) {
+
+  # safery if inherits "fd"
+  if (inherits(coef_matrix, "fd")) {
+    coef_matrix <- t(coef_matrix$coefs)
+  } else {
+    coef_matrix <- as.matrix(coef_matrix)
+  }
+
   # Interaction temporelle : integral(phi * psi)
   J_matrix <- fda::inprod(basis_obj, basis_obj)
 
@@ -1074,80 +1082,47 @@ generate_lambda_grid <- function(flat_candidate_list, block_sizes) {
   return(list_of_lambda_lists)
 }
 
-#' Fit a Multivariate Penalized Functional Regression Model
-#'
-#' @description
-#' The main wrapper function to orchestrate the block building, hyperparameter
-#' grid generation, exact LOOCV optimization, and coefficient reconstruction.
-#'
-#' @param data_list A list of raw data (data.frames for CFD/NFD, matrices for SFD).
-#' @param types A character vector of types: "nfd", "sfd", or "cfd".
-#' @param Y The numeric response vector.
-#' @param basis_list A list of fda basis objects (same length as data_list).
-#' @param candidate_list A flat list of candidate lambda vectors to test.
-#' @param block_sizes A numeric vector indicating how many lambdas belong to each block.
-#'
-#' @return An S3 object of class 'mpfr' containing the final model and curves.
-#' @export
-mpfr_ONE <- function(data_list, types, Y, basis_list, candidate_list, block_sizes) {
-
-  P <- length(data_list)
-  block_list <- list()
-
-  cat("=> 1. Building individual structural blocks...\n")
-  for (i in 1:P) {
-    if (types[i] == "nfd") {
-      block_list[[i]] <- build_block_nfd(data_list[[i]])
-
-    } else if (types[i] == "sfd") {
-      block_list[[i]] <- build_block_sfd(data_list[[i]], basis_obj = basis_list[[i]])
-
-    } else if (types[i] == "cfd") {
-      # On suppose ici qu'un état de référence a été géré en amont ou via un argument
-      block_list[[i]] <- build_block_cfd(data_list[[i]], basis_obj = basis_list[[i]])
-    }
-  }
-
-  cat("=> 2. Generating Hyperparameter Grid...\n")
-  list_of_lambda_lists <- generate_lambda_grid(candidate_list, block_sizes)
-  cat(sprintf("   Testing %d combinations.\n", length(list_of_lambda_lists)))
-
-  cat("=> 3. Running Exact LOOCV Optimization...\n")
-  cv_results <- cv_pfr_multi(block_list, Y, list_of_lambda_lists)
-  best_lambdas <- cv_results$optimal_lambda_list
-
-  cat("=> 4. Fitting final model with optimal parameters...\n")
-  D_global <- build_global_design(block_list, length(Y))
-  R_0_lam_opt <- build_global_penalty(block_list, best_lambdas)
-
-  final_fit <- fit_pfr_multi(D_global, Y, R_0_lam_opt)
-
-  cat("=> 5. Reconstructing functional curves...\n")
-  reconstructed_curves <- reconstruct_coefficients(final_fit$beta_hat, block_list)
-
-  # Compilation de l'objet final
-  res <- list(
-    call = match.call(),
-    optimal_lambdas = best_lambdas,
-    cv_min_rmsep = cv_results$min_rmsep,
-    cv_results = cv_results$all_results,
-    fitted_values = final_fit$Y_hat,
-    residuals = final_fit$residuals,
-    coefficients = reconstructed_curves # Contient l'intercept, les NFD, et les courbes fd
-  )
-
-  class(res) <- "mpfr"
-  cat("=> Done!\n")
-  return(res)
-}
-
-
 #' Multivariate Penalized Functional Regression
 #'
-#' @description Fits a multivariate PFR model for heterogeneous data (CFD, SFD, NFD).
-#' ...
+#' @description
+#' Fits a Multivariate Penalized Functional Regression (MPFR) model. This function
+#' handles heterogeneous datasets by integrating Continuous Functional Data (CFD),
+#' Scalar Functional Data (SFD), and Non-Functional Data (NFD) into a single
+#' regularized block-matrix architecture. It automatically builds the structural blocks,
+#' generates the hyperparameter grid, optimizes the penalties via exact LOOCV,
+#' and reconstructs the functional coefficients.
+#'
+#' @param df_list A list of raw data objects (e.g., `data.frame` for CFD, `matrix` for NFD/SFD).
+#' @param Y A numeric vector representing the scalar response variable.
+#' @param basis_list A list of `basisfd` objects from the `fda` package. Must be the same length as `df_list`. Use `NULL` for NFD blocks.
+#' @param types A character vector specifying the type of each predictor. Accepted values are `"nfd"`, `"sfd"`, or `"cfd"`.
+#' @param candidate_list A flat list of numeric vectors containing the candidate lambda penalty values to test during cross-validation.
+#' @param block_sizes A numeric vector indicating the number of lambda parameters assigned to each block (e.g., `1` for a global CFD penalty, or `K` for state-specific penalties).
+#' @param LDO An integer defining the Linear Differential Operator for the roughness penalty. Defaults to `2` (penalizes the squared second derivative).
+#' @param reference_state Character. The specific state to drop for CFD blocks to avoid collinearity (i.e., using K-1 states). Defaults to `NULL` (uses all K states).
+#' @param regul_time_list A list of numeric vectors specifying the time regularization grid for each curve. Defaults to `NULL`.
+#' @param id_col Character. The name of the ID column in the functional dataframes. Defaults to `"id"`.
+#' @param time_col Character. The name of the time column in the functional dataframes. Defaults to `"time"`.
+#' @param int_mode Integer. The integration mode used for active area evaluation in CFD. Defaults to `1`.
+#' @param print_steps Logical. If `TRUE`, prints the progression steps of the algorithm to the console. Defaults to `FALSE`.
+#' @param plot_rmsep Logical. If `TRUE` and the model is univariate, automatically plots the LOOCV RMSEP curve. Defaults to `TRUE`.
+#' @param plot_reg_curves Logical. If `TRUE`, automatically plots the reconstructed functional coefficient curves (`beta(t)`) at the end of the execution. Defaults to `FALSE`.
+#' @param parallel Logical. If `TRUE`, uses parallel computing for the active area integration of CFD. Defaults to `TRUE`.
+#'
+#' @return An S3 object of class `mpfr` containing:
+#' \itemize{
+#'   \item \strong{call}: The matched call.
+#'   \item \strong{optimal_lambdas}: The list of optimal penalty parameters selected by LOOCV.
+#'   \item \strong{cv_min_rmsep}: The minimum Root Mean Squared Error of Prediction achieved.
+#'   \item \strong{cv_results}: A data frame containing the RMSEP for all tested lambda combinations.
+#'   \item \strong{fitted_values}: The numeric vector of fitted values (`Y_hat`).
+#'   \item \strong{residuals}: The numeric vector of residuals.
+#'   \item \strong{coefficients}: A named list containing the estimated intercept, the non-functional coefficients, and the reconstructed `fd` objects for functional covariates.
+#' }
 #'
 #' @export
+#'
+#' @author Francois Bassac
 mpfr <- function(df_list, Y,
                  basis_list,                   # Liste des objets basis (NULL pour les NFD)
                  types,                        # Remplace curve_type_obj ('nfd', 'sfd', 'cfd')
@@ -1236,7 +1211,7 @@ mpfr <- function(df_list, Y,
     if(length(types) > 1) {
       cat("Note: Plotting multidimensional CV is complex, custom plot needed.\n")
     } else {
-      # À condition d'avoir adapté ton plot.cv_pfr_uni pour le multi
+      class(cv_results) <- "cv_pfr_uni"
       plot(cv_results)
     }
   }
@@ -1320,7 +1295,7 @@ pfr <- function(X_func, Y, basis_obj, curve_type = "cfd",
     df_list = list(X_func),
     Y = Y,
     basis_obj = list(basis_obj),       # Converti en liste pour l'assembleur
-    curve_type_obj = list(curve_type), # Converti en liste pour l'assembleur
+    types = list(curve_type), # Converti en liste pour l'assembleur
     candidate_list = list(lambda_grid),
     block_sizes = default_block_size,
     LDO = LDO,
