@@ -692,7 +692,8 @@ build_block_sfd <- function(coef_matrix, basis_obj, LDO = 2) {
     type = "sfd",
     Z = Z_block,
     R = R_block,
-    n_coefs = ncol(Z_block) # q
+    n_coefs = ncol(Z_block),# q
+    basis_obj = basis_obj
   ))
 }
 
@@ -743,7 +744,8 @@ build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, 
     R = R_base,       # On renvoie la base, l'Assembleur la dupliquera K_prime fois !
     n_coefs = ncol(Z_block), # K_prime * q
     K_prime = K_prime,
-    states = states_to_keep
+    states = states_to_keep,
+    basis_obj = basis_obj
   ))
 }
 
