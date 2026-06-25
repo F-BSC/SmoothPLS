@@ -650,3 +650,100 @@ build_reg_curve_mpfr <- function(modele_final, curves_names_list,
 
   return(delta_list)
 }
+
+# Multivariate
+# ETAPE 1 : LES USINES A BLOCS (Block Factories)
+
+#' Build block for Non-Functional Data (NFD / Scalars)
+#'
+#' @param X_nfd A numeric matrix or data.frame of scalar predictors (n x Q)
+#' @return A list with the design block Z and the penalty base R (Identity)
+build_block_nfd <- function(X_nfd) {
+  Z_block <- as.matrix(X_nfd)
+
+  # Pour les scalaires, on ne peut pas dériver.
+  # La pénalité de base est donc une matrice Identité (Ridge classique).
+  # On pourra la multiplier par 0 plus tard si on ne veut pas pénaliser.
+  R_block <- diag(ncol(Z_block))
+
+  return(list(
+    type = "nfd",
+    Z = Z_block,
+    R = R_block,
+    n_coefs = ncol(Z_block) # Q
+  ))
+}
+
+#' Build block for Scalar Functional Data (SFD)
+#'
+#' @param coef_matrix Matrix of coefficients (n x d) of the curves on their basis
+#' @param basis_obj The fda basis object
+#' @param LDO Linear Differential Operator for the penalty (default 2)
+#' @return A list with the design block Z and the penalty base R
+build_block_sfd <- function(coef_matrix, basis_obj, LDO = 2) {
+  # Interaction temporelle : integral(phi * psi)
+  J_matrix <- fda::inprod(basis_obj, basis_obj)
+
+  Z_block <- coef_matrix %*% J_matrix
+  R_block <- calc_penalty_matrix(basis_obj, LDO = LDO)
+
+  return(list(
+    type = "sfd",
+    Z = Z_block,
+    R = R_block,
+    n_coefs = ncol(Z_block) # q
+  ))
+}
+
+#' Build block for Categorical Functional Data (CFD)
+#'
+#' @param df_cfd The dataframe containing the CFD for all individuals
+#' @param basis_obj The fda basis object
+#' @param reference_state Character. The state to drop (K-1). If NULL, keeps all K states.
+#' @param ... Additional arguments to pass to your evaluate_lambda function
+#' @return A list with the concatenated design block Z and the base penalty R
+build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, ...) {
+
+  # Identifier tous les états disponibles
+  # (On suppose ici que tu as une colonne d'état, adapte selon le nom de ta variable)
+  all_states <- unique(df_cfd$state)
+
+  # Gestion de l'option K ou K-1
+  states_to_keep <- all_states
+  if (!is.null(reference_state)) {
+    states_to_keep <- setdiff(all_states, reference_state)
+  }
+
+  K_prime <- length(states_to_keep)
+
+  # Boucle pour calculer l'aire active (Lambda) de chaque état conservé
+  Z_list <- list()
+  for (k in 1:K_prime) {
+    current_state <- states_to_keep[k]
+
+    # On filtre le dataframe pour ne garder que l'état en cours
+    df_state <- df_cfd[df_cfd$state == current_state, ]
+
+    # Ton incroyable fonction de calcul d'aire active
+    Lambda_k <- evaluate_lambda(df = df_state, basis = basis_obj, ...)
+
+    Z_list[[k]] <- Lambda_k
+  }
+
+  # Concaténation horizontale de tous les blocs Lambda (Z = [L1, L2, ..., LK'])
+  Z_block <- do.call(cbind, Z_list)
+
+  # La matrice de pénalité de base pour UNE courbe de cet état
+  R_base <- calc_penalty_matrix(basis_obj, LDO = LDO)
+
+  return(list(
+    type = "cfd",
+    Z = Z_block,
+    R = R_base,       # On renvoie la base, l'Assembleur la dupliquera K_prime fois !
+    n_coefs = ncol(Z_block), # K_prime * q
+    K_prime = K_prime,
+    states = states_to_keep
+  ))
+}
+
+
