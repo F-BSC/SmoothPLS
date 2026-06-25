@@ -727,17 +727,22 @@ build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, 
   K_prime <- length(states_to_keep)
 
   Z_list <- list()
+  Z_list <- list()
   for (k in 1:K_prime) {
     current_state <- states_to_keep[k]
 
-    df_state <- df_cfd[df_cfd$state == current_state, ]
-
-    Lambda_k <- evaluate_lambda(df = df_state, basis = basis_obj, ...)
+    # copy to keep time
+    df_indicator <- df_cfd
+    # Binary indicator (1 if current state, 0 else)
+    df_indicator$state <- as.numeric(df_indicator$state == current_state)
+    Lambda_k <- evaluate_lambda(df = df_indicator, basis = basis_obj,
+                                curve_type = 'cat', ...)
 
     Z_list[[k]] <- Lambda_k
   }
 
   Z_block <- do.call(cbind, Z_list)
+  Z_block = as.matrix(Z_block)
 
   R_base <- calc_penalty_matrix(basis_obj, LDO = LDO)
 
@@ -780,10 +785,10 @@ build_global_design <- function(block_list, n_obs) {
   colnames(D_global) <- "Intercept"
 
   for (i in seq_along(block_list)) {
-    D_global <- cbind(D_global, block_list[[i]]$Z)
+    D_global <- cbind(D_global, as.matrix(block_list[[i]]$Z))
   }
 
-  return(D_global)
+  return(as.matrix(D_global))
 }
 
 
@@ -886,6 +891,9 @@ fit_pfr_multi <- function(D_global, Y, R_0_lambda) {
   DtY <- crossprod(D_global, Y)
 
   A <- DtD + R_0_lambda
+
+  # Safety against collinearity : add a little something on the diagonal
+  diag(A) <- diag(A) + 1e-8
 
   A_inv <- tryCatch(solve(A), error = function(e) NULL)
 
@@ -1202,6 +1210,12 @@ mpfr <- function(df_list, Y,
                                           time_col = time_col)
 
   curves_names_list <- names(clean_data_list)
+
+  # if NULL we assume one lambda per curve/bloc
+  if (is.null(block_sizes)) {
+    block_sizes <- rep(1, length(clean_data_list))
+  }
+
   if (print_steps) cat("=> Input format assertions OK.\n")
 
   # Step 1 : Blocks
@@ -1276,11 +1290,23 @@ mpfr <- function(df_list, Y,
   best_lambdas <- cv_results$optimal_lambda_list
 
   if (plot_rmsep) {
-    if(length(types) > 1) {
+    if (length(types) > 1) {
       cat("Note: Plotting multidimensional CV is complex, custom plot needed.\n")
     } else {
-      class(cv_results) <- "cv_pfr_uni"
-      plot(cv_results)
+      flat_lambdas <- sapply(list_of_lambda_lists, function(l) l[[1]][1])
+
+      cv_for_plot <- list(
+        optimal_lambda = unlist(best_lambdas)[1],
+        cv_results = data.frame(lambda = flat_lambdas, rmsep = cv_results$all_results$rmsep)
+      )
+      class(cv_for_plot) <- "cv_pfr_uni"
+
+      # safety
+      if (all(is.infinite(cv_for_plot$cv_results$rmsep))) {
+        warning("All model failed! (RMSEP = Inf). Plot can not be done.")
+      } else {
+        plot(cv_for_plot)
+      }
     }
   }
 
@@ -1329,7 +1355,8 @@ mpfr <- function(df_list, Y,
 
   final_fit <- fit_pfr_multi(D_global, Y, R_0_lam_opt)
 
-  reconstructed_curves <- reconstruct_coefficients(final_fit$beta_hat, block_list)
+  reconstructed_curves <- reconstruct_coefficients(final_fit$beta_hat,
+                                                   block_list)
 
   names(reconstructed_curves)[-1] <- curves_names_list
 
@@ -1398,28 +1425,31 @@ mpfr <- function(df_list, Y,
 #' @export
 #'
 #' @author Francois Bassac
-pfr <- function(X_func, Y, basis_obj, curve_type = "cfd",
+pfr <- function(df, Y, basis_obj, curve_type = "cfd",
                 lambda_grid = 10^seq(-5, 5, length.out = 30),
-                LDO = 2, reference_state = NULL, block_size=c(1), ...) {
+                LDO = 2, reference_state = NULL, block_size=c(1),
+                print_steps = TRUE, plot_rmsep = TRUE, plot_reg_curves = TRUE,
+                parallel = FALSE, regul_time_list = NULL,
+                id_col = 'id', time_col = 'time', int_mode = 1, ...) {
 
 
   res <- mpfr(
-    df_list = list(X_func),
+    df_list = list(df),
     Y = Y,
-    basis_obj = list(basis_obj),       # list conversionfor assembleur
-    types = list(curve_type),          # list conversionfor assembleur
+    basis_list = list(basis_obj),       # list conversion for assembleur
+    types = list(curve_type),          # list conversion for assembleur
     candidate_list = list(lambda_grid),
     block_sizes = block_size,
     LDO = LDO,
     reference_state = reference_state,
-    regul_time_list = NULL,       #
-    id_col = 'id',
-    time_col = 'time',
-    int_mode = 1,
-    print_steps = FALSE,
-    plot_rmsep = TRUE,
-    plot_reg_curves = FALSE,
-    parallel = TRUE
+    regul_time_list = regul_time_list,
+    id_col = id_col,
+    time_col = time_col,
+    int_mode = int_mode,
+    print_steps = print_steps,
+    plot_rmsep = plot_rmsep,
+    plot_reg_curves = plot_reg_curves,
+    parallel = parallel
   )
 
   return(res)
@@ -1456,10 +1486,10 @@ assert_mpfr_inputs <- function(data_list, Y, types, basis_list) {
   }
 
   # 3. Check allowed types
-  # valid_types <- c("nfd", "sfd", "cfd")
-  valid_types <- c("nfd", "num", "cat")
+  valid_types <- c("nfd", "num", "cat", "sfd", "cfd")
   if (!all(types %in% valid_types)) {
-    stop("mpfr() : types must only contain 'nfd', 'num', or 'cat'.")
+    stop("mpfr() : types must only contain 'nfd', 'num', 'cat', 'sfd', or 'cfd'.")
+
   }
 
   # 4. Check specific block requirements
@@ -1475,7 +1505,7 @@ assert_mpfr_inputs <- function(data_list, Y, types, basis_list) {
         stop(paste("mpfr() : Block", i, "(nfd) rows do not match length(Y)."))
       }
 
-    } else if (ctype %in% c("sfd", "cfd")) {
+    } else if (ctype %in% c("sfd", "cfd", "num", "cat")) {
       # Functional data MUST have a valid fda basis
       if (!inherits(basis_list[[i]], "basisfd")) {
         stop(paste("mpfr() : Block", i, "is functional (", ctype, ") but its basis_list element is not a 'basisfd' object."))
@@ -1508,13 +1538,12 @@ preprocess_mpfr_data <- function(data_list, types, id_col = "id", time_col = "ti
       df_processed_list[[i]] <- mat
       curves_names_list[i] <- paste0("NFD_", i)
 
-    } else if (ctype == "sfd") {
+    } else if (ctype == "sfd" || ctype == "num") {
       # Keep SFD as is (either an fd object, a coef matrix, or a raw df)
-      # L'usine build_block_sfd gèrera l'extraction des coefficients.
       df_processed_list[[i]] <- data_list[[i]]
       curves_names_list[i] <- paste0("SFD_", i)
 
-    } else if (ctype == "cfd") {
+    } else if (ctype == "cfd" || ctype == "cat") {
       # Identify the state column (the one that is not id or time)
       raw_df <- data_list[[i]]
       state_col <- setdiff(names(raw_df), c(id_col, time_col))
