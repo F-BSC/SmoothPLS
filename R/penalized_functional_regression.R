@@ -1216,6 +1216,41 @@ mpfr <- function(df_list, Y,
     }
   }
 
+  # STEP 3bis : BOUNDARY GUARDRAILS
+  # Flatten the optimal list to compare it with the user's candidate_list
+  flat_optimal <- unlist(best_lambdas)
+  # 1. Dynamically build explicit names for each hyperparameter
+  param_names <- character(0)
+  for (i in seq_along(block_sizes)) {
+    if (block_sizes[i] == 1) {
+      param_names <- c(param_names, curves_names_list[i])
+    } else {
+      # If it's a CFD with one lambda per state, specify the state
+      param_names <- c(param_names, paste0(curves_names_list[i], "_State_", 1:block_sizes[i]))
+    }
+  }
+  # Check the boundaries
+  for (j in seq_along(flat_optimal)) {
+    cands <- candidate_list[[j]]
+    opt_val <- flat_optimal[j]
+
+    # Only trigger the warning if the user actually tested multiple values
+    if (length(cands) > 1) {
+      if (opt_val == min(cands)) {
+        warning(sprintf(
+          "Suboptimal grid: the lambda for '%s' hit its LOWER bound (%g). Consider extending the search space to smaller values.",
+          param_names[j], opt_val
+        ), call. = FALSE)
+
+      } else if (opt_val == max(cands)) {
+        warning(sprintf(
+          "Suboptimal grid: the lambda for '%s' hit its UPPER bound (%g). Consider extending the search space to larger values.",
+          param_names[j], opt_val
+        ), call. = FALSE)
+      }
+    }
+  }
+
 
 
   # ETAPE 4 : MODÈLE FINAL ET TRONÇONNEUR
