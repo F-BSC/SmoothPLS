@@ -510,7 +510,7 @@ mpfr <- function(df_list, Y,
 
 
   # Step 5 Build augmented objects
-  X_aug = lambda_augmented_uni(lambda)
+  X_aug = lambda_augmented_uni(Lambda)
   R = calc_penalty_matrix(new_basis_list[[1]])
   R_aug = augment_penalty_matrix(R)
 
@@ -546,7 +546,7 @@ mpfr <- function(df_list, Y,
 }
 
 # WIP
-build_reg_curve_mpfr <- function(mpfr_model, curves_names_list,
+build_reg_curve_mpfr_old <- function(mpfr_model, curves_names_list,
                                  print_steps = TRUE){
 
 
@@ -575,7 +575,7 @@ build_reg_curve_mpfr <- function(mpfr_model, curves_names_list,
 }
 
 # WIP
-evaluate_reg_curve_PFR_uni <- function(mpfr_model, curve_name){
+evaluate_reg_curve_PFR_uni_old <- function(mpfr_model, curve_name){
   # nb_comp=length(v_i_list)
 
   delta = fda::fd(coef=rep(0,v_i_list[[1]]$basis$nbasis),
@@ -595,4 +595,58 @@ evaluate_reg_curve_PFR_uni <- function(mpfr_model, curve_name){
   }
 
   return(delta)
+}
+
+
+
+#' Evaluate the functional regression coefficient for univariate PFR
+#'
+#' @description
+#' Reconstructs the continuous functional coefficient curve beta(t) using
+#' the estimated basis coefficients from the penalized functional regression model.
+#'
+#' @param fit_obj The fitted model object from `fit_pfr_uni` (must contain `beta_hat`).
+#' @param basis_obj The `basisfd` object used to expand the functional predictor.
+#'
+#' @return An `fd` object representing the smooth functional coefficient beta(t).
+#' @export
+#'
+#' @author Francois Bassac
+evaluate_reg_curve_PFR_uni <- function(fit_obj, basis_obj) {
+
+  # 1. Vérification de sécurité
+  if (!inherits(basis_obj, "basisfd")) {
+    stop("basis_obj must be a valid fda 'basisfd' object.")
+  }
+
+  # 2. Extraction des coefficients
+  # Le premier élément est l'intercept, on prend tout le reste
+  b_hat <- fit_obj$beta_hat[-1]
+
+  # 3. Reconstruction de la courbe avec fda::fd
+  # fda::fd s'attend à recevoir une matrice colonne pour les coefficients
+  beta_fd <- fda::fd(coef = as.matrix(b_hat), basisobj = basis_obj)
+
+  return(beta_fd)
+}
+
+build_reg_curve_mpfr <- function(modele_final, curves_names_list,
+                                 basis_obj, print_steps = TRUE) {
+
+  if (print_steps) {
+    cat(paste0("==> Build regression curve for : ", curves_names_list[[1]], "\n"))
+  }
+
+  # 1. Évaluation de la courbe fonctionnelle
+  delta_curve <- evaluate_reg_curve_PFR_uni(fit_obj = modele_final,
+                                            basis_obj = basis_obj)
+
+  # 2. Récupération de l'intercept
+  delta_0 <- modele_final$beta_hat[1]
+
+  # 3. Formatage de la liste de sortie
+  delta_list <- list(delta_0, delta_curve)
+  names(delta_list) <- c("Intercept", curves_names_list[[1]])
+
+  return(delta_list)
 }
