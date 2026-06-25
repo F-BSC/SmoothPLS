@@ -832,7 +832,7 @@ build_global_penalty <- function(block_list, lambda_list) {
     block <- block_list[[i]]
     lams <- lambda_list[[i]]
 
-    if (block$type == "cfd") {
+    if (block$type == "cfd" || block$type == "cat") {
       # Cas 1 : One lambda for all states
       if (length(lams) == 1) {
         R_penalized <- lams * block$R
@@ -1217,12 +1217,12 @@ mpfr <- function(df_list, Y,
     if (ctype == "nfd") {
       block_list[[i]] <- build_block_nfd(X_nfd = clean_data_list[[i]])
 
-    } else if (ctype == "sfd") {
+    } else if (ctype == "sfd" || ctype == "num") {
       block_list[[i]] <- build_block_sfd(coef_matrix = clean_data_list[[i]],
                                          basis_obj = basis_list[[i]],
                                          LDO = LDO)
 
-    } else if (ctype %in% c("cfd", "sfd_step")) {
+    } else if (ctype %in% c("cfd", "sfd_step", "cat")) {
       block_list[[i]] <- build_block_cfd(
         df_cfd = clean_data_list[[i]],
         basis_obj = basis_list[[i]],
@@ -1456,9 +1456,10 @@ assert_mpfr_inputs <- function(data_list, Y, types, basis_list) {
   }
 
   # 3. Check allowed types
-  valid_types <- c("nfd", "sfd", "cfd")
+  # valid_types <- c("nfd", "sfd", "cfd")
+  valid_types <- c("nfd", "num", "cat")
   if (!all(types %in% valid_types)) {
-    stop("mpfr() : types must only contain 'nfd', 'sfd', or 'cfd'.")
+    stop("mpfr() : types must only contain 'nfd', 'num', or 'cat'.")
   }
 
   # 4. Check specific block requirements
