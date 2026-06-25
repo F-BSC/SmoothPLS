@@ -1097,6 +1097,7 @@ generate_lambda_grid <- function(flat_candidate_list, block_sizes) {
 #' @param plot_rmsep Logical. If `TRUE` and the model is univariate, automatically plots the LOOCV RMSEP curve. Defaults to `TRUE`.
 #' @param plot_reg_curves Logical. If `TRUE`, automatically plots the reconstructed functional coefficient curves (`beta(t)`) at the end of the execution. Defaults to `FALSE`.
 #' @param parallel Logical. If `TRUE`, uses parallel computing for the active area integration of CFD. Defaults to `TRUE`.
+#' @param length_out Integer. Length of the lambda vectors if 'candidate_list' is NULL, default = 5.
 #'
 #' @return An S3 object of class `mpfr` containing:
 #' \itemize{
@@ -1126,7 +1127,8 @@ mpfr <- function(df_list, Y,
                  print_steps = FALSE,
                  plot_rmsep = TRUE,
                  plot_reg_curves = FALSE,
-                 parallel = TRUE) {
+                 parallel = TRUE,
+                 length_out = 5) {
 
 
   # STEP 0 : DATA PREPROCESSING
@@ -1186,7 +1188,7 @@ mpfr <- function(df_list, Y,
     if (print_steps) cat("=> candidate_list is NULL. Computing smart grid via trace heuristics...\n")
     candidate_list <- get_auto_candidate_list(block_list,
                                               block_sizes,
-                                              length_out = 5)
+                                              length_out = length_out)
   }
 
   if (print_steps) cat("=> Generating hyperparameter grid...\n")
