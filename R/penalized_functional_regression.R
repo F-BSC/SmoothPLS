@@ -527,13 +527,13 @@ mpfr <- function(df_list, Y,
 
   # Improve for multivariate!
   if(plot_reg_curves){
-    plot(fd(coef = modele_final$beta_hat[-1], basisobj = basis_obj))
+    plot(fda::fd(coef = modele_final$beta_hat[-1], basisobj = basis_obj))
   }
 
   # Step 8 build functional coefficients
   delta_list = list(
     modele_final$beta_hat[1],
-    fd(coef = modele_final$beta_hat[-1], basisobj = basis_obj)
+    fda::fd(coef = modele_final$beta_hat[-1], basisobj = basis_obj)
   )
   names(delta_list) = c("Intercept", curves_names_list)
 
