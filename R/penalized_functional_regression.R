@@ -296,7 +296,7 @@ plot.cv_pfr_uni <- function(x, ...) {
 #' # Example usage:
 #' model <- pfr(Y = my_target, X_func = my_curves, basis_obj = my_basis, type = "cfd")
 #' }
-pfr <- function(Y, X_func, basis_obj, type = "cfd",
+pfr_old <- function(Y, X_func, basis_obj, type = "cfd",
                 lambda_grid = 10^seq(-5, 5, length.out = 30), LDO = 2) {
 
 
@@ -409,7 +409,7 @@ pfr <- function(Y, X_func, basis_obj, type = "cfd",
 
 # Do the univariate pfr on CFD and SFD
 # OK for UNI 1-CFD case
-mpfr <- function(df_list, Y,
+mpfr_old <- function(df_list, Y,
                  basis_obj, regul_time_obj = NULL,
                  curve_type_obj, lambda_grid = 10^seq(-5, 10, length.out = 15),
                  id_col_obj = 'id', time_col_obj = 'time', int_mode = 1,
@@ -1279,7 +1279,11 @@ mpfr <- function(df_list, Y,
     # À adapter si tu veux tracer la RMSEP par rapport à une dimension
     # spécifique
     # car la grille est maintenant multidimensionnelle !
-    cat("Note: Plotting multidimensional CV is complex, custom plot needed.\n")
+    if(length(curve_type_obj) > 1){
+      cat("Note: Plotting multidimensional CV is complex, custom plot needed.\n")
+    }else{
+      plot(cv_results)
+    }
   }
 
 
@@ -1320,18 +1324,46 @@ mpfr <- function(df_list, Y,
 }
 
 
-pfr <- function(X_func, Y, basis_obj, type = "cfd",
+#' Fit a Univariate Penalized Functional Regression Model
+#'
+#' @description
+#' A convenient shortcut function for univariate PFR. It automatically wraps
+#' the inputs into lists and delegates the computation to the main multivariate
+#' engine `mpfr()`.
+#'
+#' @param X_func The functional predictor (a data.frame for CFD, or matrix for SFD).
+#' @param Y The numeric response vector.
+#' @param basis_obj A `basisfd` object defining the functional basis.
+#' @param curve_type A character string specifying the data type: `"cfd"` or `"sfd"`.
+#' @param lambda_grid A numeric vector of penalty parameters to evaluate during CV.
+#' @param LDO An integer defining the Linear Differential Operator. Defaults to 2.
+#' @param reference_state Character. The state to drop (K-1) for CFD to avoid collinearity. Defaults to NULL.
+#' @param ... Additional arguments passed to `mpfr` (e.g., `id_col_obj`, `int_mode`, `parallel`).
+#'
+#' @return An object of class `mpfr` containing the fitted model and reconstructed curves.
+#' @export
+#'
+#' @author Francois Bassac
+pfr <- function(X_func, Y, basis_obj, curve_type = "cfd",
                 lambda_grid = 10^seq(-5, 5, length.out = 30),
-                LDO = 2, block_sizes = c(1)) {
-  # shortcut function
+                LDO = 2, reference_state = NULL, ...) {
+
+  # Dans le cas univarié standard, on suppose qu'on applique
+  # 1 seul hyperparamètre de lissage global pour toute la courbe (ou tous les états).
+  default_block_size <- c(1)
+
+  # Appel direct au moteur multivarié en "forçant" le format liste
   res <- mpfr(
-    data_list = list(X_func),
-    types = c(type),
+    df_list = list(X_func),
     Y = Y,
-    basis_list = list(basis_obj),
+    basis_obj = list(basis_obj),       # Converti en liste pour l'assembleur
+    curve_type_obj = list(curve_type), # Converti en liste pour l'assembleur
     candidate_list = list(lambda_grid),
-    block_sizes = block_sizes,
-    LDO = LDO
+    block_sizes = default_block_size,
+    LDO = LDO,
+    reference_state = reference_state,
+    ... # Transfère tous les autres paramètres optionnels (id_col, plot_steps, etc.)
   )
+
   return(res)
 }
