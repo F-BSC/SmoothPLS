@@ -1024,3 +1024,314 @@ reconstruct_coefficients <- function(beta_hat, block_list) {
 
   return(res)
 }
+
+
+#### GENERATOR: Hyperparameter Grid ####
+# Advanced Hyperparameter Grid
+
+#' Generate Advanced Lambda Grid for Multivariate PFR
+#'
+#' @description
+#' Creates a full Cartesian product grid for all independent lambda parameters,
+#' and repackages each combination into the block structure required by the assembler.
+#'
+#' @param flat_candidate_list A flat list of candidate vectors for EVERY parameter.
+#' @param block_sizes A numeric vector indicating how many parameters belong to each block.
+#'
+#' @return A list of lambda combinations ready for cv_pfr_multi.
+generate_lambda_grid <- function(flat_candidate_list, block_sizes) {
+
+  # 1. Vérification de sécurité
+  if (length(flat_candidate_list) != sum(block_sizes)) {
+    stop("The number of candidate vectors must equal the sum of block_sizes.")
+  }
+
+  # 2. Création du produit cartésien complet (Tableau plat)
+  grid_df <- expand.grid(flat_candidate_list)
+  n_models <- nrow(grid_df)
+
+  list_of_lambda_lists <- list()
+
+  # 3. Re-packaging ligne par ligne
+  for (i in 1:n_models) {
+
+    current_row <- as.numeric(grid_df[i, ]) # Vecteur plat de 8 valeurs
+    repackaged_list <- list()
+    current_idx <- 1
+
+    # On découpe le vecteur plat pour reconstruire la structure en blocs
+    for (b in seq_along(block_sizes)) {
+      size <- block_sizes[b]
+
+      # Extraction des paramètres pour ce bloc spécifique
+      repackaged_list[[b]] <- current_row[current_idx:(current_idx + size - 1)]
+      current_idx <- current_idx + size
+    }
+
+    list_of_lambda_lists[[i]] <- repackaged_list
+  }
+
+  return(list_of_lambda_lists)
+}
+
+#' Fit a Multivariate Penalized Functional Regression Model
+#'
+#' @description
+#' The main wrapper function to orchestrate the block building, hyperparameter
+#' grid generation, exact LOOCV optimization, and coefficient reconstruction.
+#'
+#' @param data_list A list of raw data (data.frames for CFD/NFD, matrices for SFD).
+#' @param types A character vector of types: "nfd", "sfd", or "cfd".
+#' @param Y The numeric response vector.
+#' @param basis_list A list of fda basis objects (same length as data_list).
+#' @param candidate_list A flat list of candidate lambda vectors to test.
+#' @param block_sizes A numeric vector indicating how many lambdas belong to each block.
+#'
+#' @return An S3 object of class 'mpfr' containing the final model and curves.
+#' @export
+mpfr_ONE <- function(data_list, types, Y, basis_list, candidate_list, block_sizes) {
+
+  P <- length(data_list)
+  block_list <- list()
+
+  cat("=> 1. Building individual structural blocks...\n")
+  for (i in 1:P) {
+    if (types[i] == "nfd") {
+      block_list[[i]] <- build_block_nfd(data_list[[i]])
+
+    } else if (types[i] == "sfd") {
+      block_list[[i]] <- build_block_sfd(data_list[[i]], basis_obj = basis_list[[i]])
+
+    } else if (types[i] == "cfd") {
+      # On suppose ici qu'un état de référence a été géré en amont ou via un argument
+      block_list[[i]] <- build_block_cfd(data_list[[i]], basis_obj = basis_list[[i]])
+    }
+  }
+
+  cat("=> 2. Generating Hyperparameter Grid...\n")
+  list_of_lambda_lists <- generate_lambda_grid(candidate_list, block_sizes)
+  cat(sprintf("   Testing %d combinations.\n", length(list_of_lambda_lists)))
+
+  cat("=> 3. Running Exact LOOCV Optimization...\n")
+  cv_results <- cv_pfr_multi(block_list, Y, list_of_lambda_lists)
+  best_lambdas <- cv_results$optimal_lambda_list
+
+  cat("=> 4. Fitting final model with optimal parameters...\n")
+  D_global <- build_global_design(block_list, length(Y))
+  R_0_lam_opt <- build_global_penalty(block_list, best_lambdas)
+
+  final_fit <- fit_pfr_multi(D_global, Y, R_0_lam_opt)
+
+  cat("=> 5. Reconstructing functional curves...\n")
+  reconstructed_curves <- reconstruct_coefficients(final_fit$beta_hat, block_list)
+
+  # Compilation de l'objet final
+  res <- list(
+    call = match.call(),
+    optimal_lambdas = best_lambdas,
+    cv_min_rmsep = cv_results$min_rmsep,
+    cv_results = cv_results$all_results,
+    fitted_values = final_fit$Y_hat,
+    residuals = final_fit$residuals,
+    coefficients = reconstructed_curves # Contient l'intercept, les NFD, et les courbes fd
+  )
+
+  class(res) <- "mpfr"
+  cat("=> Done!\n")
+  return(res)
+}
+
+
+#' Multivariate Penalized Functional Regression
+#'
+#' @description Fits a multivariate PFR model for heterogeneous data (CFD, SFD, NFD).
+#' ...
+#' @export
+mpfr <- function(df_list, Y,
+                 basis_obj,
+                 regul_time_obj = NULL,
+                 curve_type_obj,               # Équivalent de notre paramètre 'types'
+                 candidate_list,               # Remplace lambda_grid pour le multivarié (liste de grilles)
+                 block_sizes,                  # Indique combien de lambdas par bloc
+                 LDO = 2,                      # Ordre de la dérivée pour la pénalité
+                 reference_state = NULL,       # Pour passer de K à K-1 états (CFD)
+                 id_col_obj = 'id',
+                 time_col_obj = 'time',
+                 int_mode = 1,
+                 print_steps = FALSE,
+                 plot_rmsep = TRUE,
+                 plot_reg_curves = FALSE,
+                 parallel = TRUE) {
+
+
+  # ETAPE 0 : Data preprocessing
+
+  if (print_steps) cat("=> Data assertions and formatting...\n")
+
+  # Step 1 : assertion
+  if(print_steps){
+    cat("=> Input format assertions.\n")
+  }
+  assert_obj = assert_multivariate_smoothPLS_inputs(
+    df_list = df_list,
+    Y = Y,
+    basis_obj = basis_obj,
+    regul_time_obj = regul_time_obj,
+    curve_type_obj = curve_type_obj,
+    orth_obj = FALSE,
+    id_col_obj = id_col_obj,
+    time_col_obj = time_col_obj)
+
+  N_curves = assert_obj$N_curves
+  basis_list = assert_obj$basis_list
+  regul_time_list = assert_obj$regul_time_list
+  curve_type_list = assert_obj$curve_type_list
+  id_col_list = assert_obj$id_col_list
+  time_col_list = assert_obj$time_col_list
+  orth_list = assert_obj$orth_list
+
+  if(print_steps){
+    cat("=> Input format assertions OK.\n")
+  }
+
+  if(print_steps){
+    cat("=> Create list of basis functions. \n")
+  }
+
+  basis_list_obj = orthonormalize_basis_list(basis_list = basis_list,
+                                             orth_list = FALSE)
+
+  # Step 2 build df_processed_list and curves_names_list
+  if(print_steps){
+    cat("=> Data objects formatting.\n")
+  }
+
+  if(N_curves == 1 && mode(df_list[[1]]) != 'list' && ncol(df_list) == 3){
+    df_list = list(df_list)
+  }
+
+  new_list_obj = build_new_data_list(df_list = df_list,
+                                     N_curves = N_curves,
+                                     orth_basis_list = basis_list_obj,
+                                     basis_list = basis_list,
+                                     curve_type_list = curve_type_list,
+                                     id_col_list = id_col_list,
+                                     time_col_list = time_col_list,
+                                     regul_time_list = regul_time_list)
+
+  df_processed_list = new_list_obj$df_processed_list
+  curves_names_list = new_list_obj$curves_names_list
+  new_curves_type_list = new_list_obj$new_curves_type_list
+  new_basis_list = new_list_obj$new_basis_list
+  #new_orth_basis_list = new_list_obj$new_orth_basis_list
+  new_id_col_list = new_list_obj$new_id_col_list
+  new_time_col_list = new_list_obj$new_time_col_list
+  new_regul_time_list = new_list_obj$new_regul_time_list
+
+
+  # ETAPE 1 : LES USINES A BLOCS
+
+  if (print_steps) cat("=> Building structural blocks...\n")
+
+  P <- length(df_processed_list)
+  block_list <- list()
+
+  for (i in 1:P) {
+    ctype <- new_curves_type_list[[i]]
+
+    if (ctype == "nfd") {
+      block_list[[i]] <- build_block_nfd(df_processed_list[[i]])
+
+    } else if (ctype == "sfd") {
+      # On suppose ici que tu as une fonction ou une étape
+      # pour extraire les coefficients
+      # ou que build_block_sfd prend directement l'objet fd
+      block_list[[i]] <- build_block_sfd(df_processed_list[[i]],
+                                         new_basis_list[[i]], LDO)
+
+    } else if (ctype %in% c("cfd", "sfd_step")) {
+      # C'est ici que ton evaluate_lambda() va être appelé dans
+      # build_block_cfd !
+      block_list[[i]] <- build_block_cfd(
+        df_cfd = df_processed_list[[i]],
+        basis_obj = new_basis_list[[i]],
+        reference_state = reference_state,
+        LDO = LDO,
+        int_mode = int_mode,
+        id_col = new_list_obj$new_id_col_list[[i]],
+        time_col = new_list_obj$new_time_col_list[[i]],
+        regul_time = new_list_obj$new_regul_time_list[[i]],
+        parallel = parallel
+      )
+    }
+  }
+
+
+  # ETAPE 2 & 3 : GRILLE ET OPTIMISATION (Notre nouveau moteur)
+
+  if (print_steps) cat("=> Generating hyperparameter grid...\n")
+  list_of_lambda_lists <- generate_lambda_grid(candidate_list, block_sizes)
+
+  if (print_steps) cat("=> Running Exact LOOCV Optimization...\n")
+  cv_results <- cv_pfr_multi(block_list, Y, list_of_lambda_lists)
+
+  if (plot_rmsep) {
+    # À adapter si tu veux tracer la RMSEP par rapport à une dimension
+    # spécifique
+    # car la grille est maintenant multidimensionnelle !
+    cat("Note: Plotting multidimensional CV is complex, custom plot needed.\n")
+  }
+
+
+  # ETAPE 4 : MODÈLE FINAL ET TRONÇONNEUR
+
+  if (print_steps) cat("=> Fitting final model and slicing curves...\n")
+
+  D_global <- build_global_design(block_list, length(Y))
+  R_0_lam_opt <- build_global_penalty(block_list,
+                                      cv_results$optimal_lambda_list)
+
+  final_fit <- fit_pfr_multi(D_global, Y, R_0_lam_opt)
+
+  reconstructed_curves <- reconstruct_coefficients(final_fit$beta_hat,
+                                                   block_list)
+  names(reconstructed_curves)[-1] <- new_list_obj$curves_names_list
+  # Nommer avec tes vrais noms de variables
+
+  if (plot_reg_curves) {
+    # Tracer toutes les courbes fonctionnelles reconstruites
+    for (curve in reconstructed_curves[-1]) {
+      if (inherits(curve, "fd") || is.list(curve)) plot(curve)
+    }
+  }
+
+  res <- list(
+    call = match.call(),
+    optimal_lambdas = best_lambdas,
+    cv_min_rmsep = cv_results$min_rmsep,
+    cv_results = cv_results$all_results,
+    fitted_values = final_fit$Y_hat,
+    residuals = final_fit$residuals,
+    coefficients = reconstructed_curves # Contient l'intercept, les NFD, et les courbes fd
+  )
+
+  class(res) <- "mpfr"
+  cat("=> Done!\n")
+}
+
+
+pfr <- function(X_func, Y, basis_obj, type = "cfd",
+                lambda_grid = 10^seq(-5, 5, length.out = 30),
+                LDO = 2, block_sizes = c(1)) {
+  # shortcut function
+  res <- mpfr(
+    data_list = list(X_func),
+    types = c(type),
+    Y = Y,
+    basis_list = list(basis_obj),
+    candidate_list = list(lambda_grid),
+    block_sizes = block_sizes,
+    LDO = LDO
+  )
+  return(res)
+}
