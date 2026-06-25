@@ -671,7 +671,8 @@ build_block_nfd <- function(X_nfd) {
     type = "nfd",
     Z = Z_block,
     R = R_block,
-    n_coefs = ncol(Z_block) # Q
+    n_coefs = ncol(Z_block), # Q
+    lambda_scale = 1.0 # Default neutral scale for standard Ridge
   ))
 }
 
@@ -696,12 +697,21 @@ build_block_sfd <- function(coef_matrix, basis_obj, LDO = 2) {
   Z_block <- coef_matrix %*% J_matrix
   R_block <- calc_penalty_matrix(basis_obj, LDO = LDO)
 
+  # Trace Heuristic: Tr(Z'Z) / Tr(R)
+  # sum(Z_block^2) is mathematically identical to sum(diag(t(Z_block) %*% Z_block))
+  tr_ZtZ <- sum(Z_block^2)
+  tr_R <- sum(diag(R_block))
+
+  # Avoid division by zero if R has a null trace (e.g., LDO = 2 on a linear basis)
+  lambda_scale <- if (tr_R > 0) tr_ZtZ / tr_R else 1.0
+
   return(list(
     type = "sfd",
     Z = Z_block,
     R = R_block,
     n_coefs = ncol(Z_block),# q
-    basis_obj = basis_obj
+    basis_obj = basis_obj,
+    lambda_scale = lambda_scale
   ))
 }
 
@@ -746,6 +756,14 @@ build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, 
   # La matrice de pénalité de base pour UNE courbe de cet état
   R_base <- calc_penalty_matrix(basis_obj, LDO = LDO)
 
+  # Trace Heuristic for CFD:
+  # Since R_base is duplicated K_prime times on the global diagonal,
+  # the total trace of the penalty block is K_prime * Tr(R_base)
+  tr_ZtZ <- sum(Z_block^2)
+  tr_R_total <- K_prime * sum(diag(R_base))
+
+  lambda_scale <- if (tr_R_total > 0) tr_ZtZ / tr_R_total else 1.0
+
   return(list(
     type = "cfd",
     Z = Z_block,
@@ -753,7 +771,8 @@ build_block_cfd <- function(df_cfd, basis_obj, reference_state = NULL, LDO = 2, 
     n_coefs = ncol(Z_block), # K_prime * q
     K_prime = K_prime,
     states = states_to_keep,
-    basis_obj = basis_obj
+    basis_obj = basis_obj,
+    lambda_scale = lambda_scale
   ))
 }
 
@@ -1126,7 +1145,7 @@ generate_lambda_grid <- function(flat_candidate_list, block_sizes) {
 mpfr <- function(df_list, Y,
                  basis_list,                   # Liste des objets basis (NULL pour les NFD)
                  types,                        # Remplace curve_type_obj ('nfd', 'sfd', 'cfd')
-                 candidate_list,               # Liste des grilles de lambda
+                 candidate_list = NULL,               # Liste des grilles de lambda
                  block_sizes,                  # Tailles des blocs pour la grille
                  LDO = 2,                      # Ordre de la pénalité
                  reference_state = NULL,       # État de référence pour les CFD
@@ -1193,12 +1212,21 @@ mpfr <- function(df_list, Y,
   }
 
 
+  # STEP 2 & 3 : GRID GENERATION & OPTIMIZATION
 
-  # ETAPE 2 & 3 : GRILLE ET OPTIMISATION
+  # If the user did not provide a grid, compute it automatically using the trace heuristic
+  if (is.null(candidate_list)) {
+    if (print_steps) cat("=> candidate_list is NULL. Computing smart grid via trace heuristics...\n")
+    candidate_list <- get_auto_candidate_list(block_list,
+                                              block_sizes,
+                                              length_out = 5)
+  }
 
   if (print_steps) cat("=> Generating hyperparameter grid...\n")
-  list_of_lambda_lists <- generate_lambda_grid(flat_candidate_list = candidate_list,
-                                               block_sizes = block_sizes)
+  list_of_lambda_lists <- generate_lambda_grid(
+    flat_candidate_list = candidate_list,
+    block_sizes = block_sizes)
+
 
   if (print_steps) cat("=> Running Exact LOOCV Optimization...\n")
   cv_results <- cv_pfr_multi(block_list = block_list,
@@ -1252,7 +1280,6 @@ mpfr <- function(df_list, Y,
   }
 
 
-
   # ETAPE 4 : MODÈLE FINAL ET TRONÇONNEUR
 
   if (print_steps) cat("=> Fitting final model and slicing curves...\n")
@@ -1293,7 +1320,7 @@ mpfr <- function(df_list, Y,
   class(res) <- "mpfr"
   if (print_steps) cat("=> Done!\n")
 
-  return(res) # Il manquait le return final !
+  return(res)
 }
 
 
@@ -1304,16 +1331,34 @@ mpfr <- function(df_list, Y,
 #' the inputs into lists and delegates the computation to the main multivariate
 #' engine `mpfr()`.
 #'
-#' @param X_func The functional predictor (a data.frame for CFD, or matrix for SFD).
-#' @param Y The numeric response vector.
-#' @param basis_obj A `basisfd` object defining the functional basis.
-#' @param curve_type A character string specifying the data type: `"cfd"` or `"sfd"`.
-#' @param lambda_grid A numeric vector of penalty parameters to evaluate during CV.
-#' @param LDO An integer defining the Linear Differential Operator. Defaults to 2.
-#' @param reference_state Character. The state to drop (K-1) for CFD to avoid collinearity. Defaults to NULL.
-#' @param ... Additional arguments passed to `mpfr` (e.g., `id_col_obj`, `int_mode`, `parallel`).
+#' @param df_list A list of raw data objects (e.g., `data.frame` for CFD, `matrix` for NFD/SFD).
+#' @param Y A numeric vector representing the scalar response variable.
+#' @param basis_list A list of `basisfd` objects from the `fda` package. Must be the same length as `df_list`. Use `NULL` for NFD blocks.
+#' @param types A character vector specifying the type of each predictor. Accepted values are `"nfd"`, `"sfd"`, or `"cfd"`.
+#' @param candidate_list A flat list of numeric vectors containing the candidate lambda penalty values to test during cross-validation.
+#' @param block_sizes A numeric vector indicating the number of lambda parameters assigned to each block (e.g., `1` for a global CFD penalty, or `K` for state-specific penalties).
+#' @param LDO An integer defining the Linear Differential Operator for the roughness penalty. Defaults to `2` (penalizes the squared second derivative).
+#' @param reference_state Character. The specific state to drop for CFD blocks to avoid collinearity (i.e., using K-1 states). Defaults to `NULL` (uses all K states).
+#' @param regul_time_list A list of numeric vectors specifying the time regularization grid for each curve. Defaults to `NULL`.
+#' @param id_col Character. The name of the ID column in the functional dataframes. Defaults to `"id"`.
+#' @param time_col Character. The name of the time column in the functional dataframes. Defaults to `"time"`.
+#' @param int_mode Integer. The integration mode used for active area evaluation in CFD. Defaults to `1`.
+#' @param print_steps Logical. If `TRUE`, prints the progression steps of the algorithm to the console. Defaults to `FALSE`.
+#' @param plot_rmsep Logical. If `TRUE` and the model is univariate, automatically plots the LOOCV RMSEP curve. Defaults to `TRUE`.
+#' @param plot_reg_curves Logical. If `TRUE`, automatically plots the reconstructed functional coefficient curves (`beta(t)`) at the end of the execution. Defaults to `FALSE`.
+#' @param parallel Logical. If `TRUE`, uses parallel computing for the active area integration of CFD. Defaults to `TRUE`.
 #'
-#' @return An object of class `mpfr` containing the fitted model and reconstructed curves.
+#' @return An S3 object of class `mpfr` containing:
+#' \itemize{
+#'   \item \strong{call}: The matched call.
+#'   \item \strong{optimal_lambdas}: The list of optimal penalty parameters selected by LOOCV.
+#'   \item \strong{cv_min_rmsep}: The minimum Root Mean Squared Error of Prediction achieved.
+#'   \item \strong{cv_results}: A data frame containing the RMSEP for all tested lambda combinations.
+#'   \item \strong{fitted_values}: The numeric vector of fitted values (`Y_hat`).
+#'   \item \strong{residuals}: The numeric vector of residuals.
+#'   \item \strong{coefficients}: A named list containing the estimated intercept, the non-functional coefficients, and the reconstructed `fd` objects for functional covariates.
+#' }
+#'
 #' @export
 #'
 #' @author Francois Bassac
@@ -1335,7 +1380,14 @@ pfr <- function(X_func, Y, basis_obj, curve_type = "cfd",
     block_sizes = default_block_size,
     LDO = LDO,
     reference_state = reference_state,
-    ... # Transfère tous les autres paramètres optionnels (id_col, plot_steps, etc.)
+    regul_time_list = NULL,       # Liste des vecteurs de temps de régularisation
+    id_col = 'id',                # Remplace id_col_obj
+    time_col = 'time',            # Remplace time_col_obj
+    int_mode = 1,
+    print_steps = FALSE,
+    plot_rmsep = TRUE,
+    plot_reg_curves = FALSE,
+    parallel = TRUE
   )
 
   return(res)
@@ -1448,4 +1500,41 @@ preprocess_mpfr_data <- function(data_list, types, id_col = "id", time_col = "ti
 
   names(df_processed_list) <- curves_names_list
   return(df_processed_list)
+}
+
+#### Auto candidate ####
+
+#' Generate an automatic smart lambda grid based on trace heuristics
+#'
+#' @param block_list A list of blocks generated by the build_block_* functions.
+#' @param block_sizes A numeric vector indicating how many parameters belong to each block.
+#' @param length_out Integer. The number of candidate values per lambda parameter.
+#'
+#' @return A flat list of candidate vectors, ready for generate_lambda_grid.
+get_auto_candidate_list <- function(block_list, block_sizes, length_out = 5) {
+  flat_candidate_list <- list()
+  current_param_idx <- 1
+
+  for (i in seq_along(block_list)) {
+    scale <- block_list[[i]]$lambda_scale
+    n_params_for_block <- block_sizes[i]
+
+    # Generate a logarithmic sequence centered on the scale factor
+    # If scale = 100, it goes from 0.01 to 1,000,000
+    smart_seq <- 10^seq(log10(scale) - 4, log10(scale) + 4,
+                        length.out = length_out)
+
+    # If NFD, we might want to include exactly 0 (standard OLS) as a candidate
+    if (block_list[[i]]$type == "nfd") {
+      smart_seq <- c(0, smart_seq)
+    }
+
+    # Duplicate this smart sequence for every independent parameter in the block
+    for (p in 1:n_params_for_block) {
+      flat_candidate_list[[current_param_idx]] <- smart_seq
+      current_param_idx <- current_param_idx + 1
+    }
+  }
+
+  return(flat_candidate_list)
 }
