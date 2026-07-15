@@ -785,6 +785,12 @@ build_global_design <- function(block_list, n_obs) {
   colnames(D_global) <- "Intercept"
 
   for (i in seq_along(block_list)) {
+    if (nrow(Z_mat) != n_obs) {
+      stop(sprintf(
+        "WARNING : Check Y and df dimensions! Should be the same!.",
+        i, nrow(Z_mat), n_obs
+      ), call. = FALSE)
+    }
     D_global <- cbind(D_global, as.matrix(block_list[[i]]$Z))
   }
 
