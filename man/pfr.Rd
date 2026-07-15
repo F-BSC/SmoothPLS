@@ -2,45 +2,77 @@
 % Please edit documentation in R/penalized_functional_regression.R
 \name{pfr}
 \alias{pfr}
-\title{Fit a Penalized Functional Regression Model}
+\title{Fit a Univariate Penalized Functional Regression Model}
 \usage{
 pfr(
+  df,
   Y,
-  X_func,
   basis_obj,
-  type = "cfd",
+  curve_type = "cfd",
   lambda_grid = 10^seq(-5, 5, length.out = 30),
-  LDO = 2
+  LDO = 2,
+  reference_state = NULL,
+  block_size = c(1),
+  print_steps = TRUE,
+  plot_rmsep = TRUE,
+  plot_reg_curves = TRUE,
+  parallel = FALSE,
+  regul_time_list = NULL,
+  id_col = "id",
+  time_col = "time",
+  int_mode = 1,
+  ...
 )
 }
 \arguments{
 \item{Y}{A numeric vector representing the scalar response variable.}
 
-\item{X_func}{The functional predictor. Can be a raw data matrix or an \code{fd} object.}
+\item{LDO}{An integer defining the Linear Differential Operator for the roughness penalty. Defaults to \code{2} (penalizes the squared second derivative).}
 
-\item{basis_obj}{A \code{basis.fd} object defining the functional basis.}
+\item{reference_state}{Character. The specific state to drop for CFD blocks to avoid collinearity (i.e., using K-1 states). Defaults to \code{NULL} (uses all K states).}
 
-\item{type}{A character string specifying the type of functional data:
-\code{"cfd"} (Continuous Functional Data) or \code{"sfd"} (Step/Sparse Functional Data).}
+\item{print_steps}{Logical. If \code{TRUE}, prints the progression steps of the algorithm to the console. Defaults to \code{FALSE}.}
 
-\item{lambda_grid}{A numeric vector of penalty parameters to evaluate during CV.}
+\item{plot_rmsep}{Logical. If \code{TRUE} and the model is univariate, automatically plots the LOOCV RMSEP curve. Defaults to \code{TRUE}.}
 
-\item{LDO}{An integer defining the Linear Differential Operator for the penalty. Defaults to 2.}
+\item{plot_reg_curves}{Logical. If \code{TRUE}, automatically plots the reconstructed functional coefficient curves (\code{beta(t)}) at the end of the execution. Defaults to \code{FALSE}.}
+
+\item{parallel}{Logical. If \code{TRUE}, uses parallel computing for the active area integration of CFD. Defaults to \code{TRUE}.}
+
+\item{regul_time_list}{A list of numeric vectors specifying the time regularization grid for each curve. Defaults to \code{NULL}.}
+
+\item{id_col}{Character. The name of the ID column in the functional dataframes. Defaults to \code{"id"}.}
+
+\item{time_col}{Character. The name of the time column in the functional dataframes. Defaults to \code{"time"}.}
+
+\item{int_mode}{Integer. The integration mode used for active area evaluation in CFD. Defaults to \code{1}.}
+
+\item{df_list}{A list of raw data objects (e.g., \code{data.frame} for CFD, \code{matrix} for NFD/SFD).}
+
+\item{basis_list}{A list of \code{basisfd} objects from the \code{fda} package. Must be the same length as \code{df_list}. Use \code{NULL} for NFD blocks.}
+
+\item{types}{A character vector specifying the type of each predictor. Accepted values are \code{"nfd"}, \code{"sfd"}, or \code{"cfd"}.}
+
+\item{candidate_list}{A flat list of numeric vectors containing the candidate lambda penalty values to test during cross-validation.}
+
+\item{block_sizes}{A numeric vector indicating the number of lambda parameters assigned to each block (e.g., \code{1} for a global CFD penalty, or \code{K} for state-specific penalties).}
 }
 \value{
-An object of class \code{pfr} containing the fitted model, optimal lambda,
-cross-validation results, and estimated functional coefficients.
+An S3 object of class \code{mpfr} containing:
+\itemize{
+\item \strong{call}: The matched call.
+\item \strong{optimal_lambdas}: The list of optimal penalty parameters selected by LOOCV.
+\item \strong{cv_min_rmsep}: The minimum Root Mean Squared Error of Prediction achieved.
+\item \strong{cv_results}: A data frame containing the RMSEP for all tested lambda combinations.
+\item \strong{fitted_values}: The numeric vector of fitted values (\code{Y_hat}).
+\item \strong{residuals}: The numeric vector of residuals.
+\item \strong{coefficients}: A named list containing the estimated intercept, the non-functional coefficients, and the reconstructed \code{fd} objects for functional covariates.
+}
 }
 \description{
-Fits a univariate Penalized Functional Regression (PFR) model. It automatically
-handles data formatting, penalty matrix computation, and hyperparameter
-tuning via exact Leave-One-Out Cross-Validation (LOOCV).
-}
-\examples{
-\dontrun{
-# Example usage:
-model <- pfr(Y = my_target, X_func = my_curves, basis_obj = my_basis, type = "cfd")
-}
+A convenient shortcut function for univariate PFR. It automatically wraps
+the inputs into lists and delegates the computation to the main multivariate
+engine \code{mpfr()}.
 }
 \author{
 Francois Bassac
